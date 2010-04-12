@@ -1,0 +1,30 @@
+entrypoints MCFGM;
+
+MCFGM. MCFGM ::= [MCFG];
+
+MCFG. MCFG ::= "grammar" Ident ";" [Flag] [Rule] "end" "grammar" ";" ;
+separator MCFG "";
+
+StartCat. Flag ::= "startcat" Cat ;
+terminator Flag ";";
+
+Rule. Rule ::= Ident Profile "." Cat "->" [Cat] ":=" "{" [Field] "}";
+terminator Rule ";" ;
+
+Profile. Profile ::= "[" [ProfileItem] "]" ;
+separator ProfileItem "," ;
+
+ArgProfileItem. ProfileItem ::= Integer ;
+MetaProfileItem. ProfileItem ::= "?" ;
+
+Field. Field ::= Ident "=" [Sym] ;
+separator Field ";" ;
+
+Term. Sym ::= String;
+Proj. Sym ::= Cat "@" Integer "." Ident;
+separator Sym "" ;
+
+Cat. Cat ::= SingleQuoteString ;
+separator Cat "" ;
+
+token SingleQuoteString '\'' ((char - ["'\\"]) | ('\\' ["'\\"]))* '\'' ;
