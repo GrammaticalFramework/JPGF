@@ -1,4 +1,4 @@
-package se.chalmers.cs.pgf.parse.pmcfg;
+package pgf.parse.pmcfg;
 
 /**
  * An active edge is what Krasimirs article calls an active item. i.e. a rule with a dot • somewhere.

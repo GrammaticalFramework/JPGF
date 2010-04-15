@@ -1,4 +1,4 @@
-package se.chalmers.cs.pgf.parse.pmcfg;
+package pgf.parse.pmcfg;
 
 public abstract class RHSItem {
 	abstract boolean isTerminal();

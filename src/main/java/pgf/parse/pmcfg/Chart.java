@@ -1,10 +1,10 @@
-package se.chalmers.cs.pgf.parse.pmcfg;
+package pgf.parse.pmcfg;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import se.chalmers.cs.pgf.util.MultiMap;
-import se.chalmers.cs.pgf.util.PGFLogger;
+import pgf.util.MultiMap;
+import pgf.util.PGFLogger;
 
 /** The chart is the main data structure used in parsing.
  * It keeps track of active items, passive items and productions created

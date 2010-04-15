@@ -1,4 +1,4 @@
-package se.chalmers.cs.pgf.parse.pmcfg;
+package pgf.parse.pmcfg;
 
 /**
  * The abstract class Category subsume the classes EthernalCategory, a category

@@ -1,4 +1,4 @@
-package se.chalmers.cs.pgf.parse.pmcfg;
+package pgf.parse.pmcfg;
 
 public class PassiveEdge{
 	private int l;

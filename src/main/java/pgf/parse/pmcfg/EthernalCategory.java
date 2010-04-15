@@ -1,4 +1,4 @@
-package se.chalmers.cs.pgf.parse.pmcfg;
+package pgf.parse.pmcfg;
 
 /**
  * An EthernalCategory is a Category that exists in the grammar, i.e. not created during parsing.

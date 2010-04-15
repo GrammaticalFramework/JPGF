@@ -1,10 +1,10 @@
-package se.chalmers.cs.pgf.parse.pmcfg;
+package pgf.parse.pmcfg;
 
 
 import java.util.Set;
 import java.util.Stack;
 
-import se.chalmers.cs.pgf.util.PGFLogger;
+import pgf.util.PGFLogger;
 
 public class PMCFGParser {
     public static PGFLogger log = new PGFLogger("se.chalmers.cs.pgf.parse");
