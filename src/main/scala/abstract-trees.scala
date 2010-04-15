@@ -1,9 +1,9 @@
-package se.chalmers.cs.pgf.Abstract
+package pgf.abstractTrees
 
-class Tree
+sealed abstract class Tree
 
 // Lambda abstraction : (λcid.body)
-class Lambda(bindType : Boolean, cid : String, body : Tree) extends Tree {
+case class Lambda(bindType : Boolean, cid : String, body : Tree) extends Tree {
   override def toString:String  = "(λ" + this.cid + "." + this.body + ")"
 }
 
@@ -15,36 +15,36 @@ class Lambda(bindType : Boolean, cid : String, body : Tree) extends Tree {
  * (the fields $0 is the name of the variable.)
  * TODO: is that correct ????
  */
-class Variable(index : Int) extends Tree {
+case class Variable(index : Int) extends Tree {
   override def toString = "$" + this.index
 }
 
-// Function application : f x
-class Application(fun : Tree, x : Tree) extends Tree {
+// Function application : fun x
+case class Application(fun : Tree, x : Tree) extends Tree {
   override def toString = "(" + this.fun + " " + this.x + ")"
 }
 
 // Litteral : String, Int or Float
-class Literal(value : String) extends Tree {
+case class Literal(value : String) extends Tree {
   override def toString = this.value
 }
 
-class MetaVariable( id : Int ) extends Tree {
+case class MetaVariable( id : Int ) extends Tree {
   override def toString = "META_" + this.id
 }
 
 // Function of data constructor : fun f : /SomeType/
-class Function( cid : String ) extends Tree {
+case class Function( cid : String ) extends Tree {
   override def toString = this.cid
 }
 
 // Local type signature : (x : t)
-class TypeSignature( x : Tree, t : Type) extends Tree
+case class TypeSignature( x : Tree, t : Type) extends Tree
 
 /**
  * Implicite argument in expression : ?????
  * TODO: What is it ?
  * */
-class ImpliciteArgument( e : Tree) extends Tree
+case class ImpliciteArgument( e : Tree) extends Tree
 
 class Type
