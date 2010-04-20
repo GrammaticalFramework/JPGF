@@ -12,4 +12,13 @@ public AbsFun(String _str, Type _t, int _arit, Eq[] _eqs)
  arit = _arit;
  eqs = _eqs;
 }
+
+public String toString()
+{String ss = "Name : "+str + "\nType : (" + t.toString() + ")\nArity : "+arit+" , Equations : (";
+for(int i=0; i<eqs.length; i++)
+	ss+=(" "+eqs[i].toString());
+ss+=")\n";
+return ss;
+ 
+	}
 }

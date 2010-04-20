@@ -10,4 +10,7 @@ public Hypo(boolean _bind, String _str, Type _t)
  str = _str;
  t = _t;
 }
+
+public String toString()
+{return "Bound Type : "+bind+ " , Name : "+str+" , Type : ("+t+")";}
 }

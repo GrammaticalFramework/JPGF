@@ -1,9 +1,9 @@
 package reader;
 
 public class FloatLiteral extends Literal {
-      float value;
+      double value;
        
-	  public FloatLiteral(float _value) {value = _value; }
+	  public FloatLiteral(double _value) {value = _value; }
 
 	  public <R,A> R accept(reader.Literal.Visitor<R,A> v, A arg) { return v.visit(this, arg); }
 
