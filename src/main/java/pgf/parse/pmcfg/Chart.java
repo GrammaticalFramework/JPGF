@@ -137,21 +137,6 @@ public class Chart extends ScalaChart {
 	return count;
     }
     
-    /** **********************************************************************
-     * 	Handling Productions
-     */
-    // public boolean add(Production p) {
-    // 	if (this.productions.put(p.getCategory(), p)) {
-    // 		log.finest("Adding production " + 
-    // 			   p.getCategory() + " -> " + p + " in chart.");
-    // 		return true;
-    // 	    } else return false;
-    // }
-    
-    // public Set<Production> getRule(int leftCategory) {
-    // 	return this.productions.get(new Integer(leftCategory));
-    // }
-    
     public int getSize() {
 	return n;
     }
