@@ -1,9 +1,9 @@
 package pgf.parse.pmcfg;
 
-public class PassiveEdge{
+public class OldPassiveEdge{
 	private int l;
-	private Category baseCategory;
-	private Category freshCategory;
+	private int baseCategory;
+	private int freshCategory;
 
 	public PassiveEdge(ActiveEdge e)
 	{
@@ -14,7 +14,7 @@ public class PassiveEdge{
 		this.baseCategory = e.getRule().getCategory();
 	}
 
-	public Category getFreshCategory() {
+	public int getFreshCategory() {
 		if (this.freshCategory == null)
 			throw new IllegalStateException(
 					"Cant get fresh category of passive edge... try to add it to the chart before.");
@@ -25,11 +25,11 @@ public class PassiveEdge{
 		return l;
 	}
 
-	public Category getCategory() {
+	public int getCategory() {
 		return this.baseCategory;
 	}
 	
-	public void setFreshCategory(FreshCategory f) {
+	public void setFreshCategory(int f) {
 		this.freshCategory = f;
 	}
 

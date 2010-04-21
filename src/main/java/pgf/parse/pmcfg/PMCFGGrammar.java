@@ -7,9 +7,9 @@ public class PMCFGGrammar {
 	
 	private String name;
 	private Production[] rules;
-	private Category startCat;
+	private int startCat;
 
-	public PMCFGGrammar(String name, Category catS, Production[] productions) {
+	public PMCFGGrammar(String name, int catS, Production[] productions) {
 		this.name = name;
 		this.startCat = catS;
 		this.rules = productions;
@@ -25,7 +25,7 @@ public class PMCFGGrammar {
 		return rules;
 	}
 	
-	public Category getStartCategory()
+	public int getStartCategory()
 	{
 		return this.startCat;
 	}
