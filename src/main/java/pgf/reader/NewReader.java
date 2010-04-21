@@ -1,8 +1,6 @@
-package pgf.reader;
+package reader;
 
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,7 +29,7 @@ public class NewReader {
       Abstract abs = getAbstract(is);
       Concrete[] concretes = getListConcretes(is);
       PGF pgf = new PGF(makeInt16(ii[0],ii[1]), makeInt16(ii[2],ii[3]), flags, abs, concretes);
-      //System.out.println("The resulting PGF is : "+ pgf.toString());
+      System.out.println("The resulting PGF is : "+ pgf.toString());
       System.out.println("\n\nthe end");
       is.close();
         } 
@@ -80,20 +78,33 @@ protected Flag getFlag(DataInputStream is) throws IOException
    byte[] bytes;
    int r ;
    String letter="";
+   int lg = 0; 
    StringBuffer bf = new StringBuffer();
    for (int i=0; i<npoz; i++)
    {r = is.read();
-    if(r <= 0x7f) {bytes = new byte[1];
-                   bytes[0]= (byte)r;
-                   letter = new String(bytes,"UTF-8");
-                  }
+    if(r <= 0x7f) lg = 0;
     else if ((r >= 0xc0) && (r <= 0xdf)) 
-          {bytes = new byte[2];
+                 lg = 1;
+    	 /*      
+    {bytes = new byte[2];
            bytes[0] = (byte) r; 
            bytes[1] = (byte) is.read();
            letter = new String(bytes, "UTF-8");
-           }
+           } */
+    else if ((r >= 0xe0) && (r <= 0xef))
+    	  lg = 2;
+    else if ((r >= 0xf0) && (r <= 0xf4))
+    	  lg = 3;
+    else if ((r >= 0xf8) && (r <= 0xfb))
+    	  lg = 4;
+    else if ((r >= 0xfc) && (r <= 0xfd))
+          lg =5;    	
     else throw new IOException("Undefined for now !!! ");
+    bytes = new byte[1 + lg];
+    bytes[0] = (byte) r;
+    for(int j=1; j<=lg; j++)
+    	bytes[j] = (byte) is.read();
+    letter = new String(bytes,"UTF-8");
     bf.append(letter);
    }
    return new String(bf.toString().getBytes(),"UTF-8");

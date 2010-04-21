@@ -1,4 +1,4 @@
-package pgf.reader;
+package reader;
 
 public class CoerceProduction extends Production {
           int initId;
@@ -9,15 +9,7 @@ public class CoerceProduction extends Production {
           public String toString()
           {return "Initial id : "+initId; };
 		  
-          public <R,A> R accept(reader.Production.Visitor<R,A> v, A arg) { return v.visit(this, arg); }
 
-		  public boolean equals(Object o) {
-		    if (this == o) return true;
-		    if (o instanceof reader.CoerceProduction) {
-		      return true;
-		    }
-		    return false;
-		  }
 
 		}
 

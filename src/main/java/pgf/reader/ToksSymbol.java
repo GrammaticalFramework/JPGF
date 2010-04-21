@@ -1,4 +1,4 @@
-package pgf.reader;
+package reader;
 
 public class ToksSymbol extends Symbol {
           String[] toks ;
@@ -10,15 +10,6 @@ public class ToksSymbol extends Symbol {
         	   s+=(" "+toks[i]);  
           return s;	   
           };
-		  public <R,A> R accept(reader.Symbol.Visitor<R,A> v, A arg) { return v.visit(this, arg); }
-
-		  public boolean equals(Object o) {
-		    if (this == o) return true;
-		    if (o instanceof reader.ToksSymbol) {
-		      return true;
-		    }
-		    return false;
-		  }
 
 		}
 

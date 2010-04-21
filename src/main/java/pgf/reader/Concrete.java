@@ -1,30 +1,25 @@
-package pgf.reader;
+package reader;
 
 public class Concrete {
-    String str ;// What is str ???
-    Flag[] 	flags ; 
-    PrintName[] printnames ;	
-    Sequence[] seqs ;	
-    CncFun[] cncFuns ; 	
-    ProductionSet[] prods ; 	
-    CncCat[] cncCats ;
-    int fId ;
-    // what is that fId ?
-    // is it "total number of forest ids allocated for the grammar " ?
-    // (in that case, 'fId' is a bad name...)
-    
-    public Concrete (String _str, Flag[] _flags, PrintName[] _printnames, 
-		     Sequence[] _seqs, CncFun[] _cncFuns, 
-		     ProductionSet[] _prods, CncCat[] _cncCats, int _fId) {
-	str = _str;
-	flags = _flags;
-	printnames = _printnames;
-	seqs = _seqs;
-	cncFuns = _cncFuns;
-	prods = _prods; 
-	cncCats = _cncCats;
-	fId = _fId;	
-    }
+	String str ;
+	Flag[] 	flags ; 
+	PrintName[] printnames ;	
+	Sequence[] seqs ;	
+	CncFun[] cncFuns ; 	
+	ProductionSet[] prods ; 	
+	CncCat[] cncCats ;
+	int fId ;
+	
+public Concrete (String _str, Flag[] _flags, PrintName[] _printnames, Sequence[] _seqs, CncFun[] _cncFuns, ProductionSet[] _prods, CncCat[] _cncCats, int _fId)
+{str = _str;
+ flags = _flags;
+ printnames = _printnames;
+ seqs = _seqs;
+ cncFuns = _cncFuns;
+ prods = _prods; 
+ cncCats = _cncCats;
+ fId = _fId;	
+}
 	
 public String toString()
 {String ss = " Name : "+str + " , Flags : [";
