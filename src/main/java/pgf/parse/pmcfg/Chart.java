@@ -35,7 +35,6 @@ public class Chart extends ScalaChart {
     
     private Set<ActiveEdge>[][] active;
     private Set<PassiveEdge>[][] passive;
-    private MultiMap<Integer,Production> productions;
     
     /** **********************************************************************
      * constructors
@@ -62,7 +61,6 @@ public class Chart extends ScalaChart {
 	for (int i = 0; i <= n; i++)
 	    for (int j = i; j <= n; j++)
 		this.passive[i][j] = new HashSet<PassiveEdge>(); 
-	this.productions = new MultiMap<Integer, Production>();
     }
 
     
