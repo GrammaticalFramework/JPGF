@@ -378,7 +378,7 @@ Flag[] flags = getListFlag(is);
 PrintName[] pnames = getListPrintName(is); 	
 Sequence[] seqs = getListSequence(is); 	
 CncFun[] cncFuns = getListCncFun(is);
-ProductionSet[] prods = getListProductionSet(is); 	
+ProductionSet[] prods = getListProductionSet(is, cncFuns); 	
 CncCat[] cncCats = getListCncCat(is);
 int i = getInteger(is);
 return new Concrete(s,flags,pnames,seqs,cncFuns,prods,cncCats,i);
@@ -429,29 +429,64 @@ cncFuns[i]=getCncFun(is);
 return cncFuns;
 }
 
-protected ProductionSet getProductionSet(DataInputStream is) throws IOException
-{int id = getInteger(is);
- Production[] prods = getListProduction(is);
- ProductionSet ps = new ProductionSet(id,prods);
- return ps;
-}
+    /** **********************************************************************
+     * Productions and production sets
+     */
+    protected ProductionSet getProductionSet(DataInputStream is, 
+					     CncFun[] cncFuns) 
+	throws IOException 
+    {
+	int id = getInteger(is);
+	Production[] prods = getListProduction(is, cncFuns);
+	ProductionSet ps = new ProductionSet(id,prods);
+	return ps;
+    }
 
-protected ProductionSet[] getListProductionSet(DataInputStream is) throws IOException
-{int npoz = getInteger(is);
-ProductionSet[] prods = new ProductionSet[npoz];
-for(int i=0; i<npoz; i++)
-	prods[i]= getProductionSet(is);
-return prods;
+    protected ProductionSet[] getListProductionSet(DataInputStream is, 
+						   CncFun[] cncFuns) 
+	throws IOException
+    {
+	int npoz = getInteger(is);
+	ProductionSet[] prods = new ProductionSet[npoz];
+	for(int i=0; i<npoz; i++)
+	    prods[i]= getProductionSet(is, cncFuns);
+	return prods;
+    }
+
+    protected Production[] getListProduction(DataInputStream is,
+					     CncFun[] cncFuns) 
+	throws IOException
+    {
+	int npoz = getInteger(is);
+	Production[] prods = new Production[npoz];
+	for(int i=0; i<npoz; i++)
+	    prods[i]=getProduction(is, cncFuns);
+	return prods;
+    }
+
+    protected Production getProduction(DataInputStream is,
+				       CncFun[] cncFuns) throws IOException
+    {
+	int sel = is.read();
+	Production prod = null;
+	switch (sel) {
+	case 0 : //application 
+	    int i = getInteger(is);
+	    int[] iis = getListInteger(is);
+	    prod = new ApplProduction(cncFuns[i],iis);
+	    break;
+	case 1 : //coercion
+	    int id = getInteger(is);
+	    prod = new CoerceProduction(id);
+	    break;
+	default : throw new IOException("invalid tag for productions : "+sel);
 	}
-
-protected Production[] getListProduction(DataInputStream is) throws IOException
-{int npoz = getInteger(is);
-Production[] prods = new Production[npoz];
-for(int i=0; i<npoz; i++)
-prods[i]=getProduction(is);
-return prods;
-}
-
+	prod.fId=0;//fID;
+	prod.sel = sel;
+	return prod;
+    }
+    
+    
 protected CncCat[] getListCncCat(DataInputStream is) throws IOException
 {int npoz = getInteger(is);
 CncCat[] cncCats = new CncCat[npoz];
@@ -468,26 +503,6 @@ protected CncCat getCncCat(DataInputStream is) throws IOException
  return new CncCat(sname,firstFId,lastFId,ss);
 }
 
-protected Production getProduction(DataInputStream is) throws IOException
-{
- int sel = is.read();
- Production prod = null;
- switch (sel) {
- case 0 : //application 
-           int i = getInteger(is);
-           int[] iis = getListInteger(is);
-           prod = new ApplProduction(i,iis);
-           break;
- case 1 : //coercion
-           int id = getInteger(is);
-           prod = new CoerceProduction(id);
-           break;
- default : throw new IOException("invalid tag for productions : "+sel);
- }
- prod.fId=0;//fID;
- prod.sel = sel;
- return prod;
-}
 
 protected CncFun getCncFun(DataInputStream is) throws IOException
 {String str = getString(is);
