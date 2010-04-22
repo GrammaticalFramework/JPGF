@@ -437,7 +437,7 @@ return cncFuns;
 	throws IOException 
     {
 	int id = getInteger(is);
-	Production[] prods = getListProduction(is, cncFuns);
+	Production[] prods = getListProduction(is, id, cncFuns);
 	ProductionSet ps = new ProductionSet(id,prods);
 	return ps;
     }
@@ -454,17 +454,19 @@ return cncFuns;
     }
 
     protected Production[] getListProduction(DataInputStream is,
+					     int leftCat,
 					     CncFun[] cncFuns) 
 	throws IOException
     {
 	int npoz = getInteger(is);
 	Production[] prods = new Production[npoz];
 	for(int i=0; i<npoz; i++)
-	    prods[i]=getProduction(is, cncFuns);
+	    prods[i]=getProduction(is, leftCat, cncFuns);
 	return prods;
     }
 
     protected Production getProduction(DataInputStream is,
+				       int leftCat,
 				       CncFun[] cncFuns) throws IOException
     {
 	int sel = is.read();
@@ -473,13 +475,11 @@ return cncFuns;
 	case 0 : //application 
 	    int i = getInteger(is);
 	    int[] iis = getListInteger(is);
-	    // FIXME : fId is not 0 !!!!!!
-	    prod = new ApplProduction(0, cncFuns[i],iis);
+	    prod = new ApplProduction(leftCat, cncFuns[i],iis);
 	    break;
 	case 1 : //coercion
 	    int id = getInteger(is);
-	    // FIXME : fId is not 0 !!!!
-	    prod = new CoerceProduction(0, id);
+	    prod = new CoerceProduction(leftCat, id);
 	    break;
 	default : throw new IOException("invalid tag for productions : "+sel);
 	}
