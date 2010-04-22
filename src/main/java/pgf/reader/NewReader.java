@@ -432,6 +432,11 @@ return cncFuns;
     /** **********************************************************************
      * Productions and production sets
      */
+    /**
+     * Read a production set
+     * @param is is the input stream to read from
+     * @param cncFuns is the list of concrete function
+     */
     protected ProductionSet getProductionSet(DataInputStream is, 
 					     CncFun[] cncFuns) 
 	throws IOException 
@@ -442,6 +447,11 @@ return cncFuns;
 	return ps;
     }
 
+    /**
+     * Read a list of production set
+     * @param is is the input stream to read from
+     * @param cncFuns is the list of concrete function
+     */
     protected ProductionSet[] getListProductionSet(DataInputStream is, 
 						   CncFun[] cncFuns) 
 	throws IOException
@@ -453,6 +463,13 @@ return cncFuns;
 	return prods;
     }
 
+    /**
+     * Read a list of production
+     * @param is is the input stream to read from
+     * @param leftCat is the left hand side category of this production (
+     * read only once for the whole production set)
+     * @param cncFuns is the list of concrete function
+     */
     protected Production[] getListProduction(DataInputStream is,
 					     int leftCat,
 					     CncFun[] cncFuns) 
@@ -465,6 +482,14 @@ return cncFuns;
 	return prods;
     }
 
+    /**
+     * Read a list of production
+     * @param is is the input stream to read from
+     * @param leftCat is the left hand side category of this production (
+     * read only once for the whole production set)
+     * @param cncFuns is the list of concrete function, used here to set the
+     * function of the production (only given by its index in the list)
+     */
     protected Production getProduction(DataInputStream is,
 				       int leftCat,
 				       CncFun[] cncFuns) throws IOException
