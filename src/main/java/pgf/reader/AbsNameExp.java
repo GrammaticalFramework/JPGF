@@ -1,4 +1,4 @@
-package reader;
+package pgf.reader;
 
 public class AbsNameExp extends Expr{ 
 	 String name ;

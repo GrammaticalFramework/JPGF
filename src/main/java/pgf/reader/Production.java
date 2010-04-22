@@ -1,4 +1,4 @@
-package reader;
+package pgf.reader;
 
 public abstract class Production {
     private int sel;

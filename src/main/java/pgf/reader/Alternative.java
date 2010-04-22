@@ -1,4 +1,4 @@
-package reader;
+package pgf.reader;
 
 public class Alternative {
 String[] alt1;

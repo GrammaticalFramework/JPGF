@@ -1,4 +1,4 @@
-package reader;
+package pgf.reader;
 
 public class ApplProduction extends Production {
     private CncFun function;
