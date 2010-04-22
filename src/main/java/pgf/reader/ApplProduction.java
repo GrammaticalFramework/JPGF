@@ -1,12 +1,17 @@
 package reader;
 
 public class ApplProduction extends Production {
-    CncFun function;
-    int[] args;
+    private CncFun function;
+    private int[] args;
     
-    public ApplProduction(CncFun function, int[] _args) { 
+    public ApplProduction(int fId, CncFun function, int[] _args) {
+	super(0, fId);
 	this.function = function;
 	args = _args; 
+    }
+
+    public CncFun function() {
+	return this.function;
     }
     
     public String toString() {

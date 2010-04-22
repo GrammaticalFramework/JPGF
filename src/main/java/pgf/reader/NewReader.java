@@ -473,16 +473,16 @@ return cncFuns;
 	case 0 : //application 
 	    int i = getInteger(is);
 	    int[] iis = getListInteger(is);
-	    prod = new ApplProduction(cncFuns[i],iis);
+	    // FIXME : fId is not 0 !!!!!!
+	    prod = new ApplProduction(0, cncFuns[i],iis);
 	    break;
 	case 1 : //coercion
 	    int id = getInteger(is);
-	    prod = new CoerceProduction(id);
+	    // FIXME : fId is not 0 !!!!
+	    prod = new CoerceProduction(0, id);
 	    break;
 	default : throw new IOException("invalid tag for productions : "+sel);
 	}
-	prod.fId=0;//fID;
-	prod.sel = sel;
 	return prod;
     }
     

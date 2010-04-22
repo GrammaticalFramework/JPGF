@@ -8,7 +8,13 @@ public abstract class Production {
 	  }
 
 public abstract class Production {
-    int sel;
-    int fId;
+    private int sel;
+    private int fId;
+    
+    public Production(int selector, int fId) {
+	this.sel = selector;
+	this.fId = fId;
+    }
+    
     public abstract String toString();
 }
