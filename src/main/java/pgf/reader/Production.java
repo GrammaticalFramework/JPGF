@@ -7,3 +7,8 @@ public abstract class Production {
  
 	  }
 
+public abstract class Production {
+    int sel;
+    int fId;
+    public abstract String toString();
+}
