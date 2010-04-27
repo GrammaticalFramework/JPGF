@@ -1,14 +1,14 @@
-package pgf.reader;
+package reader;
 
 public class Concrete {
-	String str ;
-	Flag[] 	flags ; 
-	PrintName[] printnames ;	
-	Sequence[] seqs ;	
-	CncFun[] cncFuns ; 	
-	ProductionSet[] prods ; 	
-	CncCat[] cncCats ;
-	int fId ;
+	private String str ;
+	private Flag[] 	flags ; 
+	private PrintName[] printnames ;	
+	private Sequence[] seqs ;	
+	private CncFun[] cncFuns ; 	
+	private ProductionSet[] prods ; 	
+	private CncCat[] cncCats ;
+	private int fId ;
 	
 public Concrete (String _str, Flag[] _flags, PrintName[] _printnames, Sequence[] _seqs, CncFun[] _cncFuns, ProductionSet[] _prods, CncCat[] _cncCats, int _fId)
 {str = _str;
@@ -43,4 +43,16 @@ public String toString()
  ss+="]\n , forest ID : "+fId;
  return ss;
 }
+
+public String getName() {return str;}
+public Flag[] getFlags() {return flags;} 
+public PrintName[] getPrintNames() {return printnames;}	
+public Sequence[] getSequences() {return seqs;}	
+public CncFun[] getCncFuns() {return cncFuns;} 	
+public ProductionSet[] getProductionSet() {return prods;} 	
+public CncCat[] getCncCat() {return cncCats;}
+public int getFId() {return fId;}
+
+
+
 }

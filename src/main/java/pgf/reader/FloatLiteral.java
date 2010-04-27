@@ -1,14 +1,15 @@
-package pgf.reader;
+package reader;
 
 public class FloatLiteral extends Literal {
-      double value;
+private double value;
        
-	  public FloatLiteral(double _value) {value = _value; }
+public FloatLiteral(double _value) {value = _value; }
 
-	  public String toString()
-	  {String s = "Float literal : "+value;
-	  return s;
-	  }
-	  
+public String toString()
+  {String s = "Float literal : "+value;
+  return s;	  
+}
+
+public double getValue() {return value;}
 
 	}

@@ -1,7 +1,7 @@
-package pgf.reader;
+package reader;
 
 public class CoerceProduction extends Production {
-          int initId;
+        private  int initId;
     
           
     public CoerceProduction(int fId, int _initId) 
@@ -10,10 +10,11 @@ public class CoerceProduction extends Production {
 	initId = _initId;
     }
 		  
-          public String toString()
-          {return "Initial id : "+initId; };
+    public String toString()
+     {return "Initial id : "+initId; };
 		  
-
+    public int getInitId() {return initId;}
+    
 
 		}
 

@@ -1,4 +1,4 @@
-package pgf.reader;
+package reader;
 
 public abstract class Pattern {
 	   int sel;

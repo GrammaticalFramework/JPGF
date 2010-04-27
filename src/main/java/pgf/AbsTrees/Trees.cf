@@ -1,0 +1,11 @@
+Lambda. Tree ::= "\\" Ident "->" Tree ; 
+Variable. Tree ::= "$" Integer ;
+Application. Tree ::= "(" Tree  Tree")" ;
+Literal. Tree ::= Lit ;
+MetaVariable. Tree ::= "META_" Integer ;
+Function. Tree ::= Ident ;
+
+
+IntLiteral.  Lit ::= Integer ;
+FloatLiteral. Lit ::= Double ;
+StringLiteral. Lit ::= String ; 

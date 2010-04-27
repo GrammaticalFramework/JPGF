@@ -1,4 +1,4 @@
-package pgf.reader;
+package reader;
 
 public class AlternToksSymbol extends Symbol {
           String[] toks;

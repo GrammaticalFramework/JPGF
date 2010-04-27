@@ -1,10 +1,10 @@
-package pgf.reader;
+package reader;
 
 public class Abstract {
-String str;
-Flag[] flags;
-AbsFun[] absFuns;
-AbsCat[] absCats;
+private String str;
+private Flag[] flags;
+private AbsFun[] absFuns;
+private AbsCat[] absCats;
 
 public Abstract(String _str, Flag[] _flags, AbsFun[] _absFuns, AbsCat[] _absCats)
 {str = _str;
@@ -26,4 +26,10 @@ for(int i=0;i<absCats.length;i++)
 ss+=")";
 return ss;
 }
+
+public String getName() {return str;}
+public Flag[] getFlags() {return flags;}
+public AbsFun[] getAbsFuns() {return absFuns;}
+public AbsCat[] getAbsCats() {return absCats;}
+
 }

@@ -1,4 +1,4 @@
-package pgf.reader;
+package reader;
 
 public class ArgConstSymbol extends Symbol {
           int arg;

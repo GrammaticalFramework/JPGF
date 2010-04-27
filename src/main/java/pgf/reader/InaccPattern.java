@@ -1,4 +1,4 @@
-package pgf.reader;
+package reader;
 
 public class InaccPattern extends Pattern{
 Expr exp;

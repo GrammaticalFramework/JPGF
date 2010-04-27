@@ -1,7 +1,7 @@
-package pgf.reader;
+package reader;
 
 public class VarExp extends Expr{
-   int ind;
+   private int ind;
 
  public VarExp(int _ind) 
   {ind = _ind;}
@@ -9,4 +9,5 @@ public class VarExp extends Expr{
  public String toString()
  {return "Variable Expression : [Index : "+ind+"]";}
  
+ public int getVarInd() {return ind;}
 }

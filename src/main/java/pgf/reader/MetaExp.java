@@ -1,11 +1,13 @@
-package pgf.reader;
+package reader;
 
 public class MetaExp extends Expr{
-	 int id;
+	 private int id;
 	 
  public MetaExp(int _id) 
   { id = _id;}
 
  public String toString()
  {return "Meta Expression : [Id : "+id+"]";}
+
+public int getMeta() {return id;}
 }

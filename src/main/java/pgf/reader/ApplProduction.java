@@ -1,17 +1,21 @@
-package pgf.reader;
+package reader;
 
 public class ApplProduction extends Production {
     private CncFun function;
     private int[] args;
     
     public ApplProduction(int fId, CncFun function, int[] _args) {
-	super(0, fId);
+	super(0,fId);
 	this.function = function;
 	args = _args; 
     }
 
-    public CncFun function() {
-	return this.function;
+    public CncFun getFunction() {
+	return function;
+    }
+    
+    public int[] getArgs() {
+    return args;	
     }
     
     public String toString() {

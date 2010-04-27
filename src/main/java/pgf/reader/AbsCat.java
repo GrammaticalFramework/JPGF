@@ -1,9 +1,9 @@
-package pgf.reader;
+package reader;
 
 public class AbsCat {
-String str;
-Hypo[] hypos;
-String[] strs;
+private String str;
+private Hypo[] hypos;
+private String[] strs;
 
 public AbsCat(String _str, Hypo[] _hypos, String[] _strs)
 {str = _str;

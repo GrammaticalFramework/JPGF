@@ -1,10 +1,10 @@
-package pgf.reader;
+package reader;
 
 public class CncCat {
-	String name; 	
-	int firstFId;
-	int lastFId;	
-	String[] labels; 
+	private String name; 	
+	private int firstFId;
+	private int lastFId;	
+	private String[] labels; 
 
 public CncCat(String _name, int _firstFId, int _lastFId, String[] _labels)
 {name = _name;
@@ -19,4 +19,11 @@ for(int i=0; i<labels.length; i++)
 	ss+=(" "+labels[i]);
 return ss;	
 }
+
+public String getName() {return name;} 	
+public int getFirstId() {return firstFId;}
+public int getLastId() {return lastFId;}	
+public String[] getLabels() {return labels;} 
+
+
 }

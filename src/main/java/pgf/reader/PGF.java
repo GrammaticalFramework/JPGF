@@ -1,11 +1,11 @@
-package pgf.reader;
+package reader;
 
 public class PGF {
-int majorVersion;
-int minorVersion;
-Flag[] flags;
-Abstract abstr;
-Concrete[] concretes;
+private int majorVersion;
+private int minorVersion;
+private Flag[] flags;
+private Abstract abstr;
+private Concrete[] concretes;
 
 public PGF(int _majorVersion, int _minorVersion, Flag[] _flags, Abstract _abstr, Concrete[] _concretes)
 {majorVersion = _majorVersion;
@@ -25,4 +25,18 @@ for(int i=0;i<concretes.length;i++)
 ss+=")";
 return ss;}
 
+public int getMajorVersion()
+{return majorVersion;}
+
+public int getMinorVersion()
+{return minorVersion;}
+
+public Flag[] getFlags()
+{return flags;}
+
+public Abstract getAbstract()
+{return abstr;}
+
+public Concrete[] getConcretes()
+{return concretes;}
 }

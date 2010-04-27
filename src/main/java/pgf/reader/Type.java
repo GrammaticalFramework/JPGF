@@ -1,9 +1,9 @@
-package pgf.reader;
+package reader;
 
 public class Type {
-Hypo [] hypos;
-String str;
-Expr[] exprs;
+private Hypo [] hypos;
+private String str;
+private Expr[] exprs;
 
 public Type(Hypo[] _hypos, String _str, Expr[] _exprs)
 {hypos = _hypos; 
@@ -21,4 +21,9 @@ for (int i=0; i<exprs.length; i++)
 ss+=")";
 return ss;
 }
+
+public Hypo[] getHypos() {return hypos;}
+public String getName() {return str;}
+public Expr[] getExprs() {return exprs;}
+
 }

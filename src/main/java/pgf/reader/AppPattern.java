@@ -1,4 +1,4 @@
-package pgf.reader;
+package reader;
 
 public class AppPattern extends Pattern{
 String name;

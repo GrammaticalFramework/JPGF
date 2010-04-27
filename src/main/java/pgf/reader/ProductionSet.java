@@ -1,8 +1,8 @@
-package pgf.reader;
+package reader;
 
 public class ProductionSet {
-int id;
-Production[] prods;
+private int id;
+private Production[] prods;
 
 public ProductionSet(int _id, Production[] _prods)
 {id = _id;
@@ -16,4 +16,8 @@ ss+=(" "+prods[i].toString());
 ss+="]";
 return ss;
 }
+
+public int getId() {return id; }
+public Production[] getProductions() {return prods;}
+
 }

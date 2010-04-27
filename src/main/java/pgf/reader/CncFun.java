@@ -1,8 +1,8 @@
-package pgf.reader;
+package reader;
 
 public class CncFun {
-String name;
-int[] inds;
+private String name;
+private int[] inds;
 
 public CncFun(String _name, int[] _inds)
 {name = _name;
@@ -15,4 +15,8 @@ for(int i=0; i<inds.length; i++)
  ss+=(" "+inds[i]);
 return ss;
 }
+
+public String getName(){return name;}
+public int[] getInds(){return inds;}
+
 }

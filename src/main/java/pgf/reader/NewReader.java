@@ -1,4 +1,4 @@
-package pgf.reader;
+package reader;
 
 
 import java.io.DataInputStream;
@@ -48,7 +48,7 @@ public class NewReader {
   {
    NewReader o = new NewReader();
    try {
-	   o.process(new FileInputStream("Foods.pgf"));
+	   o.process(new FileInputStream("..\\testsPGF\\Foods.pgf"));
        } catch (Exception e) {
           System.err.println(e);
         }

@@ -1,8 +1,8 @@
-package pgf.reader;
+package reader;
 
 public class AppExp extends Expr{
-	 Expr lExp ; 
-	 Expr rExp ;
+	 private Expr lExp ; 
+	 private Expr rExp ;
 		
  public AppExp(Expr _lExp, Expr _rExp) 
   {lExp = _lExp;
@@ -11,5 +11,6 @@ public class AppExp extends Expr{
  public String toString()
  {return "Expression application [Left-hand side : ( "+lExp.toString() + "), Right-hand side : ("+rExp.toString()+")]";}
  
-
+public Expr getLeftExpr() {return lExp;}
+public Expr getRightExpr() {return rExp;}
 }
