@@ -1,4 +1,4 @@
-package reader;
+package pgf.reader;
 
 public class LambdaExp extends Expr{
 	 private boolean bType ; 
