@@ -1,4 +1,4 @@
-package reader;
+package pgf.reader;
 
 import java.io.FileInputStream;
 
@@ -6,7 +6,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 
-public class Tests {
+public class TestReader {
 	NewReader rr = new NewReader();
 	
 	@Test public void testLang() 

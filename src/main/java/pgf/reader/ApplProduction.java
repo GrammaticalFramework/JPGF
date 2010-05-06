@@ -2,12 +2,20 @@ package pgf.reader;
 
 public class ApplProduction extends Production {
     private CncFun function;
-    private int[] args;
+    private int[] domain;
     
-    public ApplProduction(int fId, CncFun function, int[] _args) {
-	super(0,fId);
-	this.function = function;
-	args = _args; 
+    public ApplProduction(int fId, CncFun function, int[] domain) {
+        super(0, fId);
+        this.function = function;
+        this.domain = domain; 
+    }
+
+    public CncFun function() {
+        return this.function;
+    }
+
+    public int[] domain() {
+        return this.domain;
     }
 
     public CncFun getFunction() {
@@ -15,14 +23,23 @@ public class ApplProduction extends Production {
     }
     
     public int[] getArgs() {
-    return args;	
+        return this.domain;
     }
     
     public String toString() {
-	String ss =  "Fuction : "+ function + " Arguments : ["; 
-	for(int i=0; i<args.length; i++)
-	    ss+=(" "+args[i]);
-	ss+="]";
-	return ss;
+        // String ss =  "Fuction : "+ function + " Arguments : ["; 
+        // for(int i=0; i<domain.length; i++)
+        //     ss+=(" " + domain[i]);
+        // ss+="]";
+        // return ss;
+        String s = "";
+        s += this.fId;
+        s += " -> ";
+        s += this.function.name();
+        s += "[ ";
+        for(int c : this.domain)
+            s+= c + " ";
+        s += "]";
+        return s;
     };   
 }
