@@ -40,5 +40,14 @@ class Trie[K,V](var value:Option[V]) {
   }
 
   def getSubTrie(key:K):Option[Trie[K,V]] = this.getSubTrie(key::Nil)
-  
+
+  override def toString() = this.toStringWithPrefix("")
+
+  def toStringWithPrefix(prefix:String):String = {
+    prefix + "<" + this.value + ">" +
+    this.child.keys.map(k =>
+      prefix + k.toString + ":\n" +
+      this.child(k).toStringWithPrefix(prefix + "  ")
+    ).foldLeft("")((a:String,b:String) => a + "\n" + b)
+  }
 }

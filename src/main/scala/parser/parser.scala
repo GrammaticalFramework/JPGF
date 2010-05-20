@@ -29,6 +29,7 @@ class Parser(val grammar:Concrete) {
       log.fine("Scanning token " + token)
       if (!ps.scan(token)) {
         log.fine("Scan failed...")
+        log.finer(this.ps.toString())
         return
       }
     }
@@ -79,6 +80,7 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
         }
       }
     }
+    log.finer(this.trie.toString)
     return true
   }
 
@@ -191,11 +193,12 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   }
 
 
-  override def toString() = {
-    "ParseState\n" +
-    "Chart:\n" +
-    chart.toString()
-  }
+  override def toString() =
+    "= ParseState =\n" +
+    "== Chart ==\n" +
+    chart.toString() +
+    "== Trie ==\n" +
+    this.trie.toString()
 }
 
 
