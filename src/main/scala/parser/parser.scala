@@ -48,7 +48,7 @@ class Parser(val grammar:Concrete) {
 
 class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   val log = Logger.getLogger("PGF.Parsing")
-  private val startCat = 1//this.grammar.startCat
+  private val startCat = this.grammar.startCat
   private var trie = new Trie[String,Stack[ActiveItem]]
   private val chart = new Chart(10,this.length) // TODO: 0 is a bad value...
   private var agenda = new Stack[ActiveItem]
