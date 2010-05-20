@@ -6,20 +6,20 @@ import java.util.Map;
 public class Concrete {
     private String name ;
     private Map<String, Literal> flags ;
-    private PrintName[] printnames ;	
-    private Sequence[] seqs ;	
-    private CncFun[] cncFuns ; 	
-    private ProductionSet[] prods ; 	
+    private PrintName[] printnames ;
+    private Sequence[] seqs ;
+    private CncFun[] cncFuns ;
+    private ProductionSet[] prods ;
     private CncCat[] cncCats ;
     private int fId ;
 
-    public Concrete (String name, 
-                     Map<String,Literal> flags, 
-                     PrintName[] _printnames, 
-                     Sequence[] _seqs, 
-                     CncFun[] _cncFuns, 
-                     ProductionSet[] _prods, 
-                     CncCat[] _cncCats, 
+    public Concrete (String name,
+                     Map<String,Literal> flags,
+                     PrintName[] _printnames,
+                     Sequence[] _seqs,
+                     CncFun[] _cncFuns,
+                     ProductionSet[] _prods,
+                     CncCat[] _cncCats,
                      int _fId)
     {
         this.name = name;
@@ -27,22 +27,20 @@ public class Concrete {
         printnames = _printnames;
         seqs = _seqs;
         cncFuns = _cncFuns;
-        prods = _prods; 
+        prods = _prods;
         cncCats = _cncCats;
-        fId = _fId;	
+        fId = _fId;
     }
-	
+
     public String getName() {return name;}
     // FIXME : needed ???
-    //public Flag[] getFlags() {return flags;} 
-    public PrintName[] getPrintNames() {return printnames;}	
-    public Sequence[] getSequences() {return seqs;}	
-    public CncFun[] getCncFuns() {return cncFuns;} 	
-    public ProductionSet[] getProductionSet() {return prods;} 	
+    //public Flag[] getFlags() {return flags;}
+    public PrintName[] getPrintNames() {return printnames;}
+    public Sequence[] getSequences() {return seqs;}
+    public CncFun[] getCncFuns() {return cncFuns;}
+    public ProductionSet[] getProductionSet() {return prods;}
     public CncCat[] getCncCat() {return cncCats;}
     public int getFId() {return fId;}
-    
-
 
     /**
      * Accessors
@@ -56,7 +54,7 @@ public class Concrete {
         else
             return ((IntLiteral)cat).value();
     }
-    
+
     public Production[] productions() {
         int size = 0;
         for (ProductionSet ps : this.prods) {
@@ -64,14 +62,14 @@ public class Concrete {
         }
         Production [] prods = new Production[size];
         int i = 0;
-        for (ProductionSet ps : this.prods) 
+        for (ProductionSet ps : this.prods)
             for (Production p: ps.productions()) {
                 prods[i] = p;
                 i++;
             }
         return prods;
     }
-    
+
     public String toString()
     {
         String ss = " Name : "+ name + " , Flags : [";

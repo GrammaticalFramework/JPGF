@@ -21,14 +21,14 @@ class Trie[K,V](var value:Option[V]) {
       case Some(n) => n.add(l,value)
     }
   }
-  
+
   def lookup(key:Seq[K]):Option[V] = this.lookup(key.toList)
 
   def lookup(key:List[K]):Option[V] = getSubTrie(key) match {
     case None => None
     case Some(t) => t.value
   }
-    
+
   def lookup(key:K):Option[V] = this.lookup(key::Nil)
 
   def getSubTrie(key:List[K]):Option[Trie[K,V]] = key match {
@@ -38,7 +38,7 @@ class Trie[K,V](var value:Option[V]) {
       case Some(n) => n.getSubTrie(l)
     }
   }
-  
+
   def getSubTrie(key:K):Option[Trie[K,V]] = this.getSubTrie(key::Nil)
   
 }
