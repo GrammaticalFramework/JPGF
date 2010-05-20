@@ -1,5 +1,5 @@
 import org.scalacheck._
-import pgf.Trees.{TreeConverter}
+import PGF.Parsing.{TreeConverter}
 
 
 // object TreeConversionSpecification extends Properties("TreeConverter") {
