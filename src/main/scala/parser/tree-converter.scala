@@ -1,4 +1,4 @@
-package pgf.Trees
+package PGF.Parsing
 /**
  * This convert abstract trees to intermediate trees and vice-versa
  * */

@@ -1,15 +1,12 @@
-package pgf.parsing
+package PGF.Parsing
 
 import pgf.reader._
 import pgf.intermediateTrees._
 import pgf.Trees.Absyn.{ Tree => AbsSynTree }
-import pgf.Trees.TreeConverter
+
 import pgf.util.Trie
 import scala.collection.mutable.Stack
-
 import java.util.logging._;
-
-
 
 /**
  * This is the main parser class.

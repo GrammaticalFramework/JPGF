@@ -20,6 +20,7 @@ package se.chalmers.cs.gf.util;
 
 import java.util.logging.*;
 
+
 /**
  *  General logging class. 
  */
