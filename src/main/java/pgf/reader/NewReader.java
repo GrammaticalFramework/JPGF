@@ -8,9 +8,10 @@ import java.io.InputStream;
 import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.HashMap;
-
+import java.util.logging.*;
 
 public class NewReader {
+  private static Logger log = Logger.getLogger("PGF.Reader");
   
   protected int makeInt16(int j1, int j2)
   {int i = 0;
@@ -40,8 +41,8 @@ public class NewReader {
             PGF pgf = new PGF(makeInt16(ii[0],ii[1]), 
                               makeInt16(ii[2],ii[3]), 
                               flags, abs, concretes);
-            System.out.println("The resulting PGF is : "+ pgf.toString());
-            System.out.println("\n\nthe end");
+            log.finest("The resulting PGF is : "+ pgf.toString());
+            log.fine("the end");
             is.close();
             return pgf;
     }
