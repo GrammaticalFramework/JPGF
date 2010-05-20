@@ -19,13 +19,14 @@ import pgf.abstractTrees.{
 object TreeConverter {
   def intermediate2abstract (t : Tree): ETree = {
     def c2a(t : Tree, vars:List[String]): ETree = t match {
-      // Here we have to convert sugarized λ-abstraction (λx,y,z → ...) 
+      // Here we have to convert sugarized λ-abstraction (λx,y,z → ...)
       // to canonical ones (λx→λy→λz→...)
-      case Lambda(lvars, body) => lvars.foldRight(c2a(body, lvars.map(_._2).reverse ++ vars))(mkELambda)
-      // Here variables are index by name but abstract 
+      case Lambda(lvars, body) =>
+        lvars.foldRight(c2a(body, lvars.map(_._2).reverse ++ vars))(mkELambda)
+      // Here variables are index by name but abstract
       // syntax uses de Bruijn indices
       case Variable(x) => new EVariable(vars.indexOf(x))
-      // Here we have to desugarized applicaton : 
+      // Here we have to desugarized applicaton :
       // f a b c becomes (((f a) b) c)
       case Application(fun,args) => args.map(c2a(_, vars)).foldLeft(new EFunction(fun):ETree)(mkEApp)
       case Literal(value) => new ELiteral(value)
@@ -39,7 +40,7 @@ object TreeConverter {
   }
 
 
-//    tree2expr ys (Fun x ts) = foldl EApp (EFun x) (List.map (tree2expr ys) ts) 
+//    tree2expr ys (Fun x ts) = foldl EApp (EFun x) (List.map (tree2expr ys) ts)
 //    tree2expr ys (Abs xs t) = foldr (\(b,x) e -> EAbs b x e) (tree2expr (List.map snd (reverse xs)++ys) t) xs
 //    tree2expr ys (Var x)    = case List.lookup x (zip ys [0..]) of
 //                                Just i  -> EVar i
