@@ -1,20 +1,32 @@
-package pgf.intermediateTrees
+package pgf.Trees
 /**
  * This convert abstract trees to intermediate trees and vice-versa
  * */
 
 import pgf.intermediateTrees._
-import pgf.abstractTrees.{
-    Tree => ETree
-  , Lambda => ELambda
-  , Application => EApplication
-  , Literal => ELiteral
-  , MetaVariable => EMetaVariable
-  , Function => EFunction
-  , Variable => EVariable
-  , TypeSignature => ETypeSignature
-  , ImpliciteArgument => EImpliciterArgument
-  }
+// import pgf.abstractTrees.{
+//     Tree => ETree
+//   , Lambda => ELambda
+//   , Application => EApplication
+//   , Literal => ELiteral
+//   , MetaVariable => EMetaVariable
+//   , Function => EFunction
+//   , Variable => EVariable
+//   , TypeSignature => ETypeSignature
+//   , ImpliciteArgument => EImpliciterArgument
+//   }
+import pgf.Trees.Absyn.{
+     Tree => ETree
+   , Lambda => ELambda
+   , Application => EApplication
+   , Literal => ELiteral
+   , MetaVariable => EMetaVariable
+   , Function => EFunction
+   , Variable => EVariable
+  , StringLiteral
+//   , TypeSignature => ETypeSignature
+//   , ImpliciteArgument => EImpliciterArgument
+}
 
 object TreeConverter {
   def intermediate2abstract (t : Tree): ETree = {
@@ -28,13 +40,14 @@ object TreeConverter {
       case Variable(x) => new EVariable(vars.indexOf(x))
       // Here we have to desugarized applicaton :
       // f a b c becomes (((f a) b) c)
-      case Application(fun,args) => args.map(c2a(_, vars)).foldLeft(new EFunction(fun):ETree)(mkEApp)
-      case Literal(value) => new ELiteral(value)
+      case Application(fun,args) =>
+        args.map(c2a(_, vars)).foldLeft(new EFunction(fun):ETree)(mkEApp)
+      case Literal(value) => new ELiteral(new StringLiteral(value))
       case MetaVariable(id) => new EMetaVariable(id)
     }
     def mkEApp(f : ETree, x : ETree):ETree = new EApplication(f,x)
     def mkELambda(v :(Boolean, String) , body:ETree ):ETree = v match {
-      case (bindType, name) => new ELambda(bindType, name, body)
+      case (bindType, name) => new ELambda(name, body)
     }
     c2a(t, Nil)
   }
@@ -52,57 +65,57 @@ object TreeConverter {
 
 
 
-  class IllegalLiteralOfFunctionType extends Exception
-  class IllegalBetaRedex extends Exception
-  class IllegalFunctionMetaVariable extends Exception
+  // class IllegalLiteralOfFunctionType extends Exception
+  // class IllegalBetaRedex extends Exception
+  // class IllegalFunctionMetaVariable extends Exception
 
-  def abstract2intermediate(t : ETree):Tree = {
-    /** Here we have to transform single argument
-     * λ-abstraction into sugarized ones (λx→λy→... to λx,y→...)
-     * To do that, we accumulate the variables in bindings
-     * Applied to an expression that is not a λ-abstraction
-     * it just calls mkTree on it */
-    def mkLambda(t : ETree, bindings:List[(Boolean, String)], vars:List[String]):Tree = 
-      t match {
-	case ELambda(bindType, cid, body) => {val bindings1 = (bindType, cid)::bindings
-					      mkLambda(body, bindings1, vars)}
-	// We don't care about local types...
-	case ETypeSignature(t, _) => mkLambda(t, bindings, vars)
-	// for any other expression : 
-	case e => bindings match {
-	  case Nil => mkTree(e, Nil, vars)
-	  case _ => new Lambda (bindings.reverse, mkTree(e, Nil , vars))
-	}
-      }
-    /** take an abstract tree e and turn it into an
-     * intermediate tree.
-     * @param args is the list of arguments e is applied to
-     * @param vars is the list of binded variable
-     * */
-    def mkTree(e : ETree, args : List[Tree], vars:List[String] ):Tree = e match {
-      case EApplication(e1,e2) => {
-	/** here we call mkLambda on e2, and not mkTree,
-	 * because e2 could be a λ-abstraction */
-	val args1 = mkLambda(e2,Nil,vars)::args
-	mkTree(e1, args1, vars)
-      }
-      case ELiteral(l) => args match {
-	case Nil => new Literal(l)
-	case _ => throw new IllegalLiteralOfFunctionType
-      }
-      case EMetaVariable(n) => args match {
-	case Nil => new MetaVariable(n)
-	case _ => throw new IllegalFunctionMetaVariable
-      }
-      case ELambda(_, x, e) => throw new IllegalBetaRedex
-      case EVariable(i) => new Variable(vars(i))
-      case EFunction(f) => new Application(f, args)
-      case ETypeSignature(e,_) => mkTree(e, args, vars)
-      case e => {
-	println(e)
-	throw new Exception(e.toString)
-      }
-    }
-    mkLambda(t, Nil, Nil)
-  }
+  // def abstract2intermediate(t : ETree):Tree = {
+  //   /** Here we have to transform single argument
+  //    * λ-abstraction into sugarized ones (λx→λy→... to λx,y→...)
+  //    * To do that, we accumulate the variables in bindings
+  //    * Applied to an expression that is not a λ-abstraction
+  //    * it just calls mkTree on it */
+  //   def mkLambda(t : ETree, bindings:List[(Boolean, String)], vars:List[String]):Tree =
+  //     t match {
+  //       case ELambda(bindType, cid, body) => {val bindings1 = (bindType, cid)::bindings
+  //       				      mkLambda(body, bindings1, vars)}
+  //       // We don't care about local types...
+  //       case ETypeSignature(t, _) => mkLambda(t, bindings, vars)
+  //       // for any other expression :
+  //       case e => bindings match {
+  //         case Nil => mkTree(e, Nil, vars)
+  //         case _ => new Lambda (bindings.reverse, mkTree(e, Nil , vars))
+  //       }
+  //     }
+  //   /** take an abstract tree e and turn it into an
+  //    * intermediate tree.
+  //    * @param args is the list of arguments e is applied to
+  //    * @param vars is the list of binded variable
+  //    * */
+  //   def mkTree(e : ETree, args : List[Tree], vars:List[String] ):Tree = e match {
+  //     case EApplication(e1,e2) => {
+  //       /** here we call mkLambda on e2, and not mkTree,
+  //        * because e2 could be a λ-abstraction */
+  //       val args1 = mkLambda(e2,Nil,vars)::args
+  //       mkTree(e1, args1, vars)
+  //     }
+  //     case ELiteral(l) => args match {
+  //       case Nil => new Literal(l)
+  //       case _ => throw new IllegalLiteralOfFunctionType
+  //     }
+  //     case EMetaVariable(n) => args match {
+  //       case Nil => new MetaVariable(n)
+  //       case _ => throw new IllegalFunctionMetaVariable
+  //     }
+  //     case ELambda(_, x, e) => throw new IllegalBetaRedex
+  //     case EVariable(i) => new Variable(vars(i))
+  //     case EFunction(f) => new Application(f, args)
+  //     case ETypeSignature(e,_) => mkTree(e, args, vars)
+  //     case e => {
+  //       println(e)
+  //       throw new Exception(e.toString)
+  //     }
+  //   }
+  //   mkLambda(t, Nil, Nil)
+  // }
 }

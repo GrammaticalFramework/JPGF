@@ -2,6 +2,8 @@ package pgf.parsing
 
 import pgf.reader._
 import pgf.intermediateTrees._
+import pgf.Trees.Absyn.{ Tree => AbsSynTree }
+import pgf.Trees.TreeConverter
 import pgf.util.Trie
 import scala.collection.mutable.Stack
 
@@ -51,11 +53,13 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   init()
   compute()
 
-  def getTrees():List[Tree] = {
+  def getTrees():List[AbsSynTree] = {
     val chart = this.chart
     val startCat = this.startCat
     val length = this.length
-    return TreeBuilder.buildTrees(chart, startCat, length)
+    val parseTrees = TreeBuilder.buildTrees(chart, startCat, length)
+    return parseTrees.map(TreeConverter.intermediate2abstract)
+
   }
 
   def scan(token:String):Boolean = this.trie.getSubTrie(token) match {
