@@ -3,7 +3,7 @@ package pgf.parsing
 import pgf.reader._
 import pgf.intermediateTrees._
 import pgf.util.Trie
-import scala.collection.mutable.Stack 
+import scala.collection.mutable.Stack
 
 
 /**
@@ -15,9 +15,9 @@ import scala.collection.mutable.Stack
  * */
 class Parser(val grammar:Concrete) {
   var ps = new ParseState(this, this.grammar, 0)
-  
+
   def printState = println(this.ps.toString())
-  
+
   def parse(tokens : Seq[String], startCat: Int):Unit = {
     ps = new ParseState(this, this.grammar, tokens.length)
     for (token <- tokens) {
@@ -28,14 +28,14 @@ class Parser(val grammar:Concrete) {
       }
     }
   }
-  
+
   def parse(tokens:Seq[String]):Unit = parse(tokens, this.grammar.startCat)
-  
+
   def printStats() {
     println("Parser for language: " + this.grammar.name())
     println("Productions: " + this.ps.toString())
   }
-  
+
   def getTrees = ps.getTrees()
 }
 
@@ -50,7 +50,7 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   this.grammar.productions.filter{_.isInstanceOf[ApplProduction]}.foreach(p => this.chart.addProduction(p.asInstanceOf[ApplProduction]))
   init()
   compute()
-  
+
   def getTrees():List[Tree] = {
     val chart = this.chart
     val startCat = this.startCat
@@ -73,33 +73,33 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
     }
     return true
   }
-  
+
   private def init() = {
     println("Initializing parse state with start cat " + this.startCat)
     for (prod <- chart.getProductions(this.startCat)) {
-      val it = new ActiveItem(0, this.startCat, prod.function, 
+      val it = new ActiveItem(0, this.startCat, prod.function,
                               prod.domain, 0, 0)
       agenda += it
-      
+
     }
   }
-      
-    
-  
+
+
+
   private def compute() = {
     println("Computing parse state for k=" + this.position)
     while (!agenda.isEmpty) {
       val e:ActiveItem = agenda.pop();
       processActiveItem(e)
     }
-    
+
   }
 
   private def processActiveItem(item:ActiveItem) = {
     val j = item.begin
-    val A = item.category 
+    val A = item.category
     val f = item.function
-    val B = item.domain 
+    val B = item.domain
     val l = item.constituent
     val p = item.position
     println("Processing active item " + item + " from the agenda")
@@ -132,7 +132,7 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
         val Bd = item.domain(d)
         if (chart.active(this.position).add(Bd,r,item,d)) {
           for (prod <- chart.getProductions(Bd)) {
-            val it = new ActiveItem(this.position, Bd, prod.function, 
+            val it = new ActiveItem(this.position, Bd, prod.function,
                                     prod.domain, r, 0)
             println("Adding " + it + " to the agenda*")
             agenda += it
@@ -176,7 +176,7 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
             chart.addProduction(n, f, B)
           }
         }
-        
+
       }
       // return (S,P,C)
     }
@@ -191,16 +191,16 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
 }
 
 
-class ActiveItem(val begin : Int, 
+class ActiveItem(val begin : Int,
                  val category:Int,
                  val function:CncFun,
                  val domain:Array[Int],
                  val constituent:Int,
                  val position:Int) {
-  
+
   class NoNextItem extends Exception
   // get next symbol
-  def nextSymbol():Option[Symbol] = 
+  def nextSymbol():Option[Symbol] =
     if (position < function.sequence(constituent).length) {
       val symbol = function.sequence(constituent).symbol(position)
       return Some(symbol)
