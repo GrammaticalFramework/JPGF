@@ -26,25 +26,27 @@ public class NewReader {
         return this.process(stream);
     }
   
-    protected PGF process(InputStream inStream) throws IOException {
-            DataInputStream is = new DataInputStream(inStream);
-            //BufferedInputStream is = new DataInputStream(inStream);
-            //InputStreamReader is = new InputStreamReader(inStream,"UTF-8");
-            int ii[]=new int[4];
-            for(int i=0;i<4;i++)
-                ii[i]=is.read(); 
-            
-            Map<String,Literal> flags = getListFlag(is);
-            Abstract abs = getAbstract(is);
-            Concrete[] concretes = getListConcretes(is);
-            PGF pgf = new PGF(makeInt16(ii[0],ii[1]), 
-                              makeInt16(ii[2],ii[3]), 
-                              flags, abs, concretes);
-            log.finest("The resulting PGF is : "+ pgf.toString());
-            log.fine("the end");
-            is.close();
-            return pgf;
-    }
+  public PGF process(InputStream inStream) {
+   try {
+	   DataInputStream is = new DataInputStream(inStream);
+      //BufferedInputStream is = new DataInputStream(inStream);
+	  //InputStreamReader is = new InputStreamReader(inStream,"UTF-8");
+      int ii[]=new int[4];
+      for(int i=0;i<4;i++)
+        ii[i]=is.read(); 
+     	
+      Flag[] flags = getListFlag(is);
+      Abstract abs = getAbstract(is);
+      Concrete[] concretes = getListConcretes(is);
+      PGF pgf = new PGF(makeInt16(ii[0],ii[1]), makeInt16(ii[2],ii[3]), flags, abs, concretes);
+      System.out.println("The resulting PGF is : "+ pgf.toString());
+      System.out.println("\n\nthe end");
+      is.close();
+      return pgf;  } 
+    catch (IOException e) {
+      System.out.println("IOException: " + e);
+      return null; }
+  }
 
   
   
@@ -64,12 +66,12 @@ public class NewReader {
   
 
   
-// protected Flag getFlag(DataInputStream is) throws IOException
-// { String ss = getString(is);
-//   Literal lit = getLiteral(is);
-//   Flag ff = new Flag(ss,lit);
-//   return ff;
-// }
+protected Flag getFlag(DataInputStream is) throws IOException
+{ String ss = getString(is);
+  Literal lit = getLiteral(is);
+  Flag ff = new Flag(ss,lit);
+  return ff;
+}
   
     protected Map<String,Literal> getListFlag(DataInputStream is) 
         throws IOException
@@ -384,18 +386,18 @@ protected Concrete[] getListConcretes(DataInputStream is) throws IOException
     }
 
 
-    protected Concrete getConcrete(DataInputStream is) throws IOException
-    {
-        String name = getString(is);
-        Map<String,Literal> flags = getListFlag(is);
-        PrintName[] pnames = getListPrintName(is); 	
-        Sequence[] seqs = getListSequence(is); 	
-        CncFun[] cncFuns = getListCncFun(is, seqs);
-        ProductionSet[] prods = getListProductionSet(is, cncFuns); 	
-        CncCat[] cncCats = getListCncCat(is);
-        int i = getInteger(is);
-        return new Concrete(name,flags,pnames,seqs,cncFuns,prods,cncCats,i);
-    }
+protected Concrete getConcrete(DataInputStream is) throws IOException
+{
+String s = getString(is);
+Flag[] flags = getListFlag(is);
+PrintName[] pnames = getListPrintName(is); 	
+Sequence[] seqs = getListSequence(is); 	
+CncFun[] cncFuns = getListCncFun(is);
+ProductionSet[] prods = getListProductionSet(is, cncFuns); 	
+CncCat[] cncCats = getListCncCat(is);
+int i = getInteger(is);
+return new Concrete(s,flags,pnames,seqs,cncFuns,prods,cncCats,i);
+}
 
 protected PrintName getPrintName(DataInputStream is) throws IOException
 {String absName = getString(is);
@@ -433,20 +435,15 @@ Symbol[] symbols = new Symbol[npoz];
 for(int i=0; i<npoz; i++)
   symbols[i]=getSymbol(is);
 return symbols;}
- 
-    /** **********************************************************************
-     * Concrete functions (Cncfun)
-     */   
-    protected CncFun[] getListCncFun(DataInputStream is, Sequence[] sequences) 
-        throws IOException
-    {
-        int npoz = getInteger(is);
-        CncFun[] cncFuns = new CncFun[npoz];
-        for(int i=0; i<npoz; i++)
-            cncFuns[i]=getCncFun(is, sequences);
-        return cncFuns;
-    }
-    
+
+protected CncFun[] getListCncFun(DataInputStream is) throws IOException
+{int npoz = getInteger(is);
+CncFun[] cncFuns = new CncFun[npoz];
+for(int i=0; i<npoz; i++)
+cncFuns[i]=getCncFun(is);
+return cncFuns;
+}
+
     /** **********************************************************************
      * Productions and production sets
      */
@@ -547,17 +544,11 @@ protected CncCat getCncCat(DataInputStream is) throws IOException
 }
 
 
-    protected CncFun getCncFun(DataInputStream is, Sequence[] sequences) 
-        throws IOException
-    {
-        String name = getString(is);
-        int[] sIndices = getListInteger(is);
-        int l = sIndices.length;
-        Sequence[] seqs = new Sequence[l];
-        for (int i = 0 ; i < l ; i++)
-            seqs[i] = sequences[sIndices[i]];
-        return new CncFun(name,seqs);
-    }
+protected CncFun getCncFun(DataInputStream is) throws IOException
+{String str = getString(is);
+ int[] iis = getListInteger(is);
+ return new CncFun(str,iis);
+}
 
 protected Symbol getSymbol(DataInputStream is) throws IOException
 {int sel = is.read();

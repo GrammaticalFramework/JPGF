@@ -26,6 +26,12 @@ return ss;
 }
 
 public int getId() {return id; }
-public Production[] getProductions() {return prods;}
+
+public HashSet<Production> getProductions() 
+{HashSet<Production> hs = new HashSet<Production>();
+for(int i=0; i<prods.length; i++)
+	hs.add(prods[i]);
+return hs;
+}
 
 }
