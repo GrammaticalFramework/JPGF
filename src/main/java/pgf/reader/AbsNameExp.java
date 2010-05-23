@@ -1,7 +1,7 @@
 package pgf.reader;
 
 public class AbsNameExp extends Expr{ 
-	private String name ;
+	 String name ;
 	 
  public AbsNameExp(String _name) 
   {name = _name;}
@@ -9,6 +9,4 @@ public class AbsNameExp extends Expr{
   public String toString()
  {return "Abstract Name Expression : [Name : "+name+"]";}
 
-  public String getName(){return name;}
-  
 }

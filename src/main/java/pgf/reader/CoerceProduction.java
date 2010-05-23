@@ -1,25 +1,18 @@
 package pgf.reader;
 
 public class CoerceProduction extends Production {
-        private  int initId;
+    private  int initId;
     
-          
-    public CoerceProduction(int fId, int _initId) 
-    {
+    public CoerceProduction(int fId, int _initId) {
 	super(1, fId);
 	initId = _initId;
     }
-	
-    public boolean equals(Object o)
-    {if(o instanceof CoerceProduction)
-    	return ((CoerceProduction) o).initId == initId;
-    return false;}
-    
-    public String toString()
-     {return "Initial id : "+initId; };
 		  
     public int getInitId() {return initId;}
     
+    public int[] domain() {
+        return new int[] {this.initId};
+    }
 
     public String toString(){
         return "Initial id : "+initId; };    
