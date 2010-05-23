@@ -42,4 +42,17 @@ public class ApplProduction extends Production {
         s += "]";
         return s;
     };   
+    
+    public boolean equals(Object o)
+    {if (o instanceof ApplProduction)
+    	{ApplProduction newo = (ApplProduction) o;
+    	if(!newo.getFunction().equals(function))
+    	   return false;
+    	if(domain.length != newo.getArgs().length) return false;
+    	for(int i=0; i<domain.length; i++)
+    	 if(domain[i] != newo.getArgs()[i]) return false;
+    	return true;
+    	}
+    return false;
+    }
 }

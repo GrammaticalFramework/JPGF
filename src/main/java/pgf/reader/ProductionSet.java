@@ -1,5 +1,5 @@
 package pgf.reader;
-
+import java.util.HashSet;
 public class ProductionSet {
 private int id;
 private Production[] prods;
@@ -28,4 +28,10 @@ return ss;
 public int getId() {return id; }
 public Production[] getProductions() {return prods;}
 
+public HashSet<Production> getSetOfProductions() 
+{HashSet<Production> hs = new HashSet<Production>();
+for(int i=0; i<prods.length; i++)
+	hs.add(prods[i]);
+return hs;
+}
 }

@@ -1,5 +1,6 @@
 package pgf.reader;
-
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 
@@ -93,4 +94,12 @@ public class Concrete {
         ss+="]\n , forest ID : "+fId;
         return ss;
     }
+    
+    public HashMap<Integer,HashSet<Production>> getSetOfProductions() 
+    {HashMap<Integer,HashSet<Production>> hm = new HashMap<Integer,HashSet<Production>>();
+    for(int i=0; i<prods.length; i++)
+    	hm.put(new Integer(prods[i].getId()), prods[i].getSetOfProductions());
+
+
+    return hm;} 
 }

@@ -15,7 +15,9 @@ public class AlternToksSymbol extends Symbol {
         String s = "Tokens : "+toks + " Alternatives : "+alts;
         return s;	   
     };
-    
+    public String[] getToks(){return toks;}
+    public Alternative[] getAlternatives(){return alts;}
+
 		}
 
 

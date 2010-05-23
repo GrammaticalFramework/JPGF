@@ -1,7 +1,9 @@
 package pgf.reader;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class PGF {
     private int majorVersion;
@@ -56,6 +58,8 @@ public class PGF {
     public Abstract getAbstract()
     {return abstr;}
     
-    //public Concrete[] getConcretes()
-    //{return concretes;}
+    public HashMap<String, Concrete> getConcretes()
+    {HashMap<String, Concrete> hm = (HashMap<String,Concrete>)concretes;
+    return hm;	}
+    
 }

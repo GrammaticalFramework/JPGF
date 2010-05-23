@@ -22,5 +22,11 @@ public class AbsCat {
         ss+=")";
         return ss;
     }
+
+    public String getName() {return str;}
+    public Hypo[] getHypos() {return hypos;}
+    public String[] getFunctions() {return strs;}
+    
+    
 }
 
