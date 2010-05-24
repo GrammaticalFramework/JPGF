@@ -1,4 +1,4 @@
-package pgf.util
+package org.grammaticalframework.util
 
 import scala.collection.mutable.HashMap
 

@@ -1,10 +1,10 @@
-package PGF.Parsing
+package org.grammaticalframework.parser
 
-import pgf.reader._
-import pgf.intermediateTrees._
-import pgf.Trees.Absyn.{ Tree => AbsSynTree }
+import org.grammaticalframework.reader._
+import org.grammaticalframework.intermediateTrees._
+import org.grammaticalframework.Trees.Absyn.{ Tree => AbsSynTree }
 
-import pgf.util.Trie
+import org.grammaticalframework.util.Trie
 import scala.collection.mutable.Stack
 import java.util.logging._;
 

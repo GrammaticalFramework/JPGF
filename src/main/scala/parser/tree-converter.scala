@@ -1,9 +1,9 @@
-package PGF.Parsing
+package org.grammaticalframework.parser
 /**
  * This convert abstract trees to intermediate trees and vice-versa
  * */
 
-import pgf.intermediateTrees._
+import org.grammaticalframework.intermediateTrees._
 // import pgf.abstractTrees.{
 //     Tree => ETree
 //   , Lambda => ELambda
@@ -15,7 +15,7 @@ import pgf.intermediateTrees._
 //   , TypeSignature => ETypeSignature
 //   , ImpliciteArgument => EImpliciterArgument
 //   }
-import pgf.Trees.Absyn.{
+import org.grammaticalframework.Trees.Absyn.{
      Tree => ETree
    , Lambda => ELambda
    , Application => EApplication

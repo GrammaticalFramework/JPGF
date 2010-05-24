@@ -1,4 +1,4 @@
-package pgf.intermediateTrees
+package org.grammaticalframework.intermediateTrees
 /**
  * /!\ OBS
  * This is not exactly concrete trees, more like an intermediate tree...

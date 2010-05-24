@@ -12,19 +12,19 @@ JLEX = -cp ../../../lib/jlex-1.2.6.jar JLex.Main
 LATEX = latex
 DVIPS = dvips
 
-all: pgf/Trees/Yylex.java pgf/Trees/sym.java pgf/Trees/parser.java
+all: org/grammaticalframework/Trees/Yylex.java org/grammaticalframework/Trees/sym.java org/grammaticalframework/Trees/parser.java
 
-pgf/Trees/Yylex.java: pgf/Trees/Yylex
-	${JAVA} ${JAVA_FLAGS} ${JLEX} pgf/Trees/Yylex
+org/grammaticalframework/Trees/Yylex.java: org/grammaticalframework/Trees/Yylex
+	${JAVA} ${JAVA_FLAGS} ${JLEX} org/grammaticalframework/Trees/Yylex
 
-pgf/Trees/sym.java pgf/Trees/parser.java: pgf/Trees/Trees.cup
-	${JAVA} ${JAVA_FLAGS} ${CUP} ${CUPFLAGS} pgf/Trees/Trees.cup
-	mv sym.java parser.java pgf/Trees/
+org/grammaticalframework/Trees/sym.java org/grammaticalframework/Trees/parser.java: org/grammaticalframework/Trees/Trees.cup
+	${JAVA} ${JAVA_FLAGS} ${CUP} ${CUPFLAGS} org/grammaticalframework/Trees/Trees.cup
+	mv sym.java parser.java org/grammaticalframework/Trees/
 
 clean:
-	 rm -f pgf/Trees/Absyn/*.class pgf/Trees/*.class
+	 rm -f org/grammaticalframework/Trees/Absyn/*.class org/grammaticalframework/Trees/*.class
 	 rm -f .dvi Trees.aux Trees.log Trees.ps  *.class
 
 bnfc:
-	bnfc -java1.5 -p pgf Trees.cf
+	bnfc -java1.5 -p org.grammaticalframework Trees.cf
 

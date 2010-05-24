@@ -1,7 +1,7 @@
-package PGF.Parsing
+package org.grammaticalframework.parser
 
-import pgf.intermediateTrees._
-import pgf.reader.{ApplProduction => Production, CncFun}
+import org.grammaticalframework.intermediateTrees._
+import org.grammaticalframework.reader.{ApplProduction => Production, CncFun}
 
 import java.util.logging._;
 
