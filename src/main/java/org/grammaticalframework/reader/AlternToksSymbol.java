@@ -1,11 +1,11 @@
 package org.grammaticalframework.reader;
 
-public class AlternToksSymbol extends Symbol {
-    String[] toks;
+public class AlternToksSymbol extends ToksSymbol {
     Alternative[] alts;
-    
-    public AlternToksSymbol(String[] _toks, Alternative[] _alts) { 
-        toks = _toks; alts = _alts; 
+
+    public AlternToksSymbol(String[] toks, Alternative[] _alts) {
+        super(toks);
+        alts = _alts;
     }
     
     public boolean isTerminal() { return true; }

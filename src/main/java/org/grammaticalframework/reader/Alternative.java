@@ -4,8 +4,8 @@ package org.grammaticalframework.reader;
 // where the folowing words match "suffix"
 
 public class Alternative {
-    private String[] tok;
-    private String[] suffix;
+    private String[] alt1;
+    private String[] alt2;
 
     public Alternative(String[] _alt1, String[] _alt2) {
         alt1 = _alt1;
