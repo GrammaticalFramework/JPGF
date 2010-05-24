@@ -49,7 +49,7 @@ class Parser(val grammar:Concrete) {
 class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   val log = Logger.getLogger("org.grammaticalframework.parser")
   private val startCat = this.grammar.startCat
-  private var trie = new Trie[String,Stack[ActiveItem]]
+  private var trie = new ParseTrie
   private val chart = new Chart(10,this.length) // TODO: 10 is a bad value...
   private var agenda = new Stack[ActiveItem]
   private var position = 0
@@ -242,4 +242,71 @@ class ActiveItem(val begin : Int,
           "[" + this.domain.map(_.toString) + "];" + this.constituent + ";" +
           this.position + "]"
 
+}
+
+
+
+
+
+
+
+
+
+
+import scala.collection.mutable.HashMap
+
+class ParseTrie(var value:Stack[ActiveItem]) {
+  val child = new HashMap[String,ParseTrie]
+
+  def this() = this(new Stack)
+
+  def add(key:Seq[String], value:Stack[ActiveItem]):Unit =
+    this.add(key.toList, value)
+
+  def add(keys:List[String], value:Stack[ActiveItem]):Unit =
+    keys match {
+      case Nil => this.value = value
+      case x::l => this.child.get(x) match {
+        case None => {
+          val newN = new ParseTrie
+          newN.add(l,value)
+          this.child.update(x, newN)
+        }
+        case Some(n) => n.add(l,value)
+      }
+    }
+
+  def lookup(key:Seq[String]):Option[Stack[ActiveItem]] =
+    this.lookup(key.toList)
+
+  def lookup(key:List[String]):Option[Stack[ActiveItem]] =
+    getSubTrie(key) match {
+      case None => None
+      case Some(t) => Some(t.value)
+    }
+
+  def lookup(key:String):Option[Stack[ActiveItem]] =
+    this.lookup(key::Nil)
+
+  def getSubTrie(key:List[String]):Option[ParseTrie] =
+    key match {
+      case Nil => Some(this)
+      case x::l => this.child.get(x) match {
+        case None => None
+        case Some(n) => n.getSubTrie(l)
+      }
+    }
+
+  def getSubTrie(key:String):Option[ParseTrie] =
+    this.getSubTrie(key::Nil)
+
+  override def toString() = this.toStringWithPrefix("")
+
+  def toStringWithPrefix(prefix:String):String = {
+    prefix + "<" + this.value + ">" +
+    this.child.keys.map(k =>
+      prefix + k.toString + ":\n" +
+      this.child(k).toStringWithPrefix(prefix + "  ")
+    ).foldLeft("")((a:String,b:String) => a + "\n" + b)
+  }
 }
