@@ -226,4 +226,14 @@ class ActiveItem(val begin : Int,
   }
 
   val log = Logger.getLogger("PGF.Parsing")
+
+  override def equals(o:Any):Boolean = o match {
+      case (o:ActiveItem) => this.begin == o.begin &&
+                             this.category == o.category &&
+                             this.function == o.function && // CncFun,
+                             this.domain.deepEquals(o.domain) &&
+                             this.constituent == o.constituent &&
+                             this.position == o.position
+      case _ => false
+  }
 }
