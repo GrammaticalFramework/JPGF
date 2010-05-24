@@ -15,19 +15,18 @@ class Chart(var nextCat:Int, val length:Int) {
   val active = new Array[ActiveSet](length + 1)
   for (i <- active.indices)
     active(i) = new ActiveSet
-  
+
   /** **********************************************************************
    * Handling Productions
    * */
-  private val productionSets : MultiMap[Int,Production] = 
+  private val productionSets : MultiMap[Int,Production] =
     new HashMap[Int, Set[Production]] with MultiMap[Int,Production]
 
   def addProduction(p:Production):Boolean = {
     if (productionSets.entryExists(p.getCategory(), p.==))
       return false
     else {
-      //log.finest("Adding production " + 
-      //	 p.getCategory() + " -> " + p + " in chart.")
+      log.finest("Adding production " + p + " in chart.")
       productionSets.add(p.getCategory(), p)
       this.nextCat = p.getCategory().max(this.nextCat)
       return true
@@ -37,7 +36,7 @@ class Chart(var nextCat:Int, val length:Int) {
   def addProduction(cat:Int, fun: CncFun, domain:Array[Int]):Boolean =
     this.addProduction(new Production(cat, fun, domain))
 
-  
+
   def getProductions(resultCat : Int):Array[Production] =
     productionSets.get(resultCat) match {
       case Some(ps) => ps.toArray
@@ -46,15 +45,15 @@ class Chart(var nextCat:Int, val length:Int) {
   /** **********************************************************************
    *  Handling fresh categories
    * */
-  private val categoryBookKeeper: HashMap[(Int, Int, Int, Int), Int] 
+  private val categoryBookKeeper: HashMap[(Int, Int, Int, Int), Int]
   = new HashMap[(Int, Int, Int, Int), Int]()
-  
-  def getFreshCategory(oldCat:Int, l:Int, j:Int, k:Int):Int = 
+
+  def getFreshCategory(oldCat:Int, l:Int, j:Int, k:Int):Int =
     categoryBookKeeper.get((oldCat, l, j, k)) match {
       case None => this.generateFreshCategory(oldCat, l, j, k)
       case Some(c) => c
     }
-  def getCategory(oldCat:Int, cons:Int, begin:Int, end:Int):Option[Int] = 
+  def getCategory(oldCat:Int, cons:Int, begin:Int, end:Int):Option[Int] =
     categoryBookKeeper.get((oldCat, cons, begin, end))
 
   def generateFreshCategory(oldCat:Int, l:Int, j:Int, k:Int):Int = {
@@ -80,10 +79,10 @@ class Chart(var nextCat:Int, val length:Int) {
 class ActiveSet {
   val store = new HashMap[Int, MultiMap[Int, (ActiveItem,Int)]]
 
-  def add(cat:Int, cons:Int, item:ActiveItem, cons2:Int):Boolean = 
+  def add(cat:Int, cons:Int, item:ActiveItem, cons2:Int):Boolean =
     this.store.get(cat) match {
       case None => {
-        val newMap = new HashMap[Int, Set[(ActiveItem,Int)]] 
+        val newMap = new HashMap[Int, Set[(ActiveItem,Int)]]
                               with MultiMap[Int, (ActiveItem,Int)]
         newMap.add(cons,(item,cons2))
         this.store.update(cat, newMap)
@@ -97,8 +96,8 @@ class ActiveSet {
           return true
         }
     }
-  
-  def get(cat:Int):Iterator[(ActiveItem, Int, Int)] = 
+
+  def get(cat:Int):Iterator[(ActiveItem, Int, Int)] =
     this.store.get(cat) match {
       case None => return Iterator.empty
       case Some(map) => {
@@ -108,7 +107,7 @@ class ActiveSet {
       }
     }
 
-  def get(cat:Int, cons:Int):Seq[(ActiveItem,Int)] = 
+  def get(cat:Int, cons:Int):Seq[(ActiveItem,Int)] =
     this.store.get(cat) match {
       case None => return Nil
       case Some(map) => map.get(cons) match {

@@ -50,7 +50,7 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   val log = Logger.getLogger("PGF.Parsing")
   private val startCat = this.grammar.startCat
   private var trie = new Trie[String,Stack[ActiveItem]]
-  private val chart = new Chart(10,this.length) // TODO: 0 is a bad value...
+  private val chart = new Chart(10,this.length) // TODO: 10 is a bad value...
   private var agenda = new Stack[ActiveItem]
   private var position = 0
   // Adding base productions in the chart
@@ -64,7 +64,6 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
     val length = this.length
     val parseTrees = TreeBuilder.buildTrees(chart, startCat, length)
     return parseTrees.map(TreeConverter.intermediate2abstract)
-
   }
 
   def scan(token:String):Boolean = this.trie.getSubTrie(token) match {
@@ -186,9 +185,7 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
             chart.addProduction(n, f, B)
           }
         }
-
       }
-      // return (S,P,C)
     }
   }
 
@@ -208,7 +205,6 @@ class ActiveItem(val begin : Int,
                  val domain:Array[Int],
                  val constituent:Int,
                  val position:Int) {
-
   class NoNextItem extends Exception
   // get next symbol
   def nextSymbol():Option[Symbol] =
@@ -220,7 +216,9 @@ class ActiveItem(val begin : Int,
       return None
 
   override def toString() = {
-    "[" + this.begin + ";" + this.category + "->" + this.function.name + "[" + this.domain.map(_.toString) + "];" + this.constituent + ";" + this.position + "]"
+    "[" + this.begin + ";" + this.category + "->" + this.function.name + "["
+        + this.domain.map(_.toString) + "];" + this.constituent + ";"
+        + this.position + "]"
   }
 
   val log = Logger.getLogger("PGF.Parsing")
