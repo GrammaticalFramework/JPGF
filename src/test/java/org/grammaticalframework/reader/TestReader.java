@@ -1,4 +1,4 @@
-package pgf.reader;
+package org.grammaticalframework.reader;
 
 import java.io.FileInputStream;
 
