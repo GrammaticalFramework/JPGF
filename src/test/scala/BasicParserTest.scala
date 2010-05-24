@@ -9,19 +9,20 @@ object BasicParserTest {
   def main(args: Array[String]) {
     println("Current dir is : " + System.getProperty("user.dir"));
 
+    // Setting up logging
     val logger = Logger.getLogger("org.grammaticalframework.parser")
-    logger.setLevel(Level.FINE)
+    logger.setLevel(Level.INFO)
     val hdlr = new ConsoleHandler()
     hdlr.setLevel(Level.FINEST)
     logger.addHandler(hdlr)
-    //this.setupLogging()
 
-    //val grammar = new TestGrammar("pgf/AaBbCc.pgf", "AaBbCcCnc")
-    //grammar.parseAndPrint("a b c")
-    // grammar.parseAndPrint("a a b b c c")
-    // grammar.parseAndPrint("a a a a b b b b c c c c")
-    // grammar.parseAndPrint("a b c c")
-    // grammar.parseAndPrint("")
+    // Try some parsing
+    val grammar = new TestGrammar("pgf/AaBbCc.pgf", "AaBbCcCnc")
+    grammar.parseAndPrint("a b c")
+    grammar.parseAndPrint("a a b b c c")
+    grammar.parseAndPrint("a a a a b b b b c c c c")
+    grammar.parseAndPrint("a b c c")
+    grammar.parseAndPrint("")
     // Testing with the food grammar
     val foodGrammar = new TestGrammar("pgf/Foods.pgf", "FoodsEng")
     foodGrammar.parseAndPrint("this fresh pizza is Italian")
@@ -31,31 +32,7 @@ object BasicParserTest {
     val foodGrammarSwe = new TestGrammar("pgf/FoodsSwe.pgf", "FoodsSwe")
     foodGrammarSwe.parseAndPrint("den här läckra pizzan är färsk")
     val foodGrammarIta = new TestGrammar("pgf/FoodsSwe.pgf", "FoodsIta")
-    foodGrammarSwe.parseAndPrint("questa pizza deliziosa è fresca")
-
-
-
-
-    // val reader = new NewReader()
-    // val grammar:PGF = reader.readFile("pgf/AaBbCc.pgf")
-    // println(grammar.toString())
-    // val parser = new Parser(grammar.concrete("AaBbCcCnc"))
-
-    // parser.parse(List("a","a","b","b","c","c"))
-    // val trees = parser.getTrees
-    // println(trees)
-    // trees.map(PrettyPrinter.print).foreach(println)
-    // parser.printState
-
-  }
-
-  def setupLogging() = {
-    //val logger= Logger.getLogger("PGF.Reader")
-    val logger= Logger.getLogger("PGF.Parsing")
-    logger.setLevel(Level.FINER)
-    //val hdlr = new ConsoleHandler()
-    //hdlr.setLevel(Level.FINEST)
-    //logger.addHandler(hdlr)
+    foodGrammarIta.parseAndPrint("questa pizza deliziosa è fresca")
   }
 }
 
