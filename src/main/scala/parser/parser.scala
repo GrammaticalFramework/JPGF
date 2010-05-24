@@ -54,7 +54,9 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   private var agenda = new Stack[ActiveItem]
   private var position = 0
   // Adding base productions in the chart
-  this.grammar.productions.filter{_.isInstanceOf[ApplProduction]}.foreach(p => this.chart.addProduction(p.asInstanceOf[ApplProduction]))
+  this.grammar.productions.filter{_.isInstanceOf[ApplProduction]}.foreach(
+    p => this.chart.addProduction(p.asInstanceOf[ApplProduction])
+  )
   init()
   compute()
 
@@ -195,7 +197,7 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   override def toString() =
     "= ParseState =\n" +
     "== Chart ==\n" +
-    chart.toString() +
+    this.chart.toString() +
     "== Trie ==\n" +
     this.trie.toString()
 }
