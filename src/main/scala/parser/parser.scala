@@ -101,7 +101,8 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
       val e:ActiveItem = agenda.pop();
       processActiveItem(e)
     }
-
+    log.finest("After computation(k=" + this.position + ") the trie is : \n" +
+               this.trie.toString())
   }
 
   private def processActiveItem(item:ActiveItem) = {
@@ -126,7 +127,8 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
                         a}
           case Some(a) => a
         }
-        log.finest("Adding item " + i + " for terminals " + tokens.map(_.toString))
+        log.finest("Adding item " + i + " for terminals "
+                   + tokens.map(_.toString))
         newAgenda += i
       }
 

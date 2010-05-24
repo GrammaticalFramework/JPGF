@@ -2,9 +2,11 @@ package org.grammaticalframework.parser
 
 //import scala.collection.jcl._
 import scala.collection.mutable._
-import org.grammaticalframework.reader.{ApplProduction => Production, CncFun}
+import pgf.reader.{ApplProduction => Production, CncFun}
 
 class Chart(var nextCat:Int, val length:Int) {
+
+  val log = Logger.getLogger("PGF.Parsing")
 
 
   /** **********************************************************************
@@ -77,6 +79,9 @@ class Chart(var nextCat:Int, val length:Int) {
 
 
 class ActiveSet {
+
+  val log = Logger.getLogger("PGF.Parsing")
+
   val store = new HashMap[Int, MultiMap[Int, (ActiveItem,Int)]]
 
   def add(cat:Int, cons:Int, item:ActiveItem, cons2:Int):Boolean =
@@ -93,6 +98,7 @@ class ActiveSet {
           return false
         else {
           map.add(cons, (item,cons2))
+          log.finest("Adding " + (cat,cons) + " -> " + (item,cons2) + " to ActiveSet")
           return true
         }
     }
