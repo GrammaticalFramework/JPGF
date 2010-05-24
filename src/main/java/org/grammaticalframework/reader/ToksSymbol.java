@@ -2,7 +2,7 @@ package org.grammaticalframework.reader;
 
 public class ToksSymbol extends Symbol {
     String[] toks ;
-    
+
     /**
      * Constructor
      */
@@ -16,14 +16,14 @@ public class ToksSymbol extends Symbol {
     public String [] tokens() {
         return this.toks;
     }
-    
+
     public boolean isTerminal() { return true; }
-    
+
     public String toString()
     {
         String s = "Tokens : ";
         for(int i=0; i<toks.length; i++)
-            s+=(" "+toks[i]);  
-        return s;	   
+            s+=(" "+toks[i]);
+        return s;
     }
 }
