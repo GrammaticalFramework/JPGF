@@ -193,6 +193,9 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
     }
   }
 
+  /* ************************************ *
+   * Overrides
+   * ************************************ */
 
   override def toString() =
     "= ParseState =\n" +
@@ -209,7 +212,7 @@ class ActiveItem(val begin : Int,
                  val domain:Array[Int],
                  val constituent:Int,
                  val position:Int) {
-  class NoNextItem extends Exception
+
   // get next symbol
   def nextSymbol():Option[Symbol] =
     if (position < function.sequence(constituent).length) {
@@ -219,13 +222,9 @@ class ActiveItem(val begin : Int,
     else
       return None
 
-  override def toString() = {
-    "[" + this.begin + ";" + this.category + "->" + this.function.name + "["
-        + this.domain.map(_.toString) + "];" + this.constituent + ";"
-        + this.position + "]"
-  }
-
-  val log = Logger.getLogger("PGF.Parsing")
+  /* ************************************ *
+   * Overrides
+   * ************************************ */
 
   override def equals(o:Any):Boolean = o match {
       case (o:ActiveItem) => this.begin == o.begin &&
@@ -236,4 +235,11 @@ class ActiveItem(val begin : Int,
                              this.position == o.position
       case _ => false
   }
+
+  override def toString() =
+    "[" + this.begin + ";" +
+          this.category + "->" + this.function.name +
+          "[" + this.domain.map(_.toString) + "];" + this.constituent + ";" +
+          this.position + "]"
+
 }
