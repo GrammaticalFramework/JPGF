@@ -17,7 +17,7 @@ import java.util.logging._;
  * */
 class Parser(val grammar:Concrete) {
 
-  val log = Logger.getLogger("PGF.Parsing")
+  val log = Logger.getLogger("org.grammaticalframework.parser")
 
   var ps = new ParseState(this, this.grammar, 0)
 
@@ -47,7 +47,7 @@ class Parser(val grammar:Concrete) {
 
 
 class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
-  val log = Logger.getLogger("PGF.Parsing")
+  val log = Logger.getLogger("org.grammaticalframework.parser")
   private val startCat = this.grammar.startCat
   private var trie = new Trie[String,Stack[ActiveItem]]
   private val chart = new Chart(10,this.length) // TODO: 10 is a bad value...
