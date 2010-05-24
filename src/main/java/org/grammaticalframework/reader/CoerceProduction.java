@@ -15,8 +15,9 @@ public class CoerceProduction extends Production {
     }
 
     public String toString(){
-        return "Initial id : "+initId; };    
-        
+        return "Coercion(" + this.fId + " -> " +initId + ")";
+    }
+
     public boolean equals(Object o)
         {if(o instanceof CoerceProduction)
         	return ((CoerceProduction) o).initId == initId;
