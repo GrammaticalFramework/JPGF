@@ -7,9 +7,9 @@ public class AlternToksSymbol extends ToksSymbol {
         super(toks);
         alts = _alts;
     }
-    
+
     public boolean isTerminal() { return true; }
-    
+
     public String toString()
     {
         String s = "Tokens : "+toks + " Alternatives : "+alts;
