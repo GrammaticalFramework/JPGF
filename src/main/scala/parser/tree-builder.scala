@@ -8,7 +8,7 @@ import java.util.logging._;
 
 object TreeBuilder {
 
-  val log = Logger.getLogger("PGF.Reader")
+  val log = Logger.getLogger("org.grammaticalframework.parser.treebuilder")
 
   def buildTrees( chart:Chart, startCat:Int, length:Int ):List[Tree] = {
     log.fine("Building trees with start category " + (0, startCat, 0, length))

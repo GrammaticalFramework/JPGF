@@ -9,8 +9,8 @@ object BasicParserTest {
   def main(args: Array[String]) {
     println("Current dir is : " + System.getProperty("user.dir"));
 
-    val logger = Logger.getLogger("PGF.Reader")
-    logger.setLevel(Level.INFO)
+    val logger = Logger.getLogger("org.grammaticalframework.parser")
+    logger.setLevel(Level.FINE)
     val hdlr = new ConsoleHandler()
     hdlr.setLevel(Level.FINEST)
     logger.addHandler(hdlr)
