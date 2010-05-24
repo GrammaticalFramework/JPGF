@@ -26,10 +26,10 @@ class Chart(var nextCat:Int, val length:Int) {
   /** **********************************************************************
    * Handling Productions
    * */
-  private val productionSets : MultiMap[Int,Production] =
-    new HashMap[Int, Set[Production]] with MultiMap[Int,Production]
+  private val productionSets : MultiMap[Int,AnyProduction] =
+    new HashMap[Int, Set[AnyProduction]] with MultiMap[Int,AnyProduction]
 
-  def addProduction(p:Production):Boolean = {
+  def addProduction(p:AnyProduction):Boolean = {
     if (productionSets.entryExists(p.getCategory(), p.==))
       return false
     else {
@@ -46,9 +46,21 @@ class Chart(var nextCat:Int, val length:Int) {
 
   def getProductions(resultCat : Int):Array[Production] =
     productionSets.get(resultCat) match {
-      case Some(ps) => ps.toArray
+      case Some(ps) =>
+        for ((anyP:AnyProduction) <- ps.toArray;
+             prod <- this.uncoerce(anyP) )
+        yield prod
       case None => new Array[Production](0)
     }
+
+  private def uncoerce(p : AnyProduction):Array[Production] = p match {
+    case (p:Production) => Array(p)
+    case (c:Coercion) => for (prod <- this.getProductions(c.getInitId()) ;
+                              a <- this.uncoerce(prod) )
+                          yield a
+  }
+
+
   /** **********************************************************************
    *  Handling fresh categories
    * */
