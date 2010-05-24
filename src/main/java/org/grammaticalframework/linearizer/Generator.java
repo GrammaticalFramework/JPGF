@@ -17,8 +17,8 @@ public class Generator {
 	
 	public Generator(String file, PGF _pgf) throws Exception
 	{random = new Random();
-    NewReader nr = new NewReader();
-	//pgf = nr.process(new FileInputStream(file));
+	 pgf = _pgf;
+        //pgf = nr.process(new FileInputStream(file));
 	dirRules = new HashMap<String,HashSet<String>>();
 	indirRules = new HashMap<String,HashSet<String>>();
 	AbsCat[] absCats = pgf.getAbstract().getAbsCats();

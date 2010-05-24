@@ -16,6 +16,8 @@ public class Sequence {
         return this.symbs.length;
     }
 
+	public Symbol[] getSymbols() {return symbs;}
+	
     public String toString()
     {String ss = "Symbols : [";
         for(int i=0; i<symbs.length; i++)
