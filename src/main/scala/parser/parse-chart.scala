@@ -1,6 +1,5 @@
 package org.grammaticalframework.parser
 
-//import scala.collection.jcl._
 import scala.collection.mutable._
 import org.grammaticalframework.reader.{
   ApplProduction => Production,
@@ -9,7 +8,7 @@ import org.grammaticalframework.reader.{
   Production => AnyProduction }
 import java.util.logging._;
 
-class Chart(var nextCat:Int, val length:Int) {
+private class Chart(var nextCat:Int, val length:Int) {
 
   val log = Logger.getLogger("PGF.Parsing")
 
@@ -94,10 +93,12 @@ class Chart(var nextCat:Int, val length:Int) {
   }
 }
 
+/**
+ * this is used to keed track of sets of active items (the S_k)
+ * */
+private class ActiveSet {
 
-class ActiveSet {
-
-  val log = Logger.getLogger("PGF.Parsing")
+  val log = Logger.getLogger("org.grammaticalframework.parser")
 
   val store = new HashMap[Int, MultiMap[Int, (ActiveItem,Int)]]
 

@@ -10,19 +10,28 @@ import java.util.logging._;
 
 /**
  * This is the main parser class.
- * It keeps the latest parser state until parse() is caled again.
- * Then the parser state is reseted.
- * When parse() has not been called, act as if parse() have been called on the
- * empty token list.
+ * It keeps the latest parser state until parse is
+ * called again. Then the parser state is reseted.
+ * When parse has not been called, act as if parse has been
+ * called on the empty token list.
+ *
+ * @param grammar the concrete grammar to use for parsing
  * */
 class Parser(val grammar:Concrete) {
 
-  val log = Logger.getLogger("org.grammaticalframework.parser")
+  private val log = Logger.getLogger("org.grammaticalframework.parser")
 
-  var ps = new ParseState(this, this.grammar, 0)
+  private var ps = new ParseState(this, this.grammar, 0)
 
   def printState = println(this.ps.toString())
 
+  /**
+   * Parse the given list of tokens with the given root category. Return
+   * nothing, the internal state of the parser is updated.
+   *
+   * @param token list of tokens to parse
+   * @param startCat top category
+   * */
   def parse(tokens : Seq[String], startCat: Int):Unit = {
     ps = new ParseState(this, this.grammar, tokens.length)
     for (token <- tokens) {
@@ -34,7 +43,12 @@ class Parser(val grammar:Concrete) {
       }
     }
   }
-
+  /**
+   * Parse the given list of tokens with the default start category of the
+   * grammar.
+   *
+   * @param tokens list of tokens to parse
+   * */
   def parse(tokens:Seq[String]):Unit = parse(tokens, this.grammar.startCat)
 
   def printStats() {
@@ -46,7 +60,7 @@ class Parser(val grammar:Concrete) {
 }
 
 
-class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
+private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   val log = Logger.getLogger("org.grammaticalframework.parser")
   private val startCat = this.grammar.startCat
   private var trie = new ParseTrie
@@ -206,7 +220,7 @@ class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
 }
 
 
-class ActiveItem(val begin : Int,
+private class ActiveItem(val begin : Int,
                  val category:Int,
                  val function:CncFun,
                  val domain:Array[Int],
@@ -253,9 +267,14 @@ class ActiveItem(val begin : Int,
 
 
 
-import scala.collection.mutable.HashMap
+/**
+ * The ParseTries are used to keep track of the possible next symbols.
+ *
+ * @param value the value at this node.
+ * */
+private class ParseTrie(var value:Stack[ActiveItem]) {
+  import scala.collection.mutable.HashMap
 
-class ParseTrie(var value:Stack[ActiveItem]) {
   val child = new HashMap[String,ParseTrie]
 
   def this() = this(new Stack)
