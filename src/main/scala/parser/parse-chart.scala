@@ -35,7 +35,7 @@ class Chart(var nextCat:Int, val length:Int) {
     else {
       log.finest("Adding production " + p + " in chart.")
       productionSets.add(p.getCategory(), p)
-      this.nextCat = p.getCategory().max(this.nextCat)
+      this.nextCat = this.nextCat.max(p.getCategory() + 1)
       return true
     }
   }
