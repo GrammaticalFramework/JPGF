@@ -2,7 +2,12 @@ package org.grammaticalframework.parser
 
 //import scala.collection.jcl._
 import scala.collection.mutable._
-import pgf.reader.{ApplProduction => Production, CncFun}
+import org.grammaticalframework.reader.{
+  ApplProduction => Production,
+  CncFun,
+  CoerceProduction => Coercion,
+  Production => AnyProduction }
+import java.util.logging._;
 
 class Chart(var nextCat:Int, val length:Int) {
 
