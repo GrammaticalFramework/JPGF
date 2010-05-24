@@ -139,7 +139,4 @@ private class ActiveSet {
         case Some(s) => return s.toSeq
       }
     }
-
-
-
 }
