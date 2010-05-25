@@ -16,23 +16,17 @@ object BasicParserTest {
     hdlr.setLevel(Level.FINEST)
     logger.addHandler(hdlr)
 
-    // Try some parsing
-    val grammar = new TestGrammar("pgf/AaBbCc.pgf", "AaBbCcCnc")
-    grammar.parseAndPrint("a b c")
-    grammar.parseAndPrint("a a b b c c")
-    grammar.parseAndPrint("a a a a b b b b c c c c")
-    grammar.parseAndPrint("a b c c")
-    grammar.parseAndPrint("")
     // Testing with the food grammar
     val foodGrammar = new TestGrammar("pgf/Foods.pgf", "FoodsEng")
     foodGrammar.parseAndPrint("this fresh pizza is Italian")
     foodGrammar.parseAndPrint("those boring fish are expensive")
-    val foodGrammarRon = new TestGrammar("pgf/Foods.pgf", "FoodsRon")
-    foodGrammarRon.parseAndPrint("această pizza proaspătă este italiană")
-    val foodGrammarSwe = new TestGrammar("pgf/FoodsSwe.pgf", "FoodsSwe")
+    val foodGrammarSwe = new TestGrammar("pgf/Foods.pgf", "FoodsSwe")
     foodGrammarSwe.parseAndPrint("den här läckra pizzan är färsk")
-    val foodGrammarIta = new TestGrammar("pgf/FoodsSwe.pgf", "FoodsIta")
+    val foodGrammarIta = new TestGrammar("pgf/Foods.pgf", "FoodsIta")
     foodGrammarIta.parseAndPrint("questa pizza deliziosa è fresca")
+    // testing whith the phrasebook
+    val engPhrasebook = new TestGrammar("pgf/Phrasebook.pgf", "PhrasebookFre")
+    engPhrasebook.parseAndPrint("le restaurant est ouvert le lundi .")
   }
 }
 
