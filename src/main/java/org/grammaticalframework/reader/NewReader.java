@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.*;
 
-public class NewReader {
+class NewReader {
     private static Logger log =
         Logger.getLogger("org.grammaticalframework.pgf");
 
@@ -25,7 +25,7 @@ public class NewReader {
         throws FileNotFoundException, IOException
     {
         InputStream stream = new FileInputStream(filename);
-        return process(stream);
+        return readInputStream(stream);
     }
 
     /**
@@ -33,7 +33,7 @@ public class NewReader {
      *
      * @param inStream and InputStream to read the pgf binary from.
      */
-    public static PGF process(InputStream inStream) throws IOException {
+    public static PGF readInputStream(InputStream inStream) throws IOException {
             DataInputStream is = new DataInputStream(inStream);
             //BufferedInputStream is = new DataInputStream(inStream);
             //InputStreamReader is = new InputStreamReader(inStream,"UTF-8");

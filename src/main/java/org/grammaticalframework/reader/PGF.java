@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class PGF {
+
     private int majorVersion;
     private int minorVersion;
     private Map<String, RLiteral> flags;
@@ -27,12 +28,54 @@ public class PGF {
             this.concretes.put( cnc.name(), cnc);
     }
 
+    /* ************************************************* */
+    /* Reading a PGF binary                              */
+    /* ************************************************* */
     /**
-     * Accessors
+     * Reads a PGF grammar from a file.
+     *
+     * @param filepath the path of the pgf file.
+     * @return the PGF object read from the file.
+     */
+    public static PGF readFromFile(String filepath)
+        throws java.io.FileNotFoundException, java.io.IOException
+    {
+        return NewReader.readFile(filepath);
+    }
+
+    /**
+     * Reads a PGF grammar from an InputStream
+     *
+     * @param is the InputStream
+     * @return the PGF object read from the stream.
+     */
+    public static PGF readFromInputStream(java.io.InputStream is)
+        throws java.io.IOException
+    {
+        return NewReader.readInputStream(is);
+    }
+
+    /* ************************************************* */
+    /* Accessing the fields                              */
+    /* ************************************************* */
+    /**
+     * access the concrete grammar by its name
+     * @param name the name of the concrete grammar
+     * @return the concrete grammar of null if there is no grammr with
+     *             that name.
      */
     public Concrete concrete(String name) {
         return this.concretes.get(name);
     }
+
+    public int getMajorVersion()
+    {return majorVersion;}
+
+    public int getMinorVersion()
+    {return minorVersion;}
+
+    public Abstract getAbstract()
+    {return abstr;}
 
     public String toString() {
         String ss =  "PGF : \nmajor version : "+ majorVersion
@@ -44,22 +87,6 @@ public class PGF {
         for (String name : this.concretes.keySet() )
             ss += name + ", ";
         ss+=")";
-        return ss;}
-
-    public int getMajorVersion()
-    {return majorVersion;}
-
-    public int getMinorVersion()
-    {return minorVersion;}
-
-    //public Flag[] getFlags()
-    //{return flags;}
-
-    public Abstract getAbstract()
-    {return abstr;}
-
-    public HashMap<String, Concrete> getConcretes()
-    {HashMap<String, Concrete> hm = (HashMap<String,Concrete>)concretes;
-    return hm;	}
-
+        return ss;
+    }
 }

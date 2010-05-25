@@ -1,11 +1,11 @@
 package org.grammaticalframework.parser
 
-import org.grammaticalframework.reader.{NewReader, PGF}
+import org.grammaticalframework.reader.PGF
 import org.grammaticalframework.Trees.PrettyPrinter
 
 import java.util.logging._;
-object BasicParserTest {
 
+object BasicParserTest {
   def main(args: Array[String]) {
     println("Current dir is : " + System.getProperty("user.dir"));
 
@@ -37,8 +37,7 @@ object BasicParserTest {
 }
 
 class TestGrammar(pgfFile:String, langName:String) {
-  val reader = new NewReader()
-  val grammar:PGF = reader.readFile(pgfFile)
+  val grammar:PGF = PGF.readFromFile(pgfFile)
   val parser = new Parser(grammar.concrete(langName))
 
   def parseAndPrint(txt:String):Unit = {

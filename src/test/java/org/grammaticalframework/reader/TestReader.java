@@ -7,48 +7,29 @@ import static org.junit.Assert.*;
 
 
 public class TestReader {
-	NewReader rr = new NewReader();
-	
-	@Test public void testLang() 
-	{try {
-		rr.process(new FileInputStream("tesstsPGF/Lang.pgf"));
-	      }
-     catch(Exception e) {assert(1==0);}
-	}
 
-	@Test public void testFoods() 
-	{try {
-		rr.process(new FileInputStream("testsPGF/Foods.pgf"));
-	      }
-     catch(Exception e) {assert(1==0);}
-	}
+    private void tryToReadPGF(String pgffile) {
+        try {
+            PGF.readFromFile(pgffile);
+        }
+        catch(Exception e) {
+            assert(1==0);
+        }
+    }
 
-	@Test public void testNat() 
-	{try {
-		rr.process(new FileInputStream("testsPGF/Nat.pgf"));
-	      }
-     catch(Exception e) {assert(1==0);}
-	}
-
-	@Test public void testAnimals() 
-	{try {
-		rr.process(new FileInputStream("testsPGF/Animals.pgf"));
-	      }
-     catch(Exception e) {assert(1==0);}
-	}
-   
-	@Test public void testLetter() 
-	{try {
-		rr.process(new FileInputStream("testsPGF/Letter.pgf"));
-	      }
-     catch(Exception e) {assert(1==0);}
-	}
-
- 
-
-
-
-
-
-
+    @Test public void testLang() {
+        tryToReadPGF("tesstsPGF/Lang.pgf");
+    }
+    @Test public void testFoods() {
+        tryToReadPGF("tesstsPGF/Foods.pgf");
+    }
+    @Test public void testNat() {
+        tryToReadPGF("tesstsPGF/Nat.pgf");
+    }
+    @Test public void testAnimals() {
+        tryToReadPGF("tesstsPGF/Animals.pgf");
+    }
+    @Test public void testLetter() {
+        tryToReadPGF("tesstsPGF/Lang.pgf");
+    }
 }
