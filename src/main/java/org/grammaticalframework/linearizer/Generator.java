@@ -1,6 +1,6 @@
 package org.grammaticalframework.linearizer;
-import org.grammaticalframework.reader.*;
 
+import org.grammaticalframework.reader.*;
 import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.Random;
@@ -15,6 +15,10 @@ public class Generator {
 	private HashMap<String,HashSet<String>> dirRules;
 	private HashMap<String,HashSet<String>> indirRules;
 
+
+/** generates a random expression of a given category
+ * does not handle dependent categories or categories with implicit arguments
+**/
 	
 public Generator(String file, PGF _pgf) throws Exception
 {random = new Random();
@@ -41,6 +45,9 @@ for(int i=0;i<absCats.length; i++)
 }}
 	
 	
+/** generates a category with a random direct rule
+ * suitable for simple expressions
+**/
 public Expr getDirect(String type, HashSet<String> dirFuns)
 {Iterator<String> it = dirFuns.iterator();
 Vector<String> vs = new Vector<String>();
@@ -51,6 +58,9 @@ return new AbsNameExp(vs.elementAt(rand));
 }
 
 	
+/** generates a category with a random indirect rule
+ * creates more complex expressions
+**/
 public Expr getIndirect(String type, HashSet<String> indirFuns) throws Exception
 {Iterator<String> it = indirFuns.iterator();
 Vector<String> vs = new Vector<String>();
@@ -76,6 +86,10 @@ return null;
 }
 
 	
+/** generates a random expression of a given category
+ * the empirical probability of using direct rules is 60%
+ * this decreases the probability of having infinite trees for infinite grammars
+**/
 public Expr gen(String type) throws Exception
 {if(type.equals("Integer"))   return new LiteralExp(new IntLiteral(generateInt()));
     else if(type.equals("Float"))   return new LiteralExp(new FloatLiteral(generateFloat()));
@@ -93,6 +107,10 @@ return getIndirect(type,indirFuns);
 }
 	
 	
+/** generates a number of expressions of a given category
+ * the expressions are independent
+ * the probability of having simple expressions is higher
+**/
 public Vector<Expr> generateMany(String type, int count) throws Exception
 {int contor = 0;
 Vector<Expr> rez = new Vector<Expr>();
@@ -116,16 +134,21 @@ while(itDir.hasNext())
 return rez;	
 }
 
+/** generates a random string
+**/
 	
 public String generateString() 
 {String[] ss = { "x", "y", "foo", "bar" };
 return ss[random.nextInt(ss.length)];}
 
 
+/** generates a random integer
+**/
 public int generateInt() 
 {return random.nextInt(100000);}
 
-
+/** generates a random float
+**/
 public double generateFloat()
 {return random.nextDouble();}
    
