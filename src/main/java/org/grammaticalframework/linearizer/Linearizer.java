@@ -10,7 +10,7 @@ import org.grammaticalframework.reader.*;
 
 public class Linearizer {
 	private PGF pgf; 
-    private	String lang;
+        private String lang;
 	private Concrete cnc ;
 	private Expr expr;
 	private HashMap<String,HashMap<Integer,HashSet<Production>>> lProd;
@@ -22,12 +22,12 @@ public class Linearizer {
 
 	
 public Linearizer(String file, String _lang, Expr _expr, PGF _pgf) throws Exception
- {
- pgf = _pgf;
- lang = _lang;
- expr = _expr;
- cnc = cnc();
- lProd = getLProductions(); }
+{pgf = _pgf;
+lang = _lang;
+expr = _expr;
+cnc = cnc();
+lProd = getLProductions(); 
+}
 	
 public HashMap<String,HashMap<Integer,HashSet<Production>>> retLProd()
 {return lProd;}
