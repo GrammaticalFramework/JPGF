@@ -12,6 +12,7 @@ import _root_.org.grammaticalframework.parser.{Parser}
 import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
 class MainActivity extends Activity {
+
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.main)
@@ -31,7 +32,7 @@ class MainActivity extends Activity {
     // translate action
     translateButton.setOnClickListener( new View.OnClickListener() {
       def onClick(v:View) = {
-        val phrase = phraseField.getText.toString
+      val phrase = phraseField.getText.toString
         resultView.setText(parse(parser,phrase))
       }
     })
