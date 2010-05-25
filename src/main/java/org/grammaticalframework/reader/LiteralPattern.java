@@ -1,13 +1,13 @@
 package org.grammaticalframework.reader;
 
 public class LiteralPattern extends Pattern {
-private Literal value;
+private RLiteral value;
 
-public LiteralPattern(Literal _value)
+public LiteralPattern(RLiteral _value)
 {value = _value; }
 
 public String toString()
 {return "Literal Pattern : "+value.toString();}
 
-public Literal getLit() {return value;}
+public RLiteral getLit() {return value;}
 }

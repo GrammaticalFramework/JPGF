@@ -1,8 +1,8 @@
 package org.grammaticalframework.reader;
 
-public class IntLiteral extends Literal {
+public class IntLit extends RLiteral {
     private int value ;
-    public IntLiteral(int _value) {value = _value; }
+    public IntLit(int _value) {value = _value; }
     
     public int value() { return this.value; }
 

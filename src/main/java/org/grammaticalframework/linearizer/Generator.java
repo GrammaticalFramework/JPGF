@@ -1,5 +1,6 @@
 package org.grammaticalframework.linearizer;
 
+import org.grammaticalframework.Trees.Absyn.*;
 import org.grammaticalframework.reader.*;
 import java.io.FileInputStream;
 import java.util.Iterator;
@@ -48,20 +49,20 @@ for(int i=0;i<absCats.length; i++)
 /** generates a category with a random direct rule
  * suitable for simple expressions
 **/
-public Expr getDirect(String type, HashSet<String> dirFuns)
+public Tree getDirect(String type, HashSet<String> dirFuns)
 {Iterator<String> it = dirFuns.iterator();
 Vector<String> vs = new Vector<String>();
 while(it.hasNext())
     vs.add(it.next());
 int rand = random.nextInt(vs.size()); 
-return new AbsNameExp(vs.elementAt(rand));	     	
+return new Function(vs.elementAt(rand));	     	
 }
 
 	
 /** generates a category with a random indirect rule
  * creates more complex expressions
 **/
-public Expr getIndirect(String type, HashSet<String> indirFuns) throws Exception
+public Tree getIndirect(String type, HashSet<String> indirFuns) throws Exception
 {Iterator<String> it = indirFuns.iterator();
 Vector<String> vs = new Vector<String>();
 while(it.hasNext())
@@ -73,14 +74,14 @@ for(int i=0; i<absFuns.length;i++)
       if(absFuns[i].getName().equals(funcName))
 	    {Hypo[] hypos = absFuns[i].getType().getHypos();
 	     String[] tempCats = new String[hypos.length];
-	     Expr[] exps = new Expr[hypos.length];
+	     Tree[] exps = new Tree[hypos.length];
 	     for(int k=0; k<hypos.length;k++)
 	    	   {tempCats[k]=hypos[k].getType().getName();
 	    	    exps[k]=gen(tempCats[k]);
 	    	    if(exps[k] == null) return null;}
-	     Expr rez = new AbsNameExp(funcName);
+	     Tree rez = new Function(funcName);
 	     for(int j=0;j<exps.length;j++)
-	    	   rez = new AppExp (rez, exps[j]);
+	    	   rez = new Application (rez, exps[j]);
 	     return rez;}
 return null;
 }
@@ -90,10 +91,10 @@ return null;
  * the empirical probability of using direct rules is 60%
  * this decreases the probability of having infinite trees for infinite grammars
 **/
-public Expr gen(String type) throws Exception
-{if(type.equals("Integer"))   return new LiteralExp(new IntLiteral(generateInt()));
-    else if(type.equals("Float"))   return new LiteralExp(new FloatLiteral(generateFloat()));
-     else if(type.equals("String"))  return new LiteralExp(new StringLiteral(generateString()));
+public Tree gen(String type) throws Exception
+{if(type.equals("Integer"))   return new Literal(new IntLiteral(generateInt()));
+    else if(type.equals("Float"))   return new Literal(new FloatLiteral(generateFloat()));
+     else if(type.equals("String"))  return new Literal(new StringLiteral(generateString()));
 int depth = random.nextInt(5); //60% constants, 40% functions 
 HashSet<String> dirFuns = dirRules.get(type);
 HashSet<String> indirFuns = indirRules.get(type);
@@ -111,22 +112,22 @@ return getIndirect(type,indirFuns);
  * the expressions are independent
  * the probability of having simple expressions is higher
 **/
-public Vector<Expr> generateMany(String type, int count) throws Exception
+public Vector<Tree> generateMany(String type, int count) throws Exception
 {int contor = 0;
-Vector<Expr> rez = new Vector<Expr>();
+Vector<Tree> rez = new Vector<Tree>();
 if(contor >= count) return rez;
 HashSet<String> dirFuns = dirRules.get(type);
 HashSet<String> indirFuns = indirRules.get(type);
 Iterator<String> itDir = dirFuns.iterator();
 while(itDir.hasNext())
-   {Expr interm = getDirect(type,dirFuns);
+   {Tree interm = getDirect(type,dirFuns);
     if(interm != null) 
         {contor ++;
          rez.add(interm);
          if(contor == count) return rez;}}
     itDir = indirFuns.iterator();
     while(itDir.hasNext())
-	{Expr interm = getIndirect(type,indirFuns);
+	{Tree interm = getIndirect(type,indirFuns);
 	 if(interm != null) 
              {contor ++;
               rez.add(interm);

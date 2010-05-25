@@ -1,12 +1,12 @@
 package org.grammaticalframework.reader;
 
 public class LiteralExp extends Expr {
- private Literal value;
+ private RLiteral value;
  
- public LiteralExp(Literal _value) {value = _value; }
+ public LiteralExp(RLiteral _value) {value = _value; }
 
  public String toString()
  {return "Literal Expression : " + value.toString();}
 
-public Literal getLiteral() {return value;}
+public RLiteral getLiteral() {return value;}
 }

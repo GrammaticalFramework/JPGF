@@ -34,7 +34,7 @@ public class NewReader {
             for(int i=0;i<4;i++)
                 ii[i]=is.read(); 
             
-            Map<String,Literal> flags = getListFlag(is);
+            Map<String,RLiteral> flags = getListFlag(is);
             Abstract abs = getAbstract(is);
             Concrete[] concretes = getListConcretes(is);
             PGF pgf = new PGF(makeInt16(ii[0],ii[1]), 
@@ -71,16 +71,16 @@ public class NewReader {
 //   return ff;
 // }
   
-    protected Map<String,Literal> getListFlag(DataInputStream is) 
+    protected Map<String,RLiteral> getListFlag(DataInputStream is) 
         throws IOException
     {
         int npoz = getInteger(is);
-        Map<String,Literal> flags = new HashMap<String,Literal>();
+        Map<String,RLiteral> flags = new HashMap<String,RLiteral>();
         if (npoz == 0) 
             return flags;
         for (int i=0; i<npoz; i++) {
             String ss = getString(is);
-            Literal lit = getLiteral(is);
+            RLiteral lit = getLiteral(is);
             flags.put(ss, lit);
         }
         return flags;
@@ -123,18 +123,18 @@ public class NewReader {
    return new String(bf.toString().getBytes(),"UTF-8");
  }
  
- protected Literal getLiteral(DataInputStream is) throws IOException
+ protected RLiteral getLiteral(DataInputStream is) throws IOException
  {int sel = is.read();
-Literal ss = null;
+RLiteral ss = null;
 switch (sel) 
 {case 0 : String str = getString(is);
-          ss = new StringLiteral(str); 
+          ss = new StringLit(str); 
           break;
  case 1 : int i = getInteger(is);
-          ss = new IntLiteral(i);
+          ss = new IntLit(i);
           break;
  case 2 : double d = is.readDouble();
-          ss = new FloatLiteral(d);
+          ss = new FloatLit(d);
           break;
  default : throw new IOException("Incorrect literal tag "+sel); 
  }
@@ -214,7 +214,7 @@ protected Expr getExpr(DataInputStream is) throws IOException
            expr = new AppExp(e11,e2);
            break;
  case 2 : //literal expression
-           Literal lit = getLiteral(is);
+           RLiteral lit = getLiteral(is);
            expr = new LiteralExp(lit);
            break;
  case 3 : //meta variable
@@ -275,7 +275,7 @@ case 3 : //wild card pattern
 	      patt = new WildCardPattern();
 	      break;
 case 4 : //literal pattern
-	      Literal lit = getLiteral(is);
+	      RLiteral lit = getLiteral(is);
 	      patt = new LiteralPattern(lit);
 	      break;
 case 5 : //implicit argument
@@ -377,7 +377,7 @@ protected Concrete[] getListConcretes(DataInputStream is) throws IOException
     protected Abstract getAbstract(DataInputStream is) throws IOException
     {
         String s = getString(is);
-        Map<String,Literal> flags = getListFlag(is);
+        Map<String,RLiteral> flags = getListFlag(is);
         AbsFun[] absFuns = getListAbsFun(is);
         AbsCat[] absCats = getListAbsCat(is);
         return new Abstract(s,flags,absFuns,absCats);
@@ -387,7 +387,7 @@ protected Concrete[] getListConcretes(DataInputStream is) throws IOException
     protected Concrete getConcrete(DataInputStream is) throws IOException
     {
         String name = getString(is);
-        Map<String,Literal> flags = getListFlag(is);
+        Map<String,RLiteral> flags = getListFlag(is);
         PrintName[] pnames = getListPrintName(is); 	
         Sequence[] seqs = getListSequence(is); 	
         CncFun[] cncFuns = getListCncFun(is, seqs);

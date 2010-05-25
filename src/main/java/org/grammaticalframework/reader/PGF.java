@@ -8,13 +8,13 @@ import java.util.Map.Entry;
 public class PGF {
     private int majorVersion;
     private int minorVersion;
-    private Map<String, Literal> flags;
+    private Map<String, RLiteral> flags;
     private Abstract abstr;
     private Map<String, Concrete> concretes;
     //    Concrete[] concretes;
     
     public PGF(int _majorVersion, int _minorVersion, 
-               Map<String, Literal> _flags, 
+               Map<String, RLiteral> _flags, 
                Abstract _abstr, 
                Concrete[] concretes)
     {

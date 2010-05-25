@@ -1,9 +1,9 @@
 package org.grammaticalframework.reader;
 
-public class FloatLiteral extends Literal {
+public class FloatLit extends RLiteral {
 private double value;
        
-public FloatLiteral(double _value) {value = _value; }
+public FloatLit(double _value) {value = _value; }
 
 public String toString()
   {String s = "Float literal : "+value;

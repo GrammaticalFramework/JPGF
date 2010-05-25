@@ -1,9 +1,9 @@
 package org.grammaticalframework.reader;
 
-public class StringLiteral extends Literal {
+public class StringLit extends RLiteral {
 String value;
 
-public StringLiteral(String _value) { value = _value; }
+public StringLit(String _value) { value = _value; }
 
 public String toString()
 {String s = "String literal : "+value;

@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 public class Concrete {
     private String name ;
-    private Map<String, Literal> flags ;
+    private Map<String, RLiteral> flags ;
     private PrintName[] printnames ;
     private Sequence[] seqs ;
     private CncFun[] cncFuns ;
@@ -15,7 +15,7 @@ public class Concrete {
     private int fId ;
 
     public Concrete (String name,
-                     Map<String,Literal> flags,
+                     Map<String,RLiteral> flags,
                      PrintName[] _printnames,
                      Sequence[] _seqs,
                      CncFun[] _cncFuns,
@@ -49,11 +49,11 @@ public class Concrete {
     public String name() { return this.name; }
 
     public int startCat() {
-        Literal cat = this.flags.get("startcat");
+        RLiteral cat = this.flags.get("startcat");
         if (cat == null)
             return 0;
         else
-            return ((IntLiteral)cat).value();
+            return ((IntLit)cat).value();
     }
 
     public Production[] productions() {

@@ -4,13 +4,13 @@ import java.util.Map;
 
 public class Abstract {
     private String str;
-    private Map<String,Literal> flags;
+    private Map<String,RLiteral> flags;
     private AbsFun[] absFuns;
     private AbsCat[] absCats;
 
 
     public Abstract(String _str, 
-                    Map<String, Literal> _flags, 
+                    Map<String, RLiteral> _flags, 
                     AbsFun[] _absFuns, 
                     AbsCat[] _absCats)
     {
