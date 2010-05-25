@@ -26,7 +26,7 @@ public class NewReader {
         return this.process(stream);
     }
   
-    protected PGF process(InputStream inStream) throws IOException {
+    public PGF process(InputStream inStream) throws IOException {
             DataInputStream is = new DataInputStream(inStream);
             //BufferedInputStream is = new DataInputStream(inStream);
             //InputStreamReader is = new InputStreamReader(inStream,"UTF-8");
