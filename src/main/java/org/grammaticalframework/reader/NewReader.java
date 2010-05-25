@@ -13,21 +13,26 @@ public class NewReader {
     private static Logger log =
         Logger.getLogger("org.grammaticalframework.pgf");
 
-    protected int makeInt16(int j1, int j2) {
-        int i = 0;
-        i |= j1 & 0xFF;
-        i <<= 8;
-        i |= j2 & 0xFF;
-        return i;
-    }
-
-    public PGF readFile(String filename) throws FileNotFoundException,
+    /* ************************************************* */
+    /* Public reading functions                          */
+    /* ************************************************* */
+    /**
+     * Reads a PGF binary from a file idenfied by filename.
+     *
+     * @param filename the path of the pgf file.
+     */
+    public static PGF readFile(String filename) throws FileNotFoundException,
                                                 IOException {
         InputStream stream = new FileInputStream(filename);
-        return this.process(stream);
+        return process(stream);
     }
 
-    public PGF process(InputStream inStream) throws IOException {
+    /**
+     * Reads a pgf from an input stream
+     *
+     * @param inStream and InputStream to read the pgf binary from.
+     */
+    public static PGF process(InputStream inStream) throws IOException {
             DataInputStream is = new DataInputStream(inStream);
             //BufferedInputStream is = new DataInputStream(inStream);
             //InputStreamReader is = new InputStreamReader(inStream,"UTF-8");
@@ -47,18 +52,21 @@ public class NewReader {
             return pgf;
     }
 
+    /* ************************************************* */
+    /* Reading abstract grammar                          */
+    /* ************************************************* */
     /**
-     * This simple main program looks after filenames and opening files and such
-     * like for you.
+     * This function reads the part of the pgf binary corresponding to
+     * the abstract grammar.
+     * @param is the stream to read from.
      */
-    public static void main(String[] av)
+    private static Abstract getAbstract(DataInputStream is) throws IOException
     {
-        NewReader o = new NewReader();
-        try {
-            o.process(new FileInputStream("..\\testsPGF\\Foods.pgf"));
-        } catch (Exception e) {
-            System.err.println(e);
-        }
+        String s = getString(is);
+        Map<String,Literal> flags = getListFlag(is);
+        AbsFun[] absFuns = getListAbsFun(is);
+        AbsCat[] absCats = getListAbsCat(is);
+        return new Abstract(s,flags,absFuns,absCats);
     }
 
   
@@ -73,12 +81,12 @@ public class NewReader {
         throws IOException
     {
         int npoz = getInteger(is);
-        Map<String,RLiteral> flags = new HashMap<String,RLiteral>();
+        Map<String,Literal> flags = new HashMap<String,Literal>();
         if (npoz == 0)
             return flags;
         for (int i=0; i<npoz; i++) {
             String ss = getString(is);
-            RLiteral lit = getLiteral(is);
+            Literal lit = getLiteral(is);
             flags.put(ss, lit);
         }
         return flags;
@@ -140,80 +148,47 @@ ss.sel=sel;
 return ss;
 }
 
-    protected String getString(DataInputStream is) throws IOException {
+    private static AbsFun getAbsFun(DataInputStream is) throws IOException {
+        String s = getString(is);
+        Type t = getType(is);
+        int i = getInteger(is);
+        int maybe = is.read();
+        if (maybe == 0) return new AbsFun(s,t,i,new Eq[0]);
+        Eq[] eqs = getListEq(is);
+        return new AbsFun(s,t,i,eqs);
+    }
+
+    private static AbsCat getAbsCat(DataInputStream is) throws IOException {
+        String s = getString(is);
+        Hypo[] hypos = getListHypo(is);
+        String[] strs = getListString(is);
+        AbsCat abcC = new AbsCat(s,hypos, strs);
+        return abcC;
+    }
+
+
+
+    private static AbsFun[] getListAbsFun(DataInputStream is) throws IOException {
         int npoz = getInteger(is);
-        byte[] bytes;
-        int r ;
-        String letter="";
-        int lg = 0;
-        StringBuffer bf = new StringBuffer();
-        for (int i=0; i<npoz; i++)
-            {r = is.read();
-                if(r <= 0x7f) lg = 0;
-                else if ((r >= 0xc0) && (r <= 0xdf))
-                    lg = 1;
-                /*
-                  {bytes = new byte[2];
-                  bytes[0] = (byte) r;
-                  bytes[1] = (byte) is.read();
-                  letter = new String(bytes, "UTF-8");
-                  } */
-                else if ((r >= 0xe0) && (r <= 0xef))
-                    lg = 2;
-                else if ((r >= 0xf0) && (r <= 0xf4))
-                    lg = 3;
-                else if ((r >= 0xf8) && (r <= 0xfb))
-                    lg = 4;
-                else if ((r >= 0xfc) && (r <= 0xfd))
-                    lg =5;
-                else throw new IOException("Undefined for now !!! ");
-                bytes = new byte[1 + lg];
-                bytes[0] = (byte) r;
-                for(int j=1; j<=lg; j++)
-                    bytes[j] = (byte) is.read();
-                letter = new String(bytes,"UTF-8");
-                bf.append(letter);
-            }
-        return new String(bf.toString().getBytes(),"UTF-8");
+        AbsFun[] absFuns = new AbsFun[npoz];
+
+        if(npoz == 0)
+            return absFuns;
+
+        else for (int i=0; i<npoz; i++)
+                 absFuns[i] = getAbsFun(is);
+
+        return absFuns;
     }
 
-    protected Literal getLiteral(DataInputStream is) throws IOException {
-        int sel = is.read();
-        Literal ss = null;
-        switch (sel)
-            {case 0 : String str = getString(is);
-                    ss = new StringLiteral(str);
-                    break;
-            case 1 : int i = getInteger(is);
-                ss = new IntLiteral(i);
-                break;
-            case 2 : double d = is.readDouble();
-                ss = new FloatLiteral(d);
-                break;
-            default : throw new IOException("Incorrect literal tag "+sel);
-            }
-        ss.sel=sel;
-        return ss;
-    }
-
-
-    protected int getInteger(DataInputStream is) throws IOException {
-        /*
-       int res = 0;
-       int x = 0;
-       int i = 0;
-       do {
-       x = is.read();
-       res |= x << (i++)*7;
-       } while (x > 0x7F);
-
-       return res; */
-	long rez = (long) is.read();
-	if (rez <= 0x7f) return (int)rez;
-	else { int ii = getInteger(is);
-            rez = (ii <<7) | (rez & 0x7f);
-            return (int) rez;
-        }
+    private static AbsCat[] getListAbsCat(DataInputStream is) throws IOException {
+        int npoz = getInteger(is);
+        AbsCat[] absCats = new AbsCat[npoz];
+        if(npoz == 0)
+            return absCats;
+        else
+            for (int i=0; i<npoz; i++)
+                absCats[i] = getAbsCat(is);
 
 }
  
@@ -289,7 +264,8 @@ protected Expr getExpr(DataInputStream is) throws IOException
  return expr;
 	}
 
-    protected Type getType(DataInputStream is) throws IOException {
+
+    private static Type getType(DataInputStream is) throws IOException {
         Hypo[] hypos = getListHypo(is);
         String s = getString(is);
         Expr[] exprs = getListExpr(is);
@@ -335,7 +311,7 @@ patt.sel = sel;
 return patt;
 }
 
-    protected Hypo[] getListHypo(DataInputStream is) throws IOException {
+    private static Hypo[] getListHypo(DataInputStream is) throws IOException {
         int npoz = getInteger(is);
         Hypo[] hypos = new Hypo[npoz];
         for (int i=0; i<npoz; i++)
@@ -343,7 +319,7 @@ return patt;
         return hypos;
     }
 
-    protected Expr[] getListExpr(DataInputStream is) throws IOException {
+    private static Expr[] getListExpr(DataInputStream is) throws IOException {
         int npoz = getInteger(is);
         Expr[] exprs = new Expr[npoz];
         for(int i=0; i<npoz; i++)
@@ -351,7 +327,7 @@ return patt;
         return exprs;
     }
 
-    protected Expr getExpr(DataInputStream is) throws IOException {
+    private static Expr getExpr(DataInputStream is) throws IOException {
         int sel = is.read();
         Expr expr = null;
         switch (sel) {
@@ -399,7 +375,7 @@ return patt;
     }
 
 
-    protected Eq[] getListEq(DataInputStream is) throws IOException {
+    private static Eq[] getListEq(DataInputStream is) throws IOException {
         int npoz = getInteger(is);
         Eq[] eqs = new Eq[npoz];
         for (int i=0; i<npoz;i++)
@@ -407,7 +383,7 @@ return patt;
         return eqs;
     }
 
-    protected Pattern getPattern(DataInputStream is) throws IOException {
+    private static Pattern getPattern(DataInputStream is) throws IOException {
         int sel = is.read();
         Pattern patt = null;
         switch (sel) {
@@ -445,78 +421,42 @@ return patt;
         return patt;
     }
 
-    protected Pattern[] getListPattern(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
-        Pattern[] patts = new Pattern[npoz];
-        for(int i=0; i<npoz; i++)
-            patts[i]=getPattern(is);
-        return patts;
+    private static Literal getLiteral(DataInputStream is) throws IOException {
+        int sel = is.read();
+        Literal ss = null;
+        switch (sel)
+            {case 0 : String str = getString(is);
+                    ss = new StringLiteral(str);
+                    break;
+            case 1 : int i = getInteger(is);
+                ss = new IntLiteral(i);
+                break;
+            case 2 : double d = is.readDouble();
+                ss = new FloatLiteral(d);
+                break;
+            default : throw new IOException("Incorrect literal tag "+sel);
+            }
+        ss.sel=sel;
+        return ss;
     }
 
-    protected Eq getEq(DataInputStream is) throws IOException {
-        Pattern[] patts = getListPattern(is);
-        Expr exp = getExpr(is);
-        return new Eq(patts,exp);
-    }
-
-
-
-    protected AbsFun getAbsFun(DataInputStream is) throws IOException {
-        String s = getString(is);
-        Type t = getType(is);
+    /* ************************************************* */
+    /* Reading concrete grammar                          */
+    /* ************************************************* */
+    private static Concrete getConcrete(DataInputStream is) throws IOException
+    {
+        String name = getString(is);
+        Map<String,Literal> flags = getListFlag(is);
+        PrintName[] pnames = getListPrintName(is);
+        Sequence[] seqs = getListSequence(is);
+        CncFun[] cncFuns = getListCncFun(is, seqs);
+        ProductionSet[] prods = getListProductionSet(is, cncFuns);
+        CncCat[] cncCats = getListCncCat(is);
         int i = getInteger(is);
-        int maybe = is.read();
-        if (maybe == 0) return new AbsFun(s,t,i,new Eq[0]);
-        Eq[] eqs = getListEq(is);
-        return new AbsFun(s,t,i,eqs);
+        return new Concrete(name,flags,pnames,seqs,cncFuns,prods,cncCats,i);
     }
 
-    protected AbsCat getAbsCat(DataInputStream is) throws IOException {
-        String s = getString(is);
-        Hypo[] hypos = getListHypo(is);
-        String[] strs = getListString(is);
-        AbsCat abcC = new AbsCat(s,hypos, strs);
-        return abcC;
-    }
-
-    protected String[] getListString(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
-        String[] strs = new String[npoz];
-        if(npoz == 0)
-            return strs;
-        else {for (int i=0; i<npoz; i++)
-                strs[i] = getString(is);
-        }
-        return strs;
-    }
-
-
-    protected AbsFun[] getListAbsFun(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
-        AbsFun[] absFuns = new AbsFun[npoz];
-
-        if(npoz == 0)
-            return absFuns;
-
-        else for (int i=0; i<npoz; i++)
-                 absFuns[i] = getAbsFun(is);
-
-        return absFuns;
-    }
-
-    protected AbsCat[] getListAbsCat(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
-        AbsCat[] absCats = new AbsCat[npoz];
-        if(npoz == 0)
-            return absCats;
-        else
-            for (int i=0; i<npoz; i++)
-                absCats[i] = getAbsCat(is);
-
-        return absCats;
-    }
-
-    protected Concrete[] getListConcretes(DataInputStream is)
+    private static Concrete[] getListConcretes(DataInputStream is)
         throws IOException
     {
         int npoz = getInteger(is);
@@ -532,7 +472,7 @@ return patt;
     protected Abstract getAbstract(DataInputStream is) throws IOException
     {
         String s = getString(is);
-        Map<String,RLiteral> flags = getListFlag(is);
+        Map<String,Literal> flags = getListFlag(is);
         AbsFun[] absFuns = getListAbsFun(is);
         AbsCat[] absCats = getListAbsCat(is);
         return new Abstract(s,flags,absFuns,absCats);
@@ -542,7 +482,7 @@ return patt;
     protected Concrete getConcrete(DataInputStream is) throws IOException
     {
         String name = getString(is);
-        Map<String,RLiteral> flags = getListFlag(is);
+        Map<String,Literal> flags = getListFlag(is);
         PrintName[] pnames = getListPrintName(is);
         Sequence[] seqs = getListSequence(is);
         CncFun[] cncFuns = getListCncFun(is, seqs);
@@ -560,7 +500,7 @@ return patt;
 
     }
 
-    protected PrintName[] getListPrintName(DataInputStream is)
+    private static PrintName[] getListPrintName(DataInputStream is)
         throws IOException
     {
         int npoz = getInteger(is);
@@ -572,13 +512,16 @@ return patt;
         return pnames;
     }
 
-    protected Sequence getSequence(DataInputStream is) throws IOException
-    {
+    /* ************************************************* */
+    /* Reading sequences                                 */
+    /* ************************************************* */
+    private static Sequence getSequence(DataInputStream is) throws IOException {
         Symbol[] symbols = getListSymbol(is);
         return new Sequence(symbols);
     }
 
-    protected Sequence[] getListSequence(DataInputStream is) throws IOException
+    private static Sequence[] getListSequence(DataInputStream is)
+        throws IOException
     {
         int npoz = getInteger(is);
         Sequence[] seqs = new Sequence[npoz];
@@ -587,144 +530,7 @@ return patt;
         return seqs;
     }
 
-    protected Symbol[] getListSymbol(DataInputStream is) throws IOException
-    {
-        int npoz = getInteger(is);
-        Symbol[] symbols = new Symbol[npoz];
-        for(int i=0; i<npoz; i++)
-            symbols[i]=getSymbol(is);
-        return symbols;
-    }
-
-    /** **********************************************************************
-     * Concrete functions (Cncfun)
-     */
-    protected CncFun[] getListCncFun(DataInputStream is, Sequence[] sequences)
-        throws IOException
-    {
-        int npoz = getInteger(is);
-        CncFun[] cncFuns = new CncFun[npoz];
-        for(int i=0; i<npoz; i++)
-            cncFuns[i]=getCncFun(is, sequences);
-        return cncFuns;
-    }
-
-    /** **********************************************************************
-     * Productions and production sets
-     */
-    /**
-     * Read a production set
-     * @param is is the input stream to read from
-     * @param cncFuns is the list of concrete function
-     */
-    protected ProductionSet getProductionSet(DataInputStream is,
-					     CncFun[] cncFuns)
-	throws IOException
-    {
-	int id = getInteger(is);
-	Production[] prods = getListProduction(is, id, cncFuns);
-	ProductionSet ps = new ProductionSet(id,prods);
-	return ps;
-    }
-
-    /**
-     * Read a list of production set
-     * @param is is the input stream to read from
-     * @param cncFuns is the list of concrete function
-     */
-    protected ProductionSet[] getListProductionSet(DataInputStream is,
-						   CncFun[] cncFuns)
-	throws IOException
-    {
-	int npoz = getInteger(is);
-	ProductionSet[] prods = new ProductionSet[npoz];
-	for(int i=0; i<npoz; i++)
-	    prods[i]= getProductionSet(is, cncFuns);
-	return prods;
-    }
-
-    /**
-     * Read a list of production
-     * @param is is the input stream to read from
-     * @param leftCat is the left hand side category of this production (
-     * read only once for the whole production set)
-     * @param cncFuns is the list of concrete function
-     */
-    protected Production[] getListProduction(DataInputStream is,
-					     int leftCat,
-					     CncFun[] cncFuns)
-	throws IOException
-    {
-	int npoz = getInteger(is);
-	Production[] prods = new Production[npoz];
-	for(int i=0; i<npoz; i++)
-	    prods[i]=getProduction(is, leftCat, cncFuns);
-	return prods;
-    }
-
-    /**
-     * Read a list of production
-     * @param is is the input stream to read from
-     * @param leftCat is the left hand side category of this production (
-     * read only once for the whole production set)
-     * @param cncFuns is the list of concrete function, used here to set the
-     * function of the production (only given by its index in the list)
-     */
-    protected Production getProduction(DataInputStream is,
-				       int leftCat,
-				       CncFun[] cncFuns) throws IOException
-    {
-	int sel = is.read();
-	Production prod = null;
-	switch (sel) {
-	case 0 : //application
-	    int i = getInteger(is);
-	    int[] iis = getListInteger(is);
-	    prod = new ApplProduction(leftCat, cncFuns[i],iis);
-	    break;
-	case 1 : //coercion
-	    int id = getInteger(is);
-	    prod = new CoerceProduction(leftCat, id);
-	    break;
-	default : throw new IOException("invalid tag for productions : "+sel);
-	}
-	return prod;
-    }
-
-
-    protected CncCat[] getListCncCat(DataInputStream is) throws IOException
-    {
-        int npoz = getInteger(is);
-        CncCat[] cncCats = new CncCat[npoz];
-        for(int i=0; i<npoz; i++)
-            cncCats[i]=getCncCat(is);
-        return cncCats;
-    }
-
-    protected CncCat getCncCat(DataInputStream is) throws IOException
-    {
-        String sname = getString(is);
-        int firstFId = getInteger(is);
-        int lastFId = getInteger(is);
-        String[] ss = getListString(is);
-        return new CncCat(sname,firstFId,lastFId,ss);
-    }
-
-
-    protected CncFun getCncFun(DataInputStream is, Sequence[] sequences)
-        throws IOException
-    {
-        String name = getString(is);
-        int[] sIndices = getListInteger(is);
-        int l = sIndices.length;
-        Sequence[] seqs = new Sequence[l];
-        for (int i = 0 ; i < l ; i++)
-            seqs[i] = sequences[sIndices[i]];
-        return new CncFun(name,seqs);
-    }
-
-    protected Symbol getSymbol(DataInputStream is) throws IOException
-    {
+    private static Symbol getSymbol(DataInputStream is) throws IOException {
         int sel = is.read();
         Symbol symb = null;
         switch (sel) {
@@ -753,7 +559,8 @@ return patt;
         return symb;
     }
 
-    protected Alternative[] getListAlternative(DataInputStream is) throws IOException
+    private static Alternative[] getListAlternative(DataInputStream is)
+        throws IOException
     {
         int npoz = getInteger(is);
         Alternative[] alts = new Alternative[npoz];
@@ -762,20 +569,263 @@ return patt;
         return alts;
     }
 
-    protected Alternative getAlternative(DataInputStream is) throws IOException
+    private static Alternative getAlternative(DataInputStream is)
+        throws IOException
     {
         String[] s1 = getListString(is);
         String[] s2 = getListString(is);
         return new Alternative(s1,s2);
     }
 
-    protected int[] getListInteger(DataInputStream is) throws IOException
+    private static Symbol[] getListSymbol(DataInputStream is)
+        throws IOException
+    {
+        int npoz = getInteger(is);
+        Symbol[] symbols = new Symbol[npoz];
+        for(int i=0; i<npoz; i++)
+            symbols[i]=getSymbol(is);
+        return symbols;
+    }
+
+    /* ************************************************* */
+    /* Reading concrete functions                        */
+    /* ************************************************* */
+    private static CncFun getCncFun(DataInputStream is, Sequence[] sequences)
+        throws IOException
+    {
+        String name = getString(is);
+        int[] sIndices = getListInteger(is);
+        int l = sIndices.length;
+        Sequence[] seqs = new Sequence[l];
+        for (int i = 0 ; i < l ; i++)
+            seqs[i] = sequences[sIndices[i]];
+        return new CncFun(name,seqs);
+    }
+
+    private static CncFun[] getListCncFun(DataInputStream is,
+                                          Sequence[] sequences)
+        throws IOException
+    {
+        int npoz = getInteger(is);
+        CncFun[] cncFuns = new CncFun[npoz];
+        for(int i=0; i<npoz; i++)
+            cncFuns[i]=getCncFun(is, sequences);
+        return cncFuns;
+    }
+
+    /* ************************************************* */
+    /* Reading productions and production sets           */
+    /* ************************************************* */
+    /**
+     * Read a production set
+     * @param is is the input stream to read from
+     * @param cncFuns is the list of concrete function
+     */
+    private static ProductionSet getProductionSet(DataInputStream is,
+					     CncFun[] cncFuns)
+	throws IOException
+    {
+	int id = getInteger(is);
+	Production[] prods = getListProduction(is, id, cncFuns);
+	ProductionSet ps = new ProductionSet(id,prods);
+	return ps;
+    }
+
+    /**
+     * Read a list of production set
+     * @param is is the input stream to read from
+     * @param cncFuns is the list of concrete function
+     */
+    private static ProductionSet[] getListProductionSet(DataInputStream is,
+						   CncFun[] cncFuns)
+	throws IOException
+    {
+	int npoz = getInteger(is);
+	ProductionSet[] prods = new ProductionSet[npoz];
+	for(int i=0; i<npoz; i++)
+	    prods[i]= getProductionSet(is, cncFuns);
+	return prods;
+    }
+
+    /**
+     * Read a list of production
+     * @param is is the input stream to read from
+     * @param leftCat is the left hand side category of this production (
+     * read only once for the whole production set)
+     * @param cncFuns is the list of concrete function
+     */
+    private static Production[] getListProduction(DataInputStream is,
+					     int leftCat,
+					     CncFun[] cncFuns)
+	throws IOException
+    {
+	int npoz = getInteger(is);
+	Production[] prods = new Production[npoz];
+	for(int i=0; i<npoz; i++)
+	    prods[i]=getProduction(is, leftCat, cncFuns);
+	return prods;
+    }
+
+    /**
+     * Read a production
+     * @param is is the input stream to read from
+     * @param leftCat is the left hand side category of this production
+     *                (read only once for the whole production set)
+     * @param cncFuns is the list of concrete function, used here to set the
+     *                function of the production (only given by its index in
+     *                the list)
+     */
+    private static Production getProduction(DataInputStream is,
+                                            int leftCat,
+                                            CncFun[] cncFuns)
+        throws IOException
+    {
+	int sel = is.read();
+	Production prod = null;
+	switch (sel) {
+	case 0 : //application
+	    int i = getInteger(is);
+	    int[] iis = getListInteger(is);
+	    prod = new ApplProduction(leftCat, cncFuns[i],iis);
+	    break;
+	case 1 : //coercion
+	    int id = getInteger(is);
+	    prod = new CoerceProduction(leftCat, id);
+	    break;
+	default : throw new IOException("invalid tag for productions : "+sel);
+	}
+	return prod;
+    }
+
+    /* ************************************************* */
+    /* Reading concrete categories                       */
+    /* ************************************************* */
+    private static CncCat getCncCat(DataInputStream is) throws IOException
+    {
+        String sname = getString(is);
+        int firstFId = getInteger(is);
+        int lastFId = getInteger(is);
+        String[] ss = getListString(is);
+        return new CncCat(sname,firstFId,lastFId,ss);
+    }
+
+    private static CncCat[] getListCncCat(DataInputStream is) throws IOException
+    {
+        int npoz = getInteger(is);
+        CncCat[] cncCats = new CncCat[npoz];
+        for(int i=0; i<npoz; i++)
+            cncCats[i]=getCncCat(is);
+        return cncCats;
+    }
+
+    /* ************************************************* */
+    /* Reading flags                                     */
+    /* ************************************************* */
+    private static Map<String,Literal> getListFlag(DataInputStream is)
+        throws IOException {
+        int npoz = getInteger(is);
+        Map<String,Literal> flags = new HashMap<String,Literal>();
+        if (npoz == 0)
+            return flags;
+        for (int i=0; i<npoz; i++) {
+            String ss = getString(is);
+            Literal lit = getLiteral(is);
+            flags.put(ss, lit);
+        }
+        return flags;
+    }
+
+    /* ************************************************* */
+    /* Reading strings                                   */
+    /* ************************************************* */
+    private static String getString(DataInputStream is) throws IOException {
+        int npoz = getInteger(is);
+        byte[] bytes;
+        int r ;
+        String letter="";
+        int lg = 0;
+        StringBuffer bf = new StringBuffer();
+        for (int i=0; i<npoz; i++)
+            {r = is.read();
+                if(r <= 0x7f) lg = 0;
+                else if ((r >= 0xc0) && (r <= 0xdf))
+                    lg = 1;
+                /*
+                  {bytes = new byte[2];
+                  bytes[0] = (byte) r;
+                  bytes[1] = (byte) is.read();
+                  letter = new String(bytes, "UTF-8");
+                  } */
+                else if ((r >= 0xe0) && (r <= 0xef))
+                    lg = 2;
+                else if ((r >= 0xf0) && (r <= 0xf4))
+                    lg = 3;
+                else if ((r >= 0xf8) && (r <= 0xfb))
+                    lg = 4;
+                else if ((r >= 0xfc) && (r <= 0xfd))
+                    lg =5;
+                else throw new IOException("Undefined for now !!! ");
+                bytes = new byte[1 + lg];
+                bytes[0] = (byte) r;
+                for(int j=1; j<=lg; j++)
+                    bytes[j] = (byte) is.read();
+                letter = new String(bytes,"UTF-8");
+                bf.append(letter);
+            }
+        return new String(bf.toString().getBytes(),"UTF-8");
+    }
+
+    private static String[] getListString(DataInputStream is)
+        throws IOException
+    {
+        int npoz = getInteger(is);
+        String[] strs = new String[npoz];
+        if(npoz == 0)
+            return strs;
+        else {for (int i=0; i<npoz; i++)
+                strs[i] = getString(is);
+        }
+        return strs;
+    }
+
+    /* ************************************************* */
+    /* Reading integers                                  */
+    /* ************************************************* */
+    private static int getInteger(DataInputStream is) throws IOException {
+        /*
+       int res = 0;
+       int x = 0;
+       int i = 0;
+       do {
+       x = is.read();
+       res |= x << (i++)*7;
+       } while (x > 0x7F);
+
+       return res; */
+	long rez = (long) is.read();
+	if (rez <= 0x7f) return (int)rez;
+	else { int ii = getInteger(is);
+            rez = (ii <<7) | (rez & 0x7f);
+            return (int) rez;
+        }
+
+    }
+
+    private static int[] getListInteger(DataInputStream is) throws IOException
     {
         int npoz = getInteger(is);
         int[] vec = new int[npoz];
         for(int i=0; i<npoz; i++)
             vec[i] = getInteger(is);
         return vec;
+    }
+
+    private static int makeInt16(int j1, int j2) {
+        int i = 0;
+        i |= j1 & 0xFF;
+        i <<= 8;
+        i |= j2 & 0xFF;
+        return i;
     }
 }
 
