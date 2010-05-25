@@ -19,8 +19,7 @@ class MainActivity extends Activity {
 
     // Read the pgf
     val pgf_is = this.getResources().openRawResource(R.raw.foods)
-    val reader = new NewReader
-    val pgf = reader.process(pgf_is)
+    val pgf = PGF.readFromInputStream(pgf_is)
     val parser = new Parser(pgf.concrete("FoodsEng"))
 
     // Get pointers to the ui elements
@@ -30,6 +29,13 @@ class MainActivity extends Activity {
     val resultView = findViewById(R.id.result_view).asInstanceOf[TextView]
 
     // translate action
+    translateButton.setOnClickListener( new View.OnClickListener() {
+      def onClick(v:View) = {
+      val phrase = phraseField.getText.toString
+        resultView.setText(parse(parser,phrase))
+      }
+    })
+    // Speak action
     translateButton.setOnClickListener( new View.OnClickListener() {
       def onClick(v:View) = {
       val phrase = phraseField.getText.toString
