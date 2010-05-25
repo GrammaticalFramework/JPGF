@@ -1,4 +1,4 @@
-package se.chalmers
+package org.grammaticalframework.examples.FoodsDroid
 
 import _root_.android.app.Activity
 import _root_.android.os.Bundle
