@@ -14,7 +14,7 @@ public class PGF {
     //    Concrete[] concretes;
     
     public PGF(int _majorVersion, int _minorVersion, 
-               Map<String, RLiteral> _flags, 
+               Map<String, Literal> _flags, 
                Abstract _abstr, 
                Concrete[] concretes)
     {
@@ -35,7 +35,7 @@ public class PGF {
     }
 
     public String toString() {
-        String ss =  "PGF : \nmajor version : "+ majorVersion 
+        String ss =  "PGF : \nmajor version : "+ majorVersion
             + ", minor version : "+ minorVersion + "\n";
         ss += "flags : (" ;
         for (String flagName : this.flags.keySet() )
@@ -48,18 +48,18 @@ public class PGF {
 
     public int getMajorVersion()
     {return majorVersion;}
-    
+
     public int getMinorVersion()
     {return minorVersion;}
-    
+
     //public Flag[] getFlags()
     //{return flags;}
-    
+
     public Abstract getAbstract()
     {return abstr;}
-    
+
     public HashMap<String, Concrete> getConcretes()
     {HashMap<String, Concrete> hm = (HashMap<String,Concrete>)concretes;
     return hm;	}
-    
+
 }
