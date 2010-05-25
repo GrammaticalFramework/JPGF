@@ -21,8 +21,9 @@ public class NewReader {
      *
      * @param filename the path of the pgf file.
      */
-    public static PGF readFile(String filename) throws FileNotFoundException,
-                                                IOException {
+    public static PGF readFile(String filename)
+        throws FileNotFoundException, IOException
+    {
         InputStream stream = new FileInputStream(filename);
         return process(stream);
     }
