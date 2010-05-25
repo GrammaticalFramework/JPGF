@@ -30,12 +30,14 @@ object BasicParserTest {
   }
 }
 
+
 class TestGrammar(pgfFile:String, langName:String) {
   val grammar:PGF = PGF.readFromFile(pgfFile)
   val parser = new Parser(grammar.concrete(langName))
 
   def parseAndPrint(txt:String):Unit = {
-    println("Parsing string \"" + txt + "\" with grammar " + pgfFile + ":" + langName)
+    println("Parsing string \"" + txt + "\" with grammar " +
+            pgfFile + ":" + langName)
     val tokens = txt.split(" ")
     parser.parse(tokens)
     val trees = parser.getTrees
