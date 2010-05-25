@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.logging.*;
 
 public class NewReader {
-    private static Logger log = Logger.getLogger("PGF.Reader");
+    private static Logger log =
+        Logger.getLogger("org.grammaticalframework.pgf");
 
     protected int makeInt16(int j1, int j2) {
         int i = 0;
