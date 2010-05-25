@@ -464,17 +464,17 @@ public Vector<BracketedTokn> compute(Symbol s, Vector<CncType> cncTypes, Vector<
    {int arg = ((ArgConstSymbol) s).arg();
     int cons = ((ArgConstSymbol) s).cons();
     return getArg(arg,cons,cncTypes,linTables);}
-else if(s instanceof ToksSymbol)
-{String[] toks = ((ToksSymbol)s).tokens();
- Vector<BracketedTokn> v = new Vector<BracketedTokn>();
- v.add(new LeafKS(toks));
- return v;}
-else {String[] toks = ((AlternToksSymbol) s).tokens();
+else if(s instanceof AlternToksSymbol)
+    {String[] toks = ((AlternToksSymbol) s).tokens();
       Alternative[] alts = ((AlternToksSymbol) s).getAlternatives();
 	  Vector<BracketedTokn> v = new Vector<BracketedTokn>();
       v.add(new LeafKP(toks,alts));
       return v;
      } 
+else {String[] toks = ((ToksSymbol)s).tokens();
+ Vector<BracketedTokn> v = new Vector<BracketedTokn>();
+ v.add(new LeafKS(toks));
+ return v;}
 }
 
 public Vector<BracketedTokn> getArg(int d, int r, Vector<CncType> cncTypes, Vector<Vector<Vector<BracketedTokn>>> linTables)
