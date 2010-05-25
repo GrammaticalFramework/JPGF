@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	        android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+	        android:gravity="center_horizontal"
+                android:padding="10px">
+  <EditText android:id="@+id/phrase"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"/>
+  <Button android:id="@+id/translate_button"
+	  android:layout_below="@id/phrase"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:text="Translate !"/>
+  <TextView android:id="@+id/result_view"
+            android:layout_below="@id/translate_button"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+            android:text="Welcome"/>
+  <Button android:id="@+id/speak_button"
+	  android:layout_below="@id/result_view"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:text="Say it"/>
+</RelativeLayout>
