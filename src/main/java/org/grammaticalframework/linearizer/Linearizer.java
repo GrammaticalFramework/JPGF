@@ -14,7 +14,7 @@ public class Linearizer {
     private PGF pgf;
     private String lang;
     private Concrete cnc ;
-    private Expr expr;
+    private Tree expr;
     private HashMap<String,HashMap<Integer,HashSet<Production>>> lProd;
 
     /** linearizes an expression to a bracketed token
@@ -22,7 +22,7 @@ public class Linearizer {
      * not implemented to dependent categories, implicit argument,
      * and higher-order abstract syntax
      **/
-    public Linearizer(String file, String lang, Expr expr, PGF pgf)
+    public Linearizer(String file, String lang, Tree expr, PGF pgf)
         throws Exception
     {
         this.pgf = pgf;
@@ -37,8 +37,8 @@ public class Linearizer {
 public HashMap<String,HashMap<Integer,HashSet<Production>>> retLProd()
 {return lProd;}
 
-    //public Tree retExpr()
-    //{return expr;}
+    public Tree retExpr()
+    {return expr;}
 
 public PGF retPGF()
 {return pgf;}
