@@ -7,27 +7,38 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.grammaticalframework.reader.*;
+import org.grammaticalframework.Trees.Absyn.*;
 
 public class Linearizer {
-	private PGF pgf; 
-    private	String lang;
-	private Concrete cnc ;
-	private Expr expr;
-	private HashMap<String,HashMap<Integer,HashSet<Production>>> lProd;
-	
-    public Linearizer(String file, String _lang, Expr _expr, PGF _pgf) throws Exception
- {
- pgf = _pgf;
- lang = _lang;
- expr = _expr;
- cnc = cnc();
- lProd = getLProductions(); }
-	
+
+    private PGF pgf;
+    private String lang;
+    private Concrete cnc ;
+    private Expr expr;
+    private HashMap<String,HashMap<Integer,HashSet<Production>>> lProd;
+
+    /** linearizes an expression to a bracketed token
+     * and further on to a string
+     * not implemented to dependent categories, implicit argument,
+     * and higher-order abstract syntax
+     **/
+    public Linearizer(String file, String lang, Expr expr, PGF pgf)
+        throws Exception
+    {
+        this.pgf = pgf;
+        this.lang = lang;
+        this.expr = expr;
+        this.cnc = pgf.concrete(lang);
+        if (this.cnc ==null)
+            throw new NullPointerException("No such language "+lang+" !");
+        this.lProd = getLProductions();
+    }
+
 public HashMap<String,HashMap<Integer,HashSet<Production>>> retLProd()
 {return lProd;}
 
-public Expr retExpr()
-{return expr;}
+    //public Tree retExpr()
+    //{return expr;}
 
 public PGF retPGF()
 {return pgf;}
@@ -38,16 +49,8 @@ public String retLang()
 public Concrete retConcrete()
 {return cnc;}
 
-// returns a concrete syntax if the language was found in the PGF
-public Concrete cnc () throws NullPointerException
-{HashMap<String, Concrete> concs = pgf.getConcretes();
- if (concs.get(lang) ==null) throw new NullPointerException("No such language "+lang+" !");
-  return concs.get(lang);
- }
-
-
-//constructs the lproductions of the concrete syntax for the given language
-
+/** constructs the l-productions of the concrete syntax for a given language
+ **/
 public HashMap<String,HashMap<Integer,HashSet<Production>>> getLProductions() throws NullPointerException
 {HashMap<Integer,HashSet<Production>> emptyMap = new HashMap<Integer,HashSet<Production>>();
 	return linIndex(filterProductions(emptyMap, cnc.getSetOfProductions()));}
@@ -188,7 +191,7 @@ public boolean is_ho_prod(Production p)
 public HashSet<Integer> ho_fids()
 {HashSet<Integer> rezTemp = new HashSet<Integer>();
 Vector<String> ho_cats = ho_cats();
-CncCat[] cncCats = cnc().getCncCat();
+CncCat[] cncCats = this.cnc.getCncCat();
 for(int i=0; i<ho_cats.size(); i++)
 	for(int j=0; j<cncCats.length; j++)
 		if (ho_cats.elementAt(i).equals(cncCats[j].getName()))
@@ -256,29 +259,28 @@ return rez;}
 
 /** main linearization function
 **/
-public Vector<LinTriple> lin0(Vector<String> xs, Vector<String> ys, CncType mb_cty, Integer mb_fid, Expr e) throws Exception
+public Vector<LinTriple> lin0(Vector<String> xs, Vector<String> ys, CncType mb_cty, Integer mb_fid, Tree e) throws Exception
 {
- if(e instanceof LambdaExp)
-	{xs.add(((LambdaExp)e).getVarName());
-	return lin0(xs,ys,mb_cty,mb_fid,((LambdaExp)e).getBody());}
- else if(e instanceof TypedExp) {throw new Exception("Not done yet!!");}
- else if(xs.isEmpty()) return lin(ys,mb_cty,mb_fid,e,new Vector<Expr>());
+ if(e instanceof Lambda)
+	{xs.add(((Lambda)e).ident_);
+	return lin0(xs,ys,mb_cty,mb_fid,((Lambda)e).tree_);}
+ else if(xs.isEmpty()) return lin(ys,mb_cty,mb_fid,e,new Vector<Tree>());
      else {xs.addAll(ys);
-           Vector<Expr> exprs = new Vector<Expr>();
+           Vector<Tree> exprs = new Vector<Tree>();
            exprs.add(e);
            for(int i=0; i<xs.size(); i++)
-        	   exprs.add(new LiteralExp(new StringLiteral(xs.elementAt(i))));
+        	   exprs.add(new Literal(new StringLiteral(xs.elementAt(i))));
            return apply(xs,mb_cty,mb_fid,"_B",exprs);} 
 }
 
 
 /** intermediate linearization for complex expressions
 **/
-public Vector<LinTriple> apply(Vector<String> xs, CncType mb_cty, Integer n_fid, String f, Vector<Expr> es) throws Exception
+public Vector<LinTriple> apply(Vector<String> xs, CncType mb_cty, Integer n_fid, String f, Vector<Tree> es) throws Exception
 {HashMap<Integer,HashSet<Production>> prods = lProd.get(f);
 if (prods == null)
-	 {Vector<Expr> newes = new Vector<Expr>();
-	  newes.add(new LiteralExp(new StringLiteral(f)));
+	 {Vector<Tree> newes = new Vector<Tree>();
+	  newes.add(new Literal(new StringLiteral(f)));
 	  System.out.println("Function "+f+" does not have a linearization !");
 	  return apply(xs,mb_cty,n_fid,"_V",newes);
 	 }
@@ -292,7 +294,7 @@ else {Vector<AppResult> vApp = getApps(prods,mb_cty,f);
     	if (es.size() != ctys.size()) throw new Exception("lengths of es and ctys don't match"+es.toString()+" -- "+ctys.toString());
     	Sequence[] lins = vApp.elementAt(i).getCncFun().sequences();
     	String cat = vApp.elementAt(i).getCncType().getCId();
-    	Vector<Expr> copy_expr = new Vector<Expr>();
+    	Vector<Tree> copy_expr = new Vector<Tree>();
     	for(int ind = 0; ind<es.size();ind++)
     		copy_expr.add(es.elementAt(ind));
     	Vector<RezDesc> rezDesc = descend(n_fid,ctys,copy_expr,xs);
@@ -385,24 +387,23 @@ return rez;
 
 /** intermediate linearization helper function
 **/
-public Vector<LinTriple> lin(Vector<String> xs, CncType mb_cty, Integer n_fid, Expr e, Vector<Expr> es) throws Exception
+public Vector<LinTriple> lin(Vector<String> xs, CncType mb_cty, Integer n_fid, Tree e, Vector<Tree> es) throws Exception
 {Vector<LinTriple> rez = new Vector<LinTriple>();
-if(e instanceof AppExp)
-   {es.add(((AppExp)e).getRightExpr());
-        return lin(xs,mb_cty,n_fid,((AppExp)e).getLeftExpr(),es);}
-else if ((e instanceof LiteralExp) && (es.isEmpty()))
-   {Literal ll = ((LiteralExp) e).getLiteral();
+if(e instanceof Application)
+   {es.add(((Application)e).tree_2);
+        return lin(xs,mb_cty,n_fid,((Application)e).tree_1,es);}
+else if ((e instanceof Literal) && (es.isEmpty()))
+   {Lit ll = ((Literal) e).lit_;
     if (ll instanceof StringLiteral)
-	  rez.add(new LinTriple(n_fid+1, new CncType("String",n_fid),ss(((StringLiteral)ll).getValue())));
+	  rez.add(new LinTriple(n_fid+1, new CncType("String",n_fid),ss(((StringLiteral)ll).string_)));
      else if (ll instanceof IntLiteral)
- 	  rez.add(new LinTriple(n_fid+1, new CncType("Int",n_fid), ss(""+((IntLiteral)ll).getValue())));
-      else rez.add(new LinTriple(n_fid+1, new CncType("Float",n_fid), ss(""+((FloatLiteral)ll).getValue())));
+ 	  rez.add(new LinTriple(n_fid+1, new CncType("Int",n_fid), ss(""+((IntLiteral)ll).integer_)));
+      else rez.add(new LinTriple(n_fid+1, new CncType("Float",n_fid), ss(""+((FloatLiteral)ll).double_)));
     return rez;}
-else if (e instanceof MetaExp) throw new Exception("linearization for meta expressions is not implemented yet!");
-else if (e instanceof AbsNameExp) return apply(xs, mb_cty,n_fid, ((AbsNameExp)e).getName(),es);
-else if (e instanceof VarExp) throw new Exception("linearization for variable expressions is not implemented yet!");
-else if (e instanceof TypedExp) throw new Exception("linearization for typed expressions is not implemented yet!");
-else throw new Exception("linearization for expressions with implicit arguments is not implemented yet!");	
+else if (e instanceof MetaVariable) throw new Exception("linearization for meta expressions is not implemented yet!");
+else if (e instanceof Function) return apply(xs, mb_cty,n_fid, ((Function)e).ident_,es);
+else if (e instanceof Variable) throw new Exception("linearization for variable expressions is not implemented yet!");
+else throw new Exception("linearization for typed expressions or expressions with implicit arguments is not implemented yet!");	
 }
 	
 /** creates a simple vector of vectors of bracketed tokens containing a string value
@@ -466,13 +467,13 @@ return bt;
 
 /** shuffles the results of of the intermediate linearization, for generating all the possible combinations
  **/
-public Vector<RezDesc> descend(int n_fid, Vector<CncType> cncTypes, Vector<Expr> exps, Vector<String> xs) throws Exception
+public Vector<RezDesc> descend(int n_fid, Vector<CncType> cncTypes, Vector<Tree> exps, Vector<String> xs) throws Exception
 {Vector<RezDesc> rez = new Vector<RezDesc>();
  if(exps.isEmpty()) {rez.add(new RezDesc(n_fid,new Vector<CncType>(), new Vector<Vector<Vector<BracketedTokn>>>()));
                      return rez;	 }
    else {CncType cncType = cncTypes.firstElement();
          cncTypes.remove(0);
-         Expr exp = exps.firstElement();
+         Tree exp = exps.firstElement();
          exps.remove(0);
          Vector<LinTriple> rezLin = lin0(new Vector<String>(), xs, cncType,n_fid,exp);
          Vector<RezDesc> rezDesc = descend(n_fid,cncTypes,exps,xs);

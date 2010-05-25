@@ -12,11 +12,10 @@ public class PGF {
     private Map<String, RLiteral> flags;
     private Abstract abstr;
     private Map<String, Concrete> concretes;
-    //    Concrete[] concretes;
-    
-    public PGF(int _majorVersion, int _minorVersion, 
-               Map<String, Literal> _flags, 
-               Abstract _abstr, 
+
+    public PGF(int _majorVersion, int _minorVersion,
+               Map<String, RLiteral> _flags,
+               Abstract _abstr,
                Concrete[] concretes)
     {
         majorVersion = _majorVersion;

@@ -34,23 +34,28 @@ class NewReader {
      * @param inStream and InputStream to read the pgf binary from.
      */
     public static PGF readInputStream(InputStream inStream) throws IOException {
-            DataInputStream is = new DataInputStream(inStream);
-            //BufferedInputStream is = new DataInputStream(inStream);
-            //InputStreamReader is = new InputStreamReader(inStream,"UTF-8");
-            int ii[]=new int[4];
-            for(int i=0;i<4;i++)
-                ii[i]=is.read(); 
-            
-            Map<String,Literal> flags = getListFlag(is);
-            Abstract abs = getAbstract(is);
-            Concrete[] concretes = getListConcretes(is);
-            PGF pgf = new PGF(makeInt16(ii[0],ii[1]), 
-                              makeInt16(ii[2],ii[3]), 
-                              flags, abs, concretes);
-            log.finest("The resulting PGF is : "+ pgf.toString());
-            log.fine("the end");
-            is.close();
-            return pgf;
+        DataInputStream is = new DataInputStream(inStream);
+        //BufferedInputStream is = new DataInputStream(inStream);
+        //InputStreamReader is = new InputStreamReader(inStream,"UTF-8");
+        // Reading the PGF version
+        int ii[]=new int[4];
+        for(int i=0;i<4;i++)
+            ii[i]=is.read();
+        // Reading the global flags
+        Map<String,RLiteral> flags = getListFlag(is);
+        // Reading the abstract
+        Abstract abs = getAbstract(is);
+        // Reading the concrete grammars
+        Concrete[] concretes = getListConcretes(is);
+        // builds and returns the pgf object.
+        PGF pgf = new PGF(makeInt16(ii[0],ii[1]),
+                          makeInt16(ii[2],ii[3]),
+                          flags, abs, concretes);
+
+        log.finest("The resulting PGF is : "+ pgf.toString());
+        log.fine("the end");
+        is.close();
+        return pgf;
     }
 
     /* ************************************************* */
@@ -64,90 +69,27 @@ class NewReader {
     private static Abstract getAbstract(DataInputStream is) throws IOException
     {
         String s = getString(is);
-        Map<String,Literal> flags = getListFlag(is);
+        Map<String,RLiteral> flags = getListFlag(is);
         AbsFun[] absFuns = getListAbsFun(is);
         AbsCat[] absCats = getListAbsCat(is);
         return new Abstract(s,flags,absFuns,absCats);
     }
 
-  
-// protected Flag getFlag(DataInputStream is) throws IOException
-// { String ss = getString(is);
-//   Literal lit = getLiteral(is);
-//   Flag ff = new Flag(ss,lit);
-//   return ff;
-// }
-  
-    protected Map<String,Literal> getListFlag(DataInputStream is) 
-        throws IOException
-    {
+    private static Pattern[] getListPattern(DataInputStream is) throws IOException {
         int npoz = getInteger(is);
-        Map<String,Literal> flags = new HashMap<String,Literal>();
-        if (npoz == 0)
-            return flags;
-        for (int i=0; i<npoz; i++) {
-            String ss = getString(is);
-            Literal lit = getLiteral(is);
-            flags.put(ss, lit);
-        }
-        return flags;
+        Pattern[] patts = new Pattern[npoz];
+        for(int i=0; i<npoz; i++)
+            patts[i]=getPattern(is);
+        return patts;
     }
- 
- protected String getString(DataInputStream is) throws IOException
- { int npoz = getInteger(is);
-   byte[] bytes;
-   int r ;
-   String letter="";
-   int lg = 0; 
-   StringBuffer bf = new StringBuffer();
-   for (int i=0; i<npoz; i++)
-   {r = is.read();
-    if(r <= 0x7f) lg = 0;
-    else if ((r >= 0xc0) && (r <= 0xdf)) 
-                 lg = 1;
-    	 /*      
-    {bytes = new byte[2];
-           bytes[0] = (byte) r; 
-           bytes[1] = (byte) is.read();
-           letter = new String(bytes, "UTF-8");
-           } */
-    else if ((r >= 0xe0) && (r <= 0xef))
-    	  lg = 2;
-    else if ((r >= 0xf0) && (r <= 0xf4))
-    	  lg = 3;
-    else if ((r >= 0xf8) && (r <= 0xfb))
-    	  lg = 4;
-    else if ((r >= 0xfc) && (r <= 0xfd))
-          lg =5;    	
-    else throw new IOException("Undefined for now !!! ");
-    bytes = new byte[1 + lg];
-    bytes[0] = (byte) r;
-    for(int j=1; j<=lg; j++)
-    	bytes[j] = (byte) is.read();
-    letter = new String(bytes,"UTF-8");
-    bf.append(letter);
-   }
-   return new String(bf.toString().getBytes(),"UTF-8");
- }
- 
- protected Literal getLiteral(DataInputStream is) throws IOException
- {int sel = is.read();
-Literal ss = null;
-switch (sel) 
-{case 0 : String str = getString(is);
-          ss = new StringLiteral(str); 
-          break;
- case 1 : int i = getInteger(is);
-          ss = new IntLiteral(i);
-          break;
- case 2 : double d = is.readDouble();
-          ss = new FloatLiteral(d);
-          break;
- default : throw new IOException("Incorrect literal tag "+sel); 
- }
-ss.sel=sel;
-return ss;
-}
+
+    private static Eq getEq(DataInputStream is) throws IOException {
+        Pattern[] patts = getListPattern(is);
+        Expr exp = getExpr(is);
+        return new Eq(patts,exp);
+    }
+
+
 
     private static AbsFun getAbsFun(DataInputStream is) throws IOException {
         String s = getString(is);
@@ -191,79 +133,8 @@ return ss;
             for (int i=0; i<npoz; i++)
                 absCats[i] = getAbsCat(is);
 
-}
- 
-protected Hypo getHypo(DataInputStream is) throws IOException	 
-{ int btype = is.read();
-  boolean b = btype == 0 ? false : true;
-  String s = getString(is);
-  Type t = getType(is);
-  Hypo hh = new Hypo (b,s,t);
-  return hh;
-}
- 
-protected Hypo[] getListHypo(DataInputStream is) throws IOException
-{int npoz = getInteger(is);
- Hypo[] hypos = new Hypo[npoz]; 
- for (int i=0; i<npoz; i++)
-	 hypos[i]=getHypo(is);
-return hypos;	
-}
-    
-protected Expr[] getListExpr(DataInputStream is) throws IOException
-{int npoz = getInteger(is);
- Expr[] exprs = new Expr[npoz]; 
- for(int i=0; i<npoz; i++)
-	 exprs[i]=getExpr(is);
- return exprs;
- }
-	 
-protected Expr getExpr(DataInputStream is) throws IOException
-{int sel = is.read();
- Expr expr = null;
- switch (sel) {
- case 0 : //lambda abstraction
-           int bt = is.read(); 
-	       boolean btype = bt == 0 ? false : true ;
-           String str = getString(is);
-           Expr e1 = getExpr(is);
-           expr = new LambdaExp(btype,str,e1);
-           break;
- case 1 : //expression application
-           Expr e11 = getExpr(is);
-           Expr e2 = getExpr(is);
-           expr = new AppExp(e11,e2);
-           break;
- case 2 : //literal expression
-           Literal lit = getLiteral(is);
-           expr = new LiteralExp(lit);
-           break;
- case 3 : //meta variable
-	       int id = getInteger(is);
-	       expr = new MetaExp(id);
-	       break;
- case 4 : //abstract function name
-	       String s = getString(is);
-	       expr = new AbsNameExp(s);
-	       break;
- case 5 : //variable	       
-          int v = getInteger(is);
-          expr = new VarExp(v);
-          break;
- case 6 : //type annotated expression
-	      Expr e = getExpr(is);
-	      Type t = getType(is);
-	      expr = new TypedExp(e,t);
-	      break;
- case 7 : //implicit argument
-	      Expr ee = getExpr(is);
-          expr = new ImplExp(ee);
-          break;
- default : throw new IOException("invalid tag for expressions : "+sel);
- }
- expr.sel=sel;        
- return expr;
-	}
+        return absCats;
+    }
 
 
     private static Type getType(DataInputStream is) throws IOException {
@@ -274,43 +145,13 @@ protected Expr getExpr(DataInputStream is) throws IOException
 
     }
 
-protected Pattern getPattern(DataInputStream is) throws IOException
-{int sel = is.read();
-Pattern patt = null;
-switch (sel) {
-case 0 : //application pattern
-          String str = getString(is);
-          Pattern[] patts = getListPattern(is);
-          patt = new AppPattern(str,patts);
-          break;
-case 1 : //variable pattern
-          String s = getString(is);
-          patt = new VarPattern(s);
-          break;
-case 2 : //variable as pattern 
-          String sp = getString(is);
-          Pattern p = getPattern(is);
-          patt = new VarAsPattern(sp,p);
-          break;
-case 3 : //wild card pattern
-	      patt = new WildCardPattern();
-	      break;
-case 4 : //literal pattern
-	      Literal lit = getLiteral(is);
-	      patt = new LiteralPattern(lit);
-	      break;
-case 5 : //implicit argument
-          Pattern pp = getPattern(is);     
-          patt = new ImpArgPattern(pp);
-case 6 : //inaccessible pattern
-	      Expr e = getExpr(is);
-	      patt = new InaccPattern(e);
-	      break;
-default : throw new IOException("invalid tag for patterns : "+sel);
-}
-patt.sel = sel;
-return patt;
-}
+    private static Hypo getHypo(DataInputStream is) throws IOException { int btype = is.read();
+        boolean b = btype == 0 ? false : true;
+        String s = getString(is);
+        Type t = getType(is);
+        Hypo hh = new Hypo (b,s,t);
+        return hh;
+    }
 
     private static Hypo[] getListHypo(DataInputStream is) throws IOException {
         int npoz = getInteger(is);
@@ -345,7 +186,7 @@ return patt;
             expr = new AppExp(e11,e2);
             break;
         case 2 : //literal expression
-            Literal lit = getLiteral(is);
+            RLiteral lit = getLiteral(is);
             expr = new LiteralExp(lit);
             break;
         case 3 : //meta variable
@@ -406,7 +247,7 @@ return patt;
             patt = new WildCardPattern();
             break;
         case 4 : //literal pattern
-            Literal lit = getLiteral(is);
+            RLiteral lit = getLiteral(is);
             patt = new LiteralPattern(lit);
             break;
         case 5 : //implicit argument
@@ -422,18 +263,18 @@ return patt;
         return patt;
     }
 
-    private static Literal getLiteral(DataInputStream is) throws IOException {
+    private static RLiteral getLiteral(DataInputStream is) throws IOException {
         int sel = is.read();
-        Literal ss = null;
+        RLiteral ss = null;
         switch (sel)
             {case 0 : String str = getString(is);
-                    ss = new StringLiteral(str);
+                    ss = new StringLit(str);
                     break;
             case 1 : int i = getInteger(is);
-                ss = new IntLiteral(i);
+                ss = new IntLit(i);
                 break;
             case 2 : double d = is.readDouble();
-                ss = new FloatLiteral(d);
+                ss = new FloatLit(d);
                 break;
             default : throw new IOException("Incorrect literal tag "+sel);
             }
@@ -447,7 +288,7 @@ return patt;
     private static Concrete getConcrete(DataInputStream is) throws IOException
     {
         String name = getString(is);
-        Map<String,Literal> flags = getListFlag(is);
+        Map<String,RLiteral> flags = getListFlag(is);
         PrintName[] pnames = getListPrintName(is);
         Sequence[] seqs = getListSequence(is);
         CncFun[] cncFuns = getListCncFun(is, seqs);
@@ -469,31 +310,10 @@ return patt;
         return concretes;
     }
 
-
-    protected Abstract getAbstract(DataInputStream is) throws IOException
-    {
-        String s = getString(is);
-        Map<String,Literal> flags = getListFlag(is);
-        AbsFun[] absFuns = getListAbsFun(is);
-        AbsCat[] absCats = getListAbsCat(is);
-        return new Abstract(s,flags,absFuns,absCats);
-    }
-
-
-    protected Concrete getConcrete(DataInputStream is) throws IOException
-    {
-        String name = getString(is);
-        Map<String,Literal> flags = getListFlag(is);
-        PrintName[] pnames = getListPrintName(is);
-        Sequence[] seqs = getListSequence(is);
-        CncFun[] cncFuns = getListCncFun(is, seqs);
-        ProductionSet[] prods = getListProductionSet(is, cncFuns);
-        CncCat[] cncCats = getListCncCat(is);
-        int i = getInteger(is);
-        return new Concrete(name,flags,pnames,seqs,cncFuns,prods,cncCats,i);
-    }
-
-    protected PrintName getPrintName(DataInputStream is) throws IOException
+    /* ************************************************* */
+    /* Reading print names                               */
+    /* ************************************************* */
+    private static PrintName getPrintName(DataInputStream is) throws IOException
     {
         String absName = getString(is);
         String printName = getString(is);
@@ -722,15 +542,15 @@ return patt;
     /* ************************************************* */
     /* Reading flags                                     */
     /* ************************************************* */
-    private static Map<String,Literal> getListFlag(DataInputStream is)
+    private static Map<String,RLiteral> getListFlag(DataInputStream is)
         throws IOException {
         int npoz = getInteger(is);
-        Map<String,Literal> flags = new HashMap<String,Literal>();
+        Map<String,RLiteral> flags = new HashMap<String,RLiteral>();
         if (npoz == 0)
             return flags;
         for (int i=0; i<npoz; i++) {
             String ss = getString(is);
-            Literal lit = getLiteral(is);
+            RLiteral lit = getLiteral(is);
             flags.put(ss, lit);
         }
         return flags;
