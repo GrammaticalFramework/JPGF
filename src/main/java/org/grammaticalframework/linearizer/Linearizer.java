@@ -1,4 +1,5 @@
 package org.grammaticalframework.linearizer;
+
 import java.io.FileInputStream;
 import java.util.Vector;
 import java.util.HashSet;
@@ -12,65 +13,73 @@ import org.grammaticalframework.Trees.Absyn.*;
 public class Linearizer {
 
     private PGF pgf;
-    private String lang;
     private Concrete cnc ;
-    private Tree expr;
     private HashMap<String,HashMap<Integer,HashSet<Production>>> lProd;
 
     /** linearizes an expression to a bracketed token
      * and further on to a string
      * not implemented to dependent categories, implicit argument,
      * and higher-order abstract syntax
+     * @param concrete the concrete grammar to use
+     * @param expr the tree to linearize
      **/
-    public Linearizer(String file, String lang, Tree expr, PGF pgf)
-        throws Exception
+    public Linearizer(PGF pgf, Concrete concrete)
+       throws Exception
     {
         this.pgf = pgf;
-        this.lang = lang;
-        this.expr = expr;
-        this.cnc = pgf.concrete(lang);
-        if (this.cnc ==null)
-            throw new NullPointerException("No such language "+lang+" !");
+        //this.lang = lang;
+        //this.expr = expr;
+        this.cnc = concrete;
         this.lProd = getLProductions();
     }
 
-public HashMap<String,HashMap<Integer,HashSet<Production>>> retLProd()
-{return lProd;}
+    public HashMap<String,HashMap<Integer,HashSet<Production>>> retLProd()
+    {return lProd;}
 
-    public Tree retExpr()
-    {return expr;}
+    // public Tree retExpr()
+    // {return expr;}
 
-public PGF retPGF()
-{return pgf;}
+    // // public PGF retPGF()
+    // // {return pgf;}
 
-public String retLang()
-{return lang;}
+    // // public String retLang()
+    // // {return lang;}
 
-public Concrete retConcrete()
-{return cnc;}
+    // public Concrete retConcrete()
+    // {return cnc;}
 
-/** constructs the l-productions of the concrete syntax for a given language
- **/
-public HashMap<String,HashMap<Integer,HashSet<Production>>> getLProductions() throws NullPointerException
-{HashMap<Integer,HashSet<Production>> emptyMap = new HashMap<Integer,HashSet<Production>>();
-	return linIndex(filterProductions(emptyMap, cnc.getSetOfProductions()));}
+    /** constructs the l-productions of the concrete syntax for
+     * a given language
+     **/
+    public HashMap<String,HashMap<Integer,HashSet<Production>>>
+        getLProductions()
+        throws NullPointerException
+    {
+        HashMap<Integer,HashSet<Production>> emptyMap =
+            new HashMap<Integer,HashSet<Production>>();
+	return linIndex(filterProductions(emptyMap, cnc.getSetOfProductions()));
+    }
 
-
-/** aligns the indexes for the l-productions
-**/
-public HashMap<String,HashMap<Integer,HashSet<Production>>> linIndex(HashMap<Integer,HashSet<Production>> productions)
-{ 	HashMap<String,HashMap<Integer,HashSet<Production>>> vtemp = new HashMap<String,HashMap<Integer,HashSet<Production>>>();
-	Iterator<Entry<Integer,HashSet<Production>>> i = productions.entrySet().iterator();
-	 while(i.hasNext())
-	 {Entry<Integer,HashSet<Production>> entr = (Entry<Integer,HashSet<Production>>) i.next();
-	  Integer res = entr.getKey(); 
-          Iterator<Production> prods = entr.getValue().iterator();
-	  while(prods.hasNext())
-	    { Production prod = (Production) prods.next();
-		  Vector<String> vs = getFunctions(prod,productions);
-	      if (vs != null)
-	    	  for(int j=0; j<vs.size(); j++)
-	    	  {HashMap<Integer,HashSet<Production>> htemp = new HashMap<Integer,HashSet<Production>>();
+    /** aligns the indexes for the l-productions
+     **/
+    public HashMap<String,HashMap<Integer,HashSet<Production>>>
+        linIndex(HashMap<Integer,HashSet<Production>> productions)
+    {
+        HashMap<String,HashMap<Integer,HashSet<Production>>> vtemp =
+            new HashMap<String,HashMap<Integer,HashSet<Production>>>();
+	Iterator<Entry<Integer,HashSet<Production>>> i =
+            productions.entrySet().iterator();
+        while(i.hasNext()) {
+            Entry<Integer,HashSet<Production>> entr =
+                (Entry<Integer,HashSet<Production>>) i.next();
+            Integer res = entr.getKey();
+            Iterator<Production> prods = entr.getValue().iterator();
+            while(prods.hasNext()) {
+                Production prod = (Production) prods.next();
+                Vector<String> vs = getFunctions(prod,productions);
+                if (vs != null)
+                    for(int j=0; j<vs.size(); j++)
+                        {HashMap<Integer,HashSet<Production>> htemp = new HashMap<Integer,HashSet<Production>>();
 	    	   HashSet<Production> hSingleton = new HashSet<Production>();
 	    	   hSingleton.add(prod);
 	    	   String newl = vs.elementAt(j);
@@ -92,13 +101,16 @@ public HashMap<String,HashMap<Integer,HashSet<Production>>> linIndex(HashMap<Int
 	        }}}
 return vtemp;
 }
-	
-/** returns the abstract functions corresponding to a production
-**/
-public Vector<String> getFunctions(Production p, HashMap<Integer,HashSet<Production>> productions)
-{Vector<String> rez = new Vector<String>();
+
+    /** returns the abstract functions corresponding to a production
+     **/
+    public Vector<String>
+        getFunctions(Production p,
+                     HashMap<Integer,HashSet<Production>> productions)
+    {
+        Vector<String> rez = new Vector<String>();
 	if (p instanceof ApplProduction)
-		rez.add(((ApplProduction)p).getFunction().name()); 
+		rez.add(((ApplProduction)p).getFunction().name());
 	else // coercion
 	   {Integer fid = new Integer(((CoerceProduction) p).getInitId());
 		HashSet<Production> prods = productions.get(fid);
@@ -167,7 +179,7 @@ else return prods0;
 /** checks if a production satisfies conditionProd recursively
 **/
 public boolean filterRule(HashMap<Integer,HashSet<Production>> prods, Production p)
-{if (p instanceof ApplProduction) 
+{if (p instanceof ApplProduction)
   {ApplProduction ap = (ApplProduction) p;
   for(int i=0; i<ap.getArgs().length; i++)
 	 if(!conditionProd(ap.getArgs()[i], prods))  return false;
@@ -176,7 +188,7 @@ public boolean filterRule(HashMap<Integer,HashSet<Production>> prods, Production
 return conditionProd(((CoerceProduction) p).getInitId(),prods);
 	}
 
-/** checks if a production just has a variable argument 
+/** checks if a production just has a variable argument
 **/
 public boolean is_ho_prod(Production p)
 {if (p instanceof ApplProduction)
@@ -200,18 +212,19 @@ for(int i=0; i<ho_cats.size(); i++)
 return rezTemp;}
 
 
-/**get all names of types from Concrete
-**/
-public Vector<String> ho_cats()
-{Vector<String> rezTemp = new Vector<String>();
-Abstract abstr = pgf.getAbstract();
-AbsFun[] absFuns = abstr.getAbsFuns();
-for(int i=0; i<absFuns.length; i++)
- {Hypo[] hypos = absFuns[i].getType().getHypos();
- for(int j=0; j<hypos.length; j++)
-	 if(!rezTemp.contains(hypos[j].getType().getName()))
-		 rezTemp.add(hypos[j].getType().getName());}
-return rezTemp;}
+    /**get all names of types from Concrete
+     **/
+    public Vector<String> ho_cats() {
+        Vector<String> rezTemp = new Vector<String>();
+        Abstract abstr = pgf.getAbstract();
+        AbsFun[] absFuns = abstr.getAbsFuns();
+        for(int i=0; i<absFuns.length; i++) {
+            Hypo[] hypos = absFuns[i].getType().getHypos();
+            for(int j=0; j<hypos.length; j++)
+                if(!rezTemp.contains(hypos[j].getType().getName()))
+                    rezTemp.add(hypos[j].getType().getName());}
+        return rezTemp;
+    }
 
 /**gets the types from the hypotheses of a type
 **/
@@ -256,26 +269,36 @@ for(int j=0; j<vtemp.size(); j++)
 	}
 return rez;}
 
+    public Vector<LinTriple> linearize(Tree e) throws Exception {
+        return this.lin0(new Vector<String>(), new Vector<String>(),
+                         null, new Integer(0), e);
+    }
 
-/** main linearization function
-**/
-public Vector<LinTriple> lin0(Vector<String> xs, Vector<String> ys, CncType mb_cty, Integer mb_fid, Tree e) throws Exception
-{
- if(e instanceof Lambda)
-	{xs.add(((Lambda)e).ident_);
-	return lin0(xs,ys,mb_cty,mb_fid,((Lambda)e).tree_);}
- else if(xs.isEmpty()) return lin(ys,mb_cty,mb_fid,e,new Vector<Tree>());
-     else {xs.addAll(ys);
-           Vector<Tree> exprs = new Vector<Tree>();
-           exprs.add(e);
-           for(int i=0; i<xs.size(); i++)
-        	   exprs.add(new Literal(new StringLiteral(xs.elementAt(i))));
-           return apply(xs,mb_cty,mb_fid,"_B",exprs);} 
-}
+    /** main linearization function
+     **/
+    public Vector<LinTriple> lin0(Vector<String> xs,
+                                  Vector<String> ys,
+                                  CncType mb_cty,
+                                  Integer mb_fid,
+                                  Tree e) throws Exception
+    {
+        if(e instanceof Lambda) {
+            xs.add(((Lambda)e).ident_);
+            return lin0(xs,ys,mb_cty,mb_fid,((Lambda)e).tree_);}
+        else if(xs.isEmpty())
+            return lin(ys,mb_cty,mb_fid,e,new Vector<Tree>());
+        else {
+            xs.addAll(ys);
+            Vector<Tree> exprs = new Vector<Tree>();
+            exprs.add(e);
+            for(int i=0; i<xs.size(); i++)
+                exprs.add(new Literal(new StringLiteral(xs.elementAt(i))));
+            return apply(xs,mb_cty,mb_fid,"_B",exprs);
+        }
+    }
 
-
-/** intermediate linearization for complex expressions
-**/
+    /** intermediate linearization for complex expressions
+     **/
 public Vector<LinTriple> apply(Vector<String> xs, CncType mb_cty, Integer n_fid, String f, Vector<Tree> es) throws Exception
 {HashMap<Integer,HashSet<Production>> prods = lProd.get(f);
 if (prods == null)

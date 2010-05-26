@@ -41,8 +41,8 @@ for(int i=0;i<absCats.length; i++)
                        dirFuns.add(strs[j]);
           	  else indirFuns.add(strs[j]);
        		 break;}
-     dirRules.put(absCats[i].getName(),dirFuns);
-     indirRules.put(absCats[i].getName(), indirFuns);
+     dirRules.put(absCats[i].name(),dirFuns);
+     indirRules.put(absCats[i].name(), indirFuns);
 }}
 	
 	

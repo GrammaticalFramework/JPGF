@@ -1,19 +1,25 @@
 package org.grammaticalframework.reader;
 
 public class AbsCat {
-    private String str;
+    private String name;
     private Hypo[] hypos;
     private String[] strs;
     
-    public AbsCat(String _str, Hypo[] _hypos, String[] _strs)
+    public AbsCat(String name, Hypo[] _hypos, String[] _strs)
     {
-        str = _str;
+        this.name = name;
         hypos = _hypos;
         strs = _strs;
     }
 
+    public String name() {
+        return name;
+    }
+    public Hypo[] getHypos() {return hypos;}
+    public String[] getFunctions() {return strs;}
+
     public String toString() {
-        String ss = "Name : "+ str + " , Hypotheses : (";
+        String ss = "Name : "+ name + " , Hypotheses : (";
         for(int i=0; i<hypos.length; i++)
             ss+=(" "+hypos[i].toString());
         ss+=") , String Names : (";
@@ -23,10 +29,5 @@ public class AbsCat {
         return ss;
     }
 
-    public String getName() {return str;}
-    public Hypo[] getHypos() {return hypos;}
-    public String[] getFunctions() {return strs;}
-    
-    
 }
 

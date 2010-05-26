@@ -3,25 +3,31 @@ package org.grammaticalframework.reader;
 import java.util.Map;
 
 public class Abstract {
-    private String str;
+    private String name;
     private Map<String,RLiteral> flags;
     private AbsFun[] absFuns;
     private AbsCat[] absCats;
 
 
-    public Abstract(String _str, 
+    public Abstract(String name,
                     Map<String, RLiteral> _flags, 
                     AbsFun[] _absFuns, 
                     AbsCat[] _absCats)
     {
-        str = _str;
+        this.name = name;
         flags = _flags;
         absFuns = _absFuns;
-        absCats = _absCats; 
+        absCats = _absCats;
     }
-    
+
+    public String name() {
+        return name;
+    }
+    public AbsFun[] getAbsFuns() {return absFuns;}
+    public AbsCat[] getAbsCats() {return absCats;}
+
     public String toString()
-    {String ss = "Name : "+str + " , Flags : (";
+    {String ss = "Name : "+ name + " , Flags : (";
         // for(int i=0; i<flags.length;i++)
         // 	ss+=(" "+flags[i].toString());
         ss+=") , Abstract Functions : (";
@@ -33,9 +39,5 @@ public class Abstract {
         ss+=")";
         return ss;
     }
-    
-    public String getName() {return str;}
-    //public Flag[] getFlags() {return flags;}
-    public AbsFun[] getAbsFuns() {return absFuns;}
-    public AbsCat[] getAbsCats() {return absCats;}
+
 }
