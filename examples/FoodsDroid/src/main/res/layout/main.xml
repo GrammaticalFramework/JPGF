@@ -17,9 +17,4 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
             android:text="Welcome"/>
-  <Button android:id="@+id/speak_button"
-	  android:layout_below="@id/result_view"
-	  android:layout_width="wrap_content"
-	  android:layout_height="wrap_content"
-	  android:text="Say it"/>
 </RelativeLayout>
