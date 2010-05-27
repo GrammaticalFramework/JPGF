@@ -13,11 +13,18 @@ class JPGFProject(info: ProjectInfo) extends ParentProject(info)
   lazy val library = project(info.projectPath, "JPGF library")
 
   // Examples
-  lazy val phraseDroid =
+  lazy val foodDroid =
     project("examples" / "FoodsDroid",     // Project path
             "FoodsDroid",                  // Project name
             new AndroidApp(_),             // Project class
             library)                       // Dependencies
+
+  lazy val phraseDroid =
+    project("examples" / "PhraseDroid",    // Project path
+            "PhraseDroid",                 // Project name
+            new AndroidApp(_),             // Project class
+            library)                       // Dependencies
+
   class AndroidApp(info: ProjectInfo) extends AndroidProject(info)
   with AndroidDefaults
 }
