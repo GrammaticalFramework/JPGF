@@ -2,6 +2,7 @@ package org.grammaticalframework.parser
 
 import org.grammaticalframework.reader.PGF
 import org.grammaticalframework.Trees.PrettyPrinter
+import org.grammaticalframework.linearizer.Linearizer
 
 import java.util.logging._;
 
@@ -42,6 +43,10 @@ class TestGrammar(pgfFile:String, langName:String) {
     parser.parse(tokens)
     val trees = parser.getTrees
     trees.map(PrettyPrinter.print).foreach(println)
+    trees.foreach( t => {
+      val line = new Linearizer(grammar, grammar.concrete(langName))
+      println(line.renderLin(line.linearize(t)))
+    })
     //parser.printState
   }
 }
