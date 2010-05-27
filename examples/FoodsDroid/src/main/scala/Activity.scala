@@ -9,6 +9,7 @@ import _root_.android.content.res.Resources
 //import android.view.Menu._
 import _root_.org.grammaticalframework.reader.{NewReader, PGF, Concrete}
 import _root_.org.grammaticalframework.parser.{Parser}
+import _root_.org.grammaticalframework.linearizer.{Linearizer}
 import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
 class MainActivity extends Activity {
@@ -21,6 +22,7 @@ class MainActivity extends Activity {
     val pgf_is = this.getResources().openRawResource(R.raw.foods)
     val pgf = PGF.readFromInputStream(pgf_is)
     val parser = new Parser(pgf.concrete("FoodsEng"))
+    val linearizer = new Linearizer(pgf, pgf.concrete("FoodsIta"))
 
     // Get pointers to the ui elements
     val phraseField = findViewById(R.id.phrase).asInstanceOf[EditText]
@@ -32,24 +34,20 @@ class MainActivity extends Activity {
     translateButton.setOnClickListener( new View.OnClickListener() {
       def onClick(v:View) = {
       val phrase = phraseField.getText.toString
-        resultView.setText(parse(parser,phrase))
-      }
-    })
-    // Speak action
-    translateButton.setOnClickListener( new View.OnClickListener() {
-      def onClick(v:View) = {
-      val phrase = phraseField.getText.toString
-        resultView.setText(parse(parser,phrase))
+        resultView.setText(translate(parser,linearizer,phrase))
       }
     })
   }
 
-  def parse(parser:Parser, txt:String):String = {
+  def translate(parser:Parser, linearizer:Linearizer, txt:String):String = {
     val tokens = txt.split(" ")
     parser.parse(tokens)
     val trees = parser.getTrees
     var s = ""
-    trees.map(PrettyPrinter.print).foreach(s += _)
+
+    trees.foreach( t => {
+      s += linearizer.renderLin(linearizer.linearize(t)).toArray.mkString(" ")
+    })
     return s
   }
 }
