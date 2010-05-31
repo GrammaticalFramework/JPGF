@@ -32,7 +32,7 @@ class Parser(val grammar:Concrete) {
    * @param token list of tokens to parse
    * @param startCat top category
    * */
-  def parse(tokens : Seq[String], startCat: Int):Unit = {
+  def parse(tokens : Seq[String], startCat: CncCat):Unit = {
     ps = new ParseState(this, this.grammar, tokens.length)
     for (token <- tokens) {
       log.fine("Scanning token " + token)
@@ -101,12 +101,13 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
 
   private def init() = {
     log.finer("Initializing parse state with start cat " + this.startCat)
-    for (prod <- chart.getProductions(this.startCat)) {
-      val it = new ActiveItem(0, this.startCat, prod.function,
-                              prod.domain, 0, 0)
-      agenda += it
-
-    }
+    for (
+      id <- startCat.firstID until startCat.lastID + 1 ;
+      prod <- chart.getProductions(id) ) {
+        val it = new ActiveItem(0, id, prod.function,
+                                prod.domain, 0, 0)
+        agenda += it
+      }
   }
 
 

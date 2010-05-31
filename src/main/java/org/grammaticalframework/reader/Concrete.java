@@ -11,8 +11,9 @@ public class Concrete {
     private Sequence[] seqs ;
     private CncFun[] cncFuns ;
     private ProductionSet[] prods ;
-    private CncCat[] cncCats ;
+    private Map<String, CncCat> cncCats ;
     private int fId ;
+    private String startCat;
 
     public Concrete (String name,
                      Map<String,RLiteral> flags,
@@ -20,8 +21,9 @@ public class Concrete {
                      Sequence[] _seqs,
                      CncFun[] _cncFuns,
                      ProductionSet[] _prods,
-                     CncCat[] _cncCats,
-                     int _fId)
+                     Map<String, CncCat> cncCats,
+                     int _fId,
+                     String defaultStartCat)
     {
         this.name = name;
         this.flags = flags;
@@ -29,8 +31,26 @@ public class Concrete {
         seqs = _seqs;
         cncFuns = _cncFuns;
         prods = _prods;
-        cncCats = _cncCats;
+        this.cncCats = cncCats;
         fId = _fId;
+        this.startCat = defaultStartCat;
+    }
+
+    /**
+     * Accessors
+     */
+    public String name() {
+        return name;
+    }
+
+    /**
+     * returns the concretes categories (forest indices) corresponding to the
+     * given abstract category.
+     * @param absCat the name of the abstract category
+     * @return the CncCat object or null if the category in unknown.
+     **/
+    public CncCat concreteCats(String absCat) {
+        return this.cncCats.get(absCat);
     }
 
     public String getName() {return name;}
@@ -40,20 +60,23 @@ public class Concrete {
     public Sequence[] getSequences() {return seqs;}
     public CncFun[] getCncFuns() {return cncFuns;}
     public ProductionSet[] getProductionSet() {return prods;}
-    public CncCat[] getCncCat() {return cncCats;}
+    public CncCat[] getCncCat() {
+        CncCat[] array = new CncCat[this.cncCats.size()];
+        int i = 0;
+        for ( CncCat c : this.cncCats.values()) {
+            array[i] = c;
+            i++;
+        }
+        return array;
+    }
     public int getFId() {return fId;}
 
-    /**
-     * Accessors
-     */
-    public String name() { return this.name; }
-
-    public int startCat() {
-        RLiteral cat = this.flags.get("startcat");
+    public CncCat startCat() {
+        CncCat cat = this.cncCats.get(this.startCat);
         if (cat == null)
-            return 0;
+            return new CncCat(this.startCat,0,0,null);
         else
-            return ((IntLit)cat).value();
+            return cat;
     }
 
     public Production[] productions() {
@@ -89,8 +112,8 @@ public class Concrete {
         for(int i=0; i<prods.length; i++)
             ss+=("\n   "+prods[i].toString());
         ss+="]\n , Concrete Categories : [";
-        for(int i=0; i<cncCats.length; i++)
-            ss+=(" "+cncCats[i].toString());
+        // for(int i=0; i<cncCats.length; i++)
+        //     ss+=(" "+cncCats[i].toString());
         ss+="]\n , forest ID : "+fId;
         return ss;
     }

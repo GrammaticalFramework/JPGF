@@ -43,10 +43,11 @@ class NewReader {
             ii[i]=is.read();
         // Reading the global flags
         Map<String,RLiteral> flags = getListFlag(is);
+        String startCat = getStartCat(flags);
         // Reading the abstract
         Abstract abs = getAbstract(is);
         // Reading the concrete grammars
-        Concrete[] concretes = getListConcretes(is);
+        Concrete[] concretes = getListConcretes(is, startCat);
         // builds and returns the pgf object.
         PGF pgf = new PGF(makeInt16(ii[0],ii[1]),
                           makeInt16(ii[2],ii[3]),
@@ -58,6 +59,19 @@ class NewReader {
         return pgf;
     }
 
+    /**
+     * This function guess the default start category from the
+     * PGF flags: if the startcat flag is set then it is taken as default cat.
+     * otherwise "Sentence" is taken as default category.
+     */
+    private static String getStartCat(Map<String,RLiteral> flags) {
+        RLiteral cat = flags.get("startcat");
+        if (cat == null)
+            return "Sentence";
+        else
+            return ((StringLit)cat).getValue();
+
+    }
     /* ************************************************* */
     /* Reading abstract grammar                          */
     /* ************************************************* */
@@ -285,7 +299,8 @@ class NewReader {
     /* ************************************************* */
     /* Reading concrete grammar                          */
     /* ************************************************* */
-    private static Concrete getConcrete(DataInputStream is) throws IOException
+    private static Concrete getConcrete(DataInputStream is,
+                                        String startCat) throws IOException
     {
         String name = getString(is);
         Map<String,RLiteral> flags = getListFlag(is);
@@ -293,12 +308,13 @@ class NewReader {
         Sequence[] seqs = getListSequence(is);
         CncFun[] cncFuns = getListCncFun(is, seqs);
         ProductionSet[] prods = getListProductionSet(is, cncFuns);
-        CncCat[] cncCats = getListCncCat(is);
+        Map<String, CncCat> cncCats = getListCncCat(is);
         int i = getInteger(is);
-        return new Concrete(name,flags,pnames,seqs,cncFuns,prods,cncCats,i);
+        return new Concrete(name,flags,pnames,seqs,cncFuns,prods,cncCats,i, startCat);
     }
 
-    private static Concrete[] getListConcretes(DataInputStream is)
+    private static Concrete[] getListConcretes(DataInputStream is,
+                                               String startCat)
         throws IOException
     {
         int npoz = getInteger(is);
@@ -306,7 +322,7 @@ class NewReader {
         if(npoz == 0) return concretes;
         else
             for (int i=0; i<npoz; i++)
-                concretes[i] = getConcrete(is);
+                concretes[i] = getConcrete(is, startCat);
         return concretes;
     }
 
@@ -530,12 +546,20 @@ class NewReader {
         return new CncCat(sname,firstFId,lastFId,ss);
     }
 
-    private static CncCat[] getListCncCat(DataInputStream is) throws IOException
+    private static Map<String, CncCat> getListCncCat(DataInputStream is) throws IOException
     {
         int npoz = getInteger(is);
-        CncCat[] cncCats = new CncCat[npoz];
-        for(int i=0; i<npoz; i++)
-            cncCats[i]=getCncCat(is);
+        Map<String, CncCat> cncCats = new HashMap<String,CncCat>();
+        String name;
+        int firstFID, lastFID;
+        String[] ss;
+        for(int i=0; i<npoz; i++) {
+            name = getString(is);
+            firstFID = getInteger(is);
+            lastFID = getInteger(is);
+            ss = getListString(is);
+            cncCats.put(name, new CncCat(name,firstFID,lastFID,ss));
+        }
         return cncCats;
     }
 
