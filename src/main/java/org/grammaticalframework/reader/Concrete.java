@@ -1,11 +1,11 @@
 package org.grammaticalframework.reader;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.HashSet;
 
 public class Concrete {
-    private String name ;
+    private String name;
     private Map<String, RLiteral> flags ;
     private PrintName[] printnames ;
     private Sequence[] seqs ;
@@ -53,9 +53,6 @@ public class Concrete {
         return this.cncCats.get(absCat);
     }
 
-    public String getName() {return name;}
-    // FIXME : needed ???
-    //public Flag[] getFlags() {return flags;}
     public PrintName[] getPrintNames() {return printnames;}
     public Sequence[] getSequences() {return seqs;}
     public CncFun[] getCncFuns() {return cncFuns;}
@@ -117,7 +114,7 @@ public class Concrete {
         ss+="]\n , forest ID : "+fId;
         return ss;
     }
-    
+
     public HashMap<Integer,HashSet<Production>> getSetOfProductions() 
     {HashMap<Integer,HashSet<Production>> hm = new HashMap<Integer,HashSet<Production>>();
     for(int i=0; i<prods.length; i++)

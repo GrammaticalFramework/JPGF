@@ -22,7 +22,7 @@ object TreeBuilder {
         case Some(cat) => mkTreesForCat(cat, chart)
       }).toList
   }
-  
+
   def mkTreesForCat(cat : Int, chart:Chart):List[Tree] = {
     log.fine("Making trees for category "+ cat)
     for {p <- chart.getProductions(cat).toList;

@@ -110,8 +110,6 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
       }
   }
 
-
-
   private def compute() = {
     log.finer("Computing parse state for k=" + this.position)
     while (!agenda.isEmpty) {
