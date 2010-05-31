@@ -18,7 +18,7 @@ class MainActivity extends Activity {
     setContentView(R.layout.main)
 
     // Read the pgf
-    val pgf_is = this.getResources().openRawResource(R.raw.phrasebook)
+    val pgf_is = this.getResources().openRawResource(R.raw.two)
     val pgf = PGF.readFromInputStream(pgf_is)
     val parser = new Parser(pgf.concrete("PhrasebookEng"))
 
