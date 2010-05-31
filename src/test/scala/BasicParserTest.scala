@@ -18,16 +18,16 @@ object BasicParserTest {
     logger.addHandler(hdlr)
 
     // Testing with the food grammar
-    val foodGrammar = new TestGrammar("pgf/Foods.pgf", "FoodsEng")
-    foodGrammar.parseAndPrint("this fresh pizza is Italian")
-    foodGrammar.parseAndPrint("those boring fish are expensive")
-    val foodGrammarSwe = new TestGrammar("pgf/Foods.pgf", "FoodsSwe")
-    foodGrammarSwe.parseAndPrint("den här läckra pizzan är färsk")
-    val foodGrammarIta = new TestGrammar("pgf/Foods.pgf", "FoodsIta")
-    foodGrammarIta.parseAndPrint("questa pizza deliziosa è fresca")
-    // testing whith the phrasebook
-    val engPhrasebook = new TestGrammar("pgf/Phrasebook.pgf", "PhrasebookFre")
-    engPhrasebook.parseAndPrint("le restaurant est ouvert le lundi .")
+    var grammar = new TestGrammar("pgf/Foods.pgf", "FoodsEng")
+    grammar.parseAndPrint("this fresh pizza is Italian")
+    grammar.parseAndPrint("those boring fish are expensive")
+    grammar = new TestGrammar("pgf/Foods.pgf", "FoodsSwe")
+    grammar.parseAndPrint("den här läckra pizzan är färsk")
+    grammar = new TestGrammar("pgf/Foods.pgf", "FoodsIta")
+    grammar.parseAndPrint("questa pizza deliziosa è fresca")
+    // Testing whith the phrasebook
+    grammar = new TestGrammar("pgf/Phrasebook.pgf", "PhrasebookFre")
+    grammar.parseAndPrint("le restaurant est ouvert le lundi")
   }
 }
 
@@ -35,6 +35,7 @@ object BasicParserTest {
 class TestGrammar(pgfFile:String, langName:String) {
   val grammar:PGF = PGF.readFromFile(pgfFile)
   val parser = new Parser(grammar.concrete(langName))
+  val linearizer = new Linearizer(grammar, grammar.concrete(langName))
 
   def parseAndPrint(txt:String):Unit = {
     println("Parsing string \"" + txt + "\" with grammar " +
@@ -42,11 +43,10 @@ class TestGrammar(pgfFile:String, langName:String) {
     val tokens = txt.split(" ")
     parser.parse(tokens)
     val trees = parser.getTrees
-    trees.map(PrettyPrinter.print).foreach(println)
     trees.foreach( t => {
-      val line = new Linearizer(grammar, grammar.concrete(langName))
-      println(line.renderLin(line.linearize(t)))
+      println(PrettyPrinter.print(t))
+      println(linearizer.renderLin(linearizer.linearize(t)))
+      println()
     })
-    //parser.printState
   }
 }
