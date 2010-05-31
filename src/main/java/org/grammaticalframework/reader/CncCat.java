@@ -1,5 +1,15 @@
 package org.grammaticalframework.reader;
 
+/**
+ * Concrete category are a maping from category names (abstract-categories)
+ * to multiple, conjoint, concrete categories.
+ * They are represented in the pgf binary by :
+ *  - the name of the abstract category (ex: Adj)
+ *  - the first concrete categoy (ex : C18)
+ *  - the last corresponding concrete category (ex : C21)
+ *  - a list of labels (names of fields in the pmcfg tuples)
+ * Here we will keep only the indices.
+ */
 public class CncCat {
 	private String name;
 	private int firstFId;
