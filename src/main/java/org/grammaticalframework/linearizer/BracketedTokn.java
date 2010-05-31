@@ -1,5 +1,3 @@
 package org.grammaticalframework.linearizer;
 
-public abstract class BracketedTokn {
-
-}
+public abstract class BracketedTokn {}
