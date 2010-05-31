@@ -85,7 +85,11 @@ public class Linearizer {
 return vtemp;
 }
 
-    /** returns the abstract functions corresponding to a production
+    /** This function computes the list of abstract function corresponding to
+     * a given production. This is easy for standard productions but less for
+     * coercions because then you have to search reccursively.
+     * @param p the production
+     * @param productions ???
      **/
     public Vector<String>
         getFunctions(Production p,
@@ -267,7 +271,7 @@ else {Vector<String> rez = new Vector<String>();
         return rez;
     }
 
-public Vector<LinTriple> linearize(Tree e) throws Exception {
+    public Vector<LinTriple> linearize(Tree e) throws Exception {
         return this.lin0(new Vector<String>(), new Vector<String>(),
                          null, new Integer(0), e);
     }
@@ -530,30 +534,44 @@ return bt;
 }
 
 
-/** shuffles the results of of the intermediate linearization, for generating all the possible combinations
- **/
-public Vector<RezDesc> descend(int n_fid, Vector<CncType> cncTypes, Vector<Tree> exps, Vector<String> xs) throws Exception
-{Vector<RezDesc> rez = new Vector<RezDesc>();
- if(exps.isEmpty()) {rez.add(new RezDesc(n_fid,new Vector<CncType>(), new Vector<Vector<Vector<BracketedTokn>>>()));
-                     return rez;	 }
-   else {CncType cncType = cncTypes.firstElement();
-         cncTypes.remove(0);
-         Tree exp = exps.firstElement();
-         exps.remove(0);
-         Vector<LinTriple> rezLin = lin0(new Vector<String>(), xs, cncType,n_fid,exp);
-         Vector<RezDesc> rezDesc = descend(n_fid,cncTypes,exps,xs);
-         for(int i =0; i<rezLin.size(); i++)
-            for(int j=0; j<rezDesc.size();j++)
-	    	  {CncType c = rezLin.elementAt(i).getCncType();
-	    	   Vector<CncType> vcnc = rezDesc.elementAt(j).getCncTypes();
-	    	   vcnc.add(c);
-	    	   Vector<Vector<Vector<BracketedTokn>>> vbt = rezDesc.elementAt(j).getBracketedTokens();
-	    	   Vector<Vector<BracketedTokn>> bt = rezLin.elementAt(i).getLinTable();
-	    	   vbt.add(bt);
-	    	   rez.add(new RezDesc(n_fid,vcnc,vbt));}
-	 }
-return rez;	
-}
+    /** shuffles the results of of the intermediate linearization,
+     * for generating all the possible combinations
+     **/
+    public Vector<RezDesc> descend( int n_fid,
+                                    Vector<CncType> cncTypes,
+                                    Vector<Tree> exps,
+                                    Vector<String> xs)
+        throws Exception
+    {
+        Vector<RezDesc> rez = new Vector<RezDesc>();
+        if(exps.isEmpty()) {
+            rez.add(new RezDesc(n_fid,new Vector<CncType>(),
+                                new Vector<Vector<Vector<BracketedTokn>>>()));
+            return rez;
+        }
+        else {
+            CncType cncType = cncTypes.firstElement();
+            cncTypes.remove(0);
+            Tree exp = exps.firstElement();
+            exps.remove(0);
+            Vector<LinTriple> rezLin =
+                lin0(new Vector<String>(), xs, cncType,n_fid,exp);
+            Vector<RezDesc> rezDesc = descend(n_fid,cncTypes,exps,xs);
+            for(int i =0; i<rezLin.size(); i++)
+                for(int j=0; j<rezDesc.size();j++) {
+                    CncType c = rezLin.elementAt(i).getCncType();
+                    Vector<CncType> vcnc = rezDesc.elementAt(j).getCncTypes();
+                    vcnc.add(c);
+                    Vector<Vector<Vector<BracketedTokn>>> vbt =
+                        rezDesc.elementAt(j).getBracketedTokens();
+                    Vector<Vector<BracketedTokn>> bt =
+                        rezLin.elementAt(i).getLinTable();
+                    vbt.add(bt);
+                    rez.add(new RezDesc(n_fid,vcnc,vbt));
+                }
+        }
+        return rez;
+    }
 
 /**checks if a production is application production**/
 public boolean isApp(Production p) {
