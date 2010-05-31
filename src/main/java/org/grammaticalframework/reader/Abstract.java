@@ -10,8 +10,8 @@ public class Abstract {
 
 
     public Abstract(String name,
-                    Map<String, RLiteral> _flags, 
-                    AbsFun[] _absFuns, 
+                    Map<String, RLiteral> _flags,
+                    AbsFun[] _absFuns,
                     AbsCat[] _absCats)
     {
         this.name = name;

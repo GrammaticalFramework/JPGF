@@ -20,33 +20,33 @@ public class Generator {
 /** generates a random expression of a given category
  * does not handle dependent categories or categories with implicit arguments
 **/
-	
-public Generator(String file, PGF _pgf) throws Exception
-{random = new Random();
-pgf = _pgf;
-dirRules = new HashMap<String,HashSet<String>>();
-indirRules = new HashMap<String,HashSet<String>>();
-AbsCat[] absCats = pgf.getAbstract().getAbsCats();
-AbsFun[] absFuns = pgf.getAbstract().getAbsFuns();
-HashSet<String> dirFuns = new HashSet<String>();
-HashSet<String> indirFuns = new HashSet<String>();
-for(int i=0;i<absCats.length; i++)
-    {dirFuns = new HashSet<String>(); 
-     indirFuns = new HashSet<String>();
-     String[] strs = absCats[i].getFunctions();
-     for(int j=0; j<strs.length; j++)
-        for(int k=0; k<absFuns.length; k++)
-           if(strs[j].equals(absFuns[k].getName()))
-            	{if(absFuns[k].getType().getHypos().length == 0)
-                       dirFuns.add(strs[j]);
-          	  else indirFuns.add(strs[j]);
-       		 break;}
-     dirRules.put(absCats[i].name(),dirFuns);
-     indirRules.put(absCats[i].name(), indirFuns);
-}}
-	
-	
-/** generates a category with a random direct rule
+    public Generator(String file, PGF _pgf) throws Exception {
+        this.random = new Random();
+        this.pgf = _pgf;
+        this.dirRules = new HashMap<String,HashSet<String>>();
+        this.indirRules = new HashMap<String,HashSet<String>>();
+        AbsCat[] absCats = pgf.getAbstract().getAbsCats();
+        AbsFun[] absFuns = pgf.getAbstract().getAbsFuns();
+        HashSet<String> dirFuns = new HashSet<String>();
+        HashSet<String> indirFuns = new HashSet<String>();
+        for(int i=0;i<absCats.length; i++) {
+            dirFuns = new HashSet<String>();
+            indirFuns = new HashSet<String>();
+            String[] strs = absCats[i].getFunctions();
+            for(int j=0; j<strs.length; j++)
+                for(int k=0; k<absFuns.length; k++)
+                    if(strs[j].equals(absFuns[k].getName())) {
+                        if(absFuns[k].getType().getHypos().length == 0)
+                            dirFuns.add(strs[j]);
+                        else indirFuns.add(strs[j]);
+                        break;
+                    }
+            dirRules.put(absCats[i].name(),dirFuns);
+            indirRules.put(absCats[i].name(), indirFuns);
+        }
+    }
+
+    /** generates a category with a random direct rule
  * suitable for simple expressions
 **/
 public Tree getDirect(String type, HashSet<String> dirFuns)
