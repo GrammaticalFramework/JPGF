@@ -11,29 +11,36 @@ package org.grammaticalframework.reader;
  * Here we will keep only the indices.
  */
 public class CncCat {
-	private String name;
-	private int firstFId;
-	private int lastFId;
-	private String[] labels;
+    private String name;
+    private int firstFID;
+    private int lastFID;
+    //private String[] labels;
 
-public CncCat(String _name, int _firstFId, int _lastFId, String[] _labels)
-{name = _name;
- firstFId = _firstFId;
- lastFId = _lastFId;
- labels = _labels;
-}
+    public CncCat(String _name, int _firstFId, int _lastFId, String[] _labels) {
+        name = _name;
+        firstFID = _firstFId;
+        lastFID = _lastFId;
+        //labels = _labels;
+    }
 
-public String toString()
-{String ss = "Name : "+name+" , First id : "+firstFId+" , Last id : "+lastFId+"\n Labels :";
-for(int i=0; i<labels.length; i++)
-	ss+=(" "+labels[i]);
-return ss;
-}
+    public String toString() {
+        return name + " [C" + firstFID + " ... C" + lastFID + "]";
+    }
 
-public String getName() {return name;}
-public int getFirstId() {return firstFId;}
-public int getLastId() {return lastFId;}
-public String[] getLabels() {return labels;}
+    public String getName() {
+        return name;
+    }
+    public int getFirstId() {
+        return firstFID;
+    }
+    public int getLastId() {
+        return lastFID;
+    }
 
-
+    public int firstID() {
+        return firstFID;
+    }
+    public int lastID() {
+        return lastFID;
+    }
 }
