@@ -91,11 +91,12 @@ public class Concrete {
         return "concrete"  + this.name;
     }
 
-    public HashMap<Integer,HashSet<Production>> getSetOfProductions() 
-    {HashMap<Integer,HashSet<Production>> hm = new HashMap<Integer,HashSet<Production>>();
-    for(int i=0; i<prods.length; i++)
-    	hm.put(new Integer(prods[i].getId()), prods[i].getSetOfProductions());
-
-
-    return hm;} 
+    public HashMap<Integer,HashSet<Production>> getSetOfProductions() {
+        HashMap<Integer,HashSet<Production>> hm =
+            new HashMap<Integer,HashSet<Production>>();
+        for(int i=0; i<prods.length; i++)
+            hm.put(new Integer(prods[i].getId()),
+                   prods[i].getSetOfProductions());
+        return hm;
+    }
 }
