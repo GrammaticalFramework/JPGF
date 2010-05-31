@@ -304,13 +304,14 @@ class NewReader {
     {
         String name = getString(is);
         Map<String,RLiteral> flags = getListFlag(is);
-        PrintName[] pnames = getListPrintName(is);
+        // We don't use the print names, but we need to read them to skip them
+        getListPrintName(is);
         Sequence[] seqs = getListSequence(is);
         CncFun[] cncFuns = getListCncFun(is, seqs);
         ProductionSet[] prods = getListProductionSet(is, cncFuns);
         Map<String, CncCat> cncCats = getListCncCat(is);
         int i = getInteger(is);
-        return new Concrete(name,flags,pnames,seqs,cncFuns,prods,cncCats,i, startCat);
+        return new Concrete(name,flags,seqs,cncFuns,prods,cncCats,i,startCat);
     }
 
     private static Concrete[] getListConcretes(DataInputStream is,
@@ -329,6 +330,7 @@ class NewReader {
     /* ************************************************* */
     /* Reading print names                               */
     /* ************************************************* */
+    // FIXME : not used, we should avoid creating the objects
     private static PrintName getPrintName(DataInputStream is) throws IOException
     {
         String absName = getString(is);
