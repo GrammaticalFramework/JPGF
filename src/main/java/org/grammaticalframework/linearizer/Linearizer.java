@@ -20,33 +20,16 @@ public class Linearizer {
      * and further on to a string
      * not implemented to dependent categories, implicit argument,
      * and higher-order abstract syntax
-     * @param concrete the concrete grammar to use
-     * @param expr the tree to linearize
+     * @param pgf the pgf object that contains the concrete grammar.
+     * @param concrete the concrete grammar to use.
      **/
     public Linearizer(PGF pgf, Concrete concrete)
        throws Exception
     {
         this.pgf = pgf;
-        //this.lang = lang;
-        //this.expr = expr;
         this.cnc = concrete;
         this.lProd = getLProductions();
     }
-
-    public HashMap<String,HashMap<Integer,HashSet<Production>>> retLProd()
-    {return lProd;}
-
-    // public Tree retExpr()
-    // {return expr;}
-
-    // // public PGF retPGF()
-    // // {return pgf;}
-
-    // // public String retLang()
-    // // {return lang;}
-
-    // public Concrete retConcrete()
-    // {return cnc;}
 
     /** constructs the l-productions of the concrete syntax for
      * a given language
@@ -142,41 +125,51 @@ public HashSet<Production> filterProdSet1(HashMap<Integer,HashSet<Production>> p
  return set1;
 }
 
-/** filters an IntMap of productions according to filterProdsSet1
-**/
-public HashMap<Integer,HashSet<Production>> filterProductions(HashMap<Integer,HashSet<Production>> prods0, HashMap<Integer,HashSet<Production>> prods)
-{Iterator<Entry<Integer,HashSet<Production>>> it = prods.entrySet().iterator();
-HashMap<Integer,HashSet<Production>> tempRez = new HashMap<Integer,HashSet<Production>>();
-boolean are_diff = false;
-while(it.hasNext())
- {Entry<Integer,HashSet<Production>> entr = it.next();
-  Integer index = entr.getKey();
-  HashSet<Production> setProd = entr.getValue();
-  HashSet<Production> intermRez = filterProdSet1(prods0,setProd);
-  if(!intermRez.isEmpty())
-             tempRez.put(index, intermRez);
- }
-it = tempRez.entrySet().iterator();
-HashMap<Integer,HashSet<Production>> prods1 = new HashMap<Integer,HashSet<Production>>();
-prods1.putAll(prods0);
-while(it.hasNext())
- {Entry<Integer,HashSet<Production>> entr = it.next();
-  Integer index = entr.getKey();
-  HashSet<Production> hp = entr.getValue();
-  if(prods0.containsKey(index)) 
-      {if(!prods0.get(index).equals(hp)) {
-	                                   hp.addAll(prods0.get(index));
-	                                   prods1.put(index,hp); 
-	                                   are_diff = true; }
-       }
- else {prods1.put(index, hp);
-	   are_diff = true;
-      }}
-if(are_diff) return filterProductions(prods1,prods);
-else return prods0;
-}
+    /** filters an IntMap of productions according to filterProdsSet1
+     *
+     **/
+    public HashMap<Integer,HashSet<Production>>
+    filterProductions(HashMap<Integer,HashSet<Production>> prods0,
+                      HashMap<Integer,HashSet<Production>> prods)
+    {
+        Iterator<Entry<Integer,HashSet<Production>>> it =
+            prods.entrySet().iterator();
+        HashMap<Integer,HashSet<Production>> tempRez =
+            new HashMap<Integer,HashSet<Production>>();
+        boolean are_diff = false;
+        for (int index : prods.keySet()) {
+            HashSet<Production> setProd = prods.get(index);
+            HashSet<Production> intermRez = filterProdSet1(prods0,setProd);
+            if(!intermRez.isEmpty())
+                tempRez.put(index, intermRez);
+        }
+        it = tempRez.entrySet().iterator();
+        HashMap<Integer,HashSet<Production>> prods1 =
+            new HashMap<Integer,HashSet<Production>>();
+        prods1.putAll(prods0);
+        while(it.hasNext()) {
+            Entry<Integer,HashSet<Production>> entr = it.next();
+            Integer index = entr.getKey();
+            HashSet<Production> hp = entr.getValue();
+            if(prods0.containsKey(index)) {
+                if(!prods0.get(index).equals(hp)) {
+                    hp.addAll(prods0.get(index));
+                    prods1.put(index,hp);
+                    are_diff = true;
+                }
+            }
+            else {
+                prods1.put(index, hp);
+                are_diff = true;
+            }
+        }
+        if(are_diff)
+            return filterProductions(prods1,prods);
+        else
+            return prods0;
+    }
 
-/** checks if a production satisfies conditionProd recursively
+    /** checks if a production satisfies conditionProd recursively
 **/
 public boolean filterRule(HashMap<Integer,HashSet<Production>> prods, Production p)
 {if (p instanceof ApplProduction)
@@ -257,40 +250,54 @@ else {Vector<String> rez = new Vector<String>();
     	rez.addAll(untokn(bs.elementAt(i)));
       return rez;}}
 
-/** flattens the result of the linearization
-**/
-public Vector<String> renderLin(Vector<LinTriple> v)
-{Vector<String> rez= new Vector<String>();
-for(int i=0; i<v.size();i++)
-{Vector<Vector<BracketedTokn>> vtemp = v.elementAt(i).getLinTable();
-for(int j=0; j<vtemp.size(); j++)
-  for(int k=0; k<vtemp.elementAt(j).size(); k++)
-	rez.addAll(untokn(vtemp.elementAt(j).elementAt(k)));		
-	}
-return rez;}
+    /** flattens the result of the linearization
+     **/
+    // FIXME : should return smething of type String[][] and not String[]
+    // because we want all the translations separated and not glued together
+    // like it is done now.
+    // FIXME : the param should probably be only one LinTriple.
+    public Vector<String> renderLin(Vector<LinTriple> v) {
+        Vector<String> rez= new Vector<String>();
+        for(int i=0; i<v.size();i++) {
+            Vector<Vector<BracketedTokn>> vtemp = v.elementAt(i).getLinTable();
+            for(int j=0; j<vtemp.size(); j++)
+                for(int k=0; k<vtemp.elementAt(j).size(); k++)
+                    rez.addAll(untokn(vtemp.elementAt(j).elementAt(k)));
+        }
+        return rez;
+    }
 
-    public Vector<LinTriple> linearize(Tree e) throws Exception {
+public Vector<LinTriple> linearize(Tree e) throws Exception {
         return this.lin0(new Vector<String>(), new Vector<String>(),
                          null, new Integer(0), e);
     }
 
-    /** main linearization function
+    /**
+     * main linearization function
+     * @param xs is the list of bound variables (from lambdas)
+     * @param ys
+     * @param mb_cty
+     * @param mb_fid
+     * @param e is the tree to linearize
+     * @return all the possible linearized tuples for this tree.
      **/
     public Vector<LinTriple> lin0(Vector<String> xs,
                                   Vector<String> ys,
                                   CncType mb_cty,
                                   Integer mb_fid,
-                                  Tree e) throws Exception
+                                  Tree tree) throws Exception
     {
-        if(e instanceof Lambda) {
-            xs.add(((Lambda)e).ident_);
-            return lin0(xs,ys,mb_cty,mb_fid,((Lambda)e).tree_);}
+        // if tree is a lambda, we add the variable to the list of bound
+        // variables and we linearize the subtree.
+        if(tree instanceof Lambda) {
+            xs.add(((Lambda)tree).ident_);
+            return lin0(xs,ys,mb_cty,mb_fid,((Lambda)tree).tree_);}
         else if(xs.isEmpty())
-            return lin(ys,mb_cty,mb_fid,e,new Vector<Tree>());
+            return lin(ys,mb_cty,mb_fid,tree,new Vector<Tree>());
         else {
             xs.addAll(ys);
             Vector<Tree> exprs = new Vector<Tree>();
-            exprs.add(e);
+            exprs.add(tree);
             for(int i=0; i<xs.size(); i++)
                 exprs.add(new Literal(new StringLiteral(xs.elementAt(i))));
             return apply(xs,mb_cty,mb_fid,"_B",exprs);
@@ -298,38 +305,61 @@ return rez;}
     }
 
     /** intermediate linearization for complex expressions
+     * Linearize function appliction.
+     * To linearize the application of the function "f" to the arguments
+     * (trees) a, b and c use :
+     * apply(???,???,??? "f", [a,b,c])
+     *
+     * 'apply' will linearize the argument and then use the concrete function
+     * for "f" to glue them together.
+     * @param xs
+     * @param mb_cty
+     * @param n_fid
+     * @param f the name of the function to be applied
+     * @param es the argument of the function to linearize
+     * @return All the possible linearization for the application of f to es
      **/
-public Vector<LinTriple> apply(Vector<String> xs, CncType mb_cty, Integer n_fid, String f, Vector<Tree> es) throws Exception
-{HashMap<Integer,HashSet<Production>> prods = lProd.get(f);
-if (prods == null)
-	 {Vector<Tree> newes = new Vector<Tree>();
-	  newes.add(new Literal(new StringLiteral(f)));
-	  System.out.println("Function "+f+" does not have a linearization !");
-	  return apply(xs,mb_cty,n_fid,"_V",newes);
-	 }
-else {Vector<AppResult> vApp = getApps(prods,mb_cty,f);
-      Vector<LinTriple> rez = new Vector<LinTriple>();
-      for(int i=0; i<vApp.size();i++)
-       {Vector<CncType> copy_ctys = vApp.elementAt(i).getCncTypes();
-        Vector<CncType> ctys = new Vector<CncType>();
-        for(int ind =copy_ctys.size()-1; ind >=0; ind--)
-        	  ctys.add(copy_ctys.elementAt(ind));
-    	if (es.size() != ctys.size()) throw new Exception("lengths of es and ctys don't match"+es.toString()+" -- "+ctys.toString());
-    	Sequence[] lins = vApp.elementAt(i).getCncFun().sequences();
-    	String cat = vApp.elementAt(i).getCncType().getCId();
-    	Vector<Tree> copy_expr = new Vector<Tree>();
-    	for(int ind = 0; ind<es.size();ind++)
-    		copy_expr.add(es.elementAt(ind));
-    	Vector<RezDesc> rezDesc = descend(n_fid,ctys,copy_expr,xs);
-    	for(int k=0; k<rezDesc.size();k++)
-    	{ RezDesc intRez = rezDesc.elementAt(k);
-    	  Vector<Vector<BracketedTokn>> linTab = new Vector<Vector<BracketedTokn>>();
-    	  for(int ind=0; ind<lins.length; ind++)
-    	         linTab.add(computeSeq(lins[ind],intRez.getCncTypes(),intRez.getBracketedTokens()));	
-    	   rez.add(new LinTriple(n_fid+1,new CncType(cat,n_fid),linTab)); }
-       }
-      return rez;
-}}
+    public Vector<LinTriple> apply( Vector<String> xs,
+                                    CncType mb_cty,
+                                    Integer n_fid,
+                                    String f,
+                                    Vector<Tree> es)
+        throws Exception
+    {
+        HashMap<Integer,HashSet<Production>> prods = lProd.get(f);
+        if (prods == null) {
+            Vector<Tree> newes = new Vector<Tree>();
+            newes.add(new Literal(new StringLiteral(f)));
+            System.out.println("Function "+f+" does not have a linearization !");
+            return apply(xs,mb_cty,n_fid,"_V",newes);
+        }
+        else {
+            Vector<AppResult> vApp = getApps(prods,mb_cty,f);
+            Vector<LinTriple> rez = new Vector<LinTriple>();
+            for(int i=0; i<vApp.size();i++) {
+                Vector<CncType> copy_ctys = vApp.elementAt(i).getCncTypes();
+                Vector<CncType> ctys = new Vector<CncType>();
+                for(int ind =copy_ctys.size()-1; ind >=0; ind--)
+                    ctys.add(copy_ctys.elementAt(ind));
+                if (es.size() != ctys.size())
+                    throw new Exception("lengths of es and ctys don't match"+es.toString()+" -- "+ctys.toString());
+                Sequence[] lins = vApp.elementAt(i).getCncFun().sequences();
+                String cat = vApp.elementAt(i).getCncType().getCId();
+                Vector<Tree> copy_expr = new Vector<Tree>();
+                for(int ind = 0; ind<es.size();ind++)
+                    copy_expr.add(es.elementAt(ind));
+                Vector<RezDesc> rezDesc = descend(n_fid,ctys,copy_expr,xs);
+                for(int k=0; k<rezDesc.size();k++) {
+                    RezDesc intRez = rezDesc.elementAt(k);
+                    Vector<Vector<BracketedTokn>> linTab = new Vector<Vector<BracketedTokn>>();
+                    for(int ind=0; ind<lins.length; ind++)
+                        linTab.add(computeSeq(lins[ind],intRez.getCncTypes(),intRez.getBracketedTokens()));
+                    rez.add(new LinTriple(n_fid+1,new CncType(cat,n_fid),linTab));
+                }
+            }
+            return rez;
+        }
+    }
 
 
 
@@ -408,27 +438,39 @@ for(int i=0; i<hypos.length;i++)
 return rez;
 }
 
+
+
 /** intermediate linearization helper function
 **/
-public Vector<LinTriple> lin(Vector<String> xs, CncType mb_cty, Integer n_fid, Tree e, Vector<Tree> es) throws Exception
-{Vector<LinTriple> rez = new Vector<LinTriple>();
-if(e instanceof Application)
-   {es.add(((Application)e).tree_2);
-        return lin(xs,mb_cty,n_fid,((Application)e).tree_1,es);}
-else if ((e instanceof Literal) && (es.isEmpty()))
-   {Lit ll = ((Literal) e).lit_;
-    if (ll instanceof StringLiteral)
-	  rez.add(new LinTriple(n_fid+1, new CncType("String",n_fid),ss(((StringLiteral)ll).string_)));
-     else if (ll instanceof IntLiteral)
- 	  rez.add(new LinTriple(n_fid+1, new CncType("Int",n_fid), ss(""+((IntLiteral)ll).integer_)));
-      else rez.add(new LinTriple(n_fid+1, new CncType("Float",n_fid), ss(""+((FloatLiteral)ll).double_)));
-    return rez;}
-else if (e instanceof MetaVariable) throw new Exception("linearization for meta expressions is not implemented yet!");
-else if (e instanceof Function) return apply(xs, mb_cty,n_fid, ((Function)e).ident_,es);
-else if (e instanceof Variable) throw new Exception("linearization for variable expressions is not implemented yet!");
-else throw new Exception("linearization for typed expressions or expressions with implicit arguments is not implemented yet!");	
-}
-	
+    public Vector<LinTriple> lin(Vector<String> xs,
+                                 CncType mb_cty,
+                                 Integer n_fid,
+                                 Tree e,
+                                 Vector<Tree> es)
+        throws Exception
+    {
+        Vector<LinTriple> rez = new Vector<LinTriple>();
+        if(e instanceof Application) {
+            es.add(((Application)e).tree_2);
+            return lin(xs,mb_cty,n_fid,((Application)e).tree_1,es);
+        } else if ((e instanceof Literal) && (es.isEmpty())) {
+            Lit ll = ((Literal) e).lit_;
+            if (ll instanceof StringLiteral)
+                rez.add(new LinTriple(n_fid+1, new CncType("String",n_fid),ss(((StringLiteral)ll).string_)));
+            else if (ll instanceof IntLiteral)
+                rez.add(new LinTriple(n_fid+1, new CncType("Int",n_fid), ss(""+((IntLiteral)ll).integer_)));
+            else rez.add(new LinTriple(n_fid+1, new CncType("Float",n_fid), ss(""+((FloatLiteral)ll).double_)));
+            return rez;
+        } else if (e instanceof MetaVariable)
+            throw new Exception("linearization for meta expressions is not implemented yet!");
+        else if (e instanceof Function)
+            return apply(xs, mb_cty,n_fid, ((Function)e).ident_,es);
+        else if (e instanceof Variable)
+            throw new Exception("linearization for variable expressions is not implemented yet!");
+        else throw
+                 new Exception("linearization for typed expressions or expressions with implicit arguments is not implemented yet!");
+    }
+
 /** creates a simple vector of vectors of bracketed tokens containing a string value
 **/
 public Vector<Vector<BracketedTokn>> ss(String s)
@@ -514,8 +556,9 @@ return rez;
 }
 
 /**checks if a production is application production**/
-public boolean isApp(Production p)
-{return (p instanceof ApplProduction);}
+public boolean isApp(Production p) {
+return (p instanceof ApplProduction);
+}
 
 
 /** checks if an integer is the index of an integer literal
