@@ -17,11 +17,6 @@ class MainActivity extends Activity {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.main)
 
-    // Read the pgf
-    val pgf_is = this.getResources().openRawResource(R.raw.two)
-    val pgf = PGF.readFromInputStream(pgf_is)
-    val parser = new Parser(pgf.concrete("PhrasebookEng"))
-
     // Get pointers to the ui elements
     val phraseField = findViewById(R.id.phrase).asInstanceOf[EditText]
     val translateButton =
@@ -29,6 +24,14 @@ class MainActivity extends Activity {
     val speakButton =
       findViewById(R.id.speak_button).asInstanceOf[Button]
     val resultView = findViewById(R.id.result_view).asInstanceOf[TextView]
+
+    // Read the pgf
+    val begin_time = System.currentTimeMillis()
+    val pgf_is = this.getResources().openRawResource(R.raw.two)
+    val pgf = PGF.readFromInputStream(pgf_is)
+    val parser = new Parser(pgf.concrete("PhrasebookEng"))
+    val end_time = System.currentTimeMillis()
+    resultView.setText("PGF read in " + (end_time - begin_time) + " ms")
 
     // translate action
     translateButton.setOnClickListener( new View.OnClickListener() {
@@ -47,11 +50,15 @@ class MainActivity extends Activity {
   }
 
   def parse(parser:Parser, txt:String):String = {
+    val begin_time = System.currentTimeMillis()
     val tokens = txt.split(" ")
     parser.parse(tokens)
+    val end_time = System.currentTimeMillis()
+    val parse_time = end_time - begin_time
     val trees = parser.getTrees
     var s = ""
     trees.map(PrettyPrinter.print).foreach(s += _)
+    s+="("+parse_time+" ms)"
     return s
   }
 }
