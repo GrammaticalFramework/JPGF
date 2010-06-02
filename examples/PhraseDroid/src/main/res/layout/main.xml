@@ -6,7 +6,8 @@
                 android:padding="10px">
   <EditText android:id="@+id/phrase"
 	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"/>
+	    android:layout_height="wrap_content"
+            android:text="the restaurant is open on Monday"/>
   <Button android:id="@+id/translate_button"
 	  android:layout_below="@id/phrase"
 	  android:layout_width="wrap_content"
