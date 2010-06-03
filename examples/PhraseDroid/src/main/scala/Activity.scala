@@ -9,6 +9,7 @@ import _root_.android.content.res.Resources
 
 import _root_.org.grammaticalframework.reader.{NewReader, PGF, Concrete}
 import _root_.org.grammaticalframework.parser.{Parser}
+import _root_.org.grammaticalframework.linearizer.Linearizer
 import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
 class MainActivity extends Activity {
@@ -30,6 +31,7 @@ class MainActivity extends Activity {
     val pgf_is = this.getResources().openRawResource(R.raw.two)
     val pgf = PGF.readFromInputStream(pgf_is)
     val parser = new Parser(pgf.concrete("PhrasebookEng"))
+    val linearizer = new Linearizer(pgf, pgf.concrete("PhrasebookFre"))
     val end_time = System.currentTimeMillis()
     resultView.setText("PGF read in " + (end_time - begin_time) + " ms")
 
@@ -37,16 +39,16 @@ class MainActivity extends Activity {
     translateButton.setOnClickListener( new View.OnClickListener() {
       def onClick(v:View) = {
       val phrase = phraseField.getText.toString
-        resultView.setText(parse(parser,phrase))
+        resultView.setText(translate(parser,linearizer,phrase))
       }
     })
-    // Speak action
-    translateButton.setOnClickListener( new View.OnClickListener() {
-      def onClick(v:View) = {
-      val phrase = phraseField.getText.toString
-        resultView.setText(parse(parser,phrase))
-      }
-    })
+//     // Speak action
+//     translateButton.setOnClickListener( new View.OnClickListener() {
+//       def onClick(v:View) = {
+//       val phrase = phraseField.getText.toString
+//         resultView.setText(parse(parser,phrase))
+//       }
+//     })
   }
 
   def parse(parser:Parser, txt:String):String = {
@@ -61,4 +63,19 @@ class MainActivity extends Activity {
     s+="("+parse_time+" ms)"
     return s
   }
+
+  def translate(parser:Parser, linearizer:Linearizer, txt:String):String = {
+    val begin_time = System.currentTimeMillis()
+    val tokens = txt.split(" ")
+    parser.parse(tokens)
+    val trees = parser.getTrees
+    val inter_time = System.currentTimeMillis()
+    var s = ""
+    trees.foreach( t => {
+      s += linearizer.renderLin(linearizer.linearize(t)).toArray.mkString(" ")
+    })
+    val end_time = System.currentTimeMillis()
+    return s
+  }
+
 }
