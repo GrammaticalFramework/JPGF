@@ -12,11 +12,14 @@ import _root_.org.grammaticalframework.parser.{Parser}
 import _root_.org.grammaticalframework.linearizer.Linearizer
 import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
-class MainActivity extends Activity {
+class MainActivity extends TTSActivity {
+
+  var currentText = "";
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.main)
+    setupLanguage(  )
 
     // Get pointers to the ui elements
     val phraseField = findViewById(R.id.phrase).asInstanceOf[EditText]
@@ -39,16 +42,14 @@ class MainActivity extends Activity {
     translateButton.setOnClickListener( new View.OnClickListener() {
       def onClick(v:View) = {
       val phrase = phraseField.getText.toString
-        resultView.setText(translate(parser,linearizer,phrase))
+      currentText = translate(parser,linearizer,phrase)
+        resultView.setText(currentText)
       }
     })
-//     // Speak action
-//     translateButton.setOnClickListener( new View.OnClickListener() {
-//       def onClick(v:View) = {
-//       val phrase = phraseField.getText.toString
-//         resultView.setText(parse(parser,phrase))
-//       }
-//     })
+    // speak action
+    speakButton.setOnClickListener( new View.OnClickListener() {
+      def onClick(v:View) = say(currentText)
+    })
   }
 
   def parse(parser:Parser, txt:String):String = {
@@ -78,4 +79,6 @@ class MainActivity extends Activity {
     return s
   }
 
+  override def onLanguageIsReady()= {
+  }
 }
