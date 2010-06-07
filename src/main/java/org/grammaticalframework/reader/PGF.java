@@ -51,7 +51,7 @@ public class PGF {
     public static PGF readFromInputStream(java.io.InputStream is)
         throws java.io.IOException
     {
-        return NewReader.readInputStream(is);
+        return new NewReader().readInputStream(is);
     }
 
     /* ************************************************* */

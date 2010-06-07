@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 class NewReader {
     private static Logger log =
         Logger.getLogger("org.grammaticalframework.pgf");
+    private DataInputStream mDataInputStream;
 
     /* ************************************************* */
     /* Public reading functions                          */
@@ -27,7 +28,7 @@ class NewReader {
         throws FileNotFoundException, IOException
     {
         InputStream stream = new FileInputStream(filename);
-        return readInputStream(stream);
+        return new NewReader().readInputStream(stream);
     }
 
     /**
@@ -35,21 +36,19 @@ class NewReader {
      *
      * @param inStream and InputStream to read the pgf binary from.
      */
-    public static PGF readInputStream(InputStream inStream) throws IOException {
-        DataInputStream is = new DataInputStream(inStream);
-        //BufferedInputStream is = new DataInputStream(inStream);
-        //InputStreamReader is = new InputStreamReader(inStream,"UTF-8");
+    public PGF readInputStream(InputStream inStream) throws IOException {
+        this.mDataInputStream = new DataInputStream(inStream);
         // Reading the PGF version
         int ii[]=new int[4];
         for(int i=0;i<4;i++)
-            ii[i]=is.read();
+            ii[i]=mDataInputStream.read();
         // Reading the global flags
-        Map<String,RLiteral> flags = getListFlag(is);
+        Map<String,RLiteral> flags = getListFlag();
         String startCat = getStartCat(flags);
         // Reading the abstract
-        Abstract abs = getAbstract(is);
+        Abstract abs = getAbstract();
         // Reading the concrete grammars
-        Concrete[] concretes = getListConcretes(is, startCat);
+        Concrete[] concretes = getListConcretes(startCat);
         // builds and returns the pgf object.
         PGF pgf = new PGF(makeInt16(ii[0],ii[1]),
                           makeInt16(ii[2],ii[3]),
@@ -57,7 +56,7 @@ class NewReader {
 
         log.finest("The resulting PGF is : "+ pgf.toString());
         log.fine("the end");
-        is.close();
+        mDataInputStream.close();
         return pgf;
     }
 
@@ -66,7 +65,7 @@ class NewReader {
      * PGF flags: if the startcat flag is set then it is taken as default cat.
      * otherwise "Sentence" is taken as default category.
      */
-    private static String getStartCat(Map<String,RLiteral> flags) {
+    private String getStartCat(Map<String,RLiteral> flags) {
         RLiteral cat = flags.get("startcat");
         if (cat == null)
             return "Sentence";
@@ -82,148 +81,149 @@ class NewReader {
      * the abstract grammar.
      * @param is the stream to read from.
      */
-    private static Abstract getAbstract(DataInputStream is) throws IOException
+    private Abstract getAbstract() throws IOException
     {
-        String s = getString(is);
-        Map<String,RLiteral> flags = getListFlag(is);
-        AbsFun[] absFuns = getListAbsFun(is);
-        AbsCat[] absCats = getListAbsCat(is);
+        String s = getString();
+        Map<String,RLiteral> flags = getListFlag();
+        AbsFun[] absFuns = getListAbsFun();
+        AbsCat[] absCats = getListAbsCat();
         return new Abstract(s,flags,absFuns,absCats);
     }
 
-    private static Pattern[] getListPattern(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
+    private Pattern[] getListPattern() throws IOException {
+        int npoz = getInteger();
         Pattern[] patts = new Pattern[npoz];
         for(int i=0; i<npoz; i++)
-            patts[i]=getPattern(is);
+            patts[i]=getPattern();
         return patts;
     }
 
-    private static Eq getEq(DataInputStream is) throws IOException {
-        Pattern[] patts = getListPattern(is);
-        Expr exp = getExpr(is);
+    private Eq getEq() throws IOException {
+        Pattern[] patts = getListPattern();
+        Expr exp = getExpr();
         return new Eq(patts,exp);
     }
 
 
 
-    private static AbsFun getAbsFun(DataInputStream is) throws IOException {
-        String s = getString(is);
-        Type t = getType(is);
-        int i = getInteger(is);
-        int maybe = is.read();
+    private AbsFun getAbsFun() throws IOException {
+        String s = getString();
+        Type t = getType();
+        int i = getInteger();
+        int maybe = mDataInputStream.read();
         if (maybe == 0) return new AbsFun(s,t,i,new Eq[0]);
-        Eq[] eqs = getListEq(is);
+        Eq[] eqs = getListEq();
         return new AbsFun(s,t,i,eqs);
     }
 
-    private static AbsCat getAbsCat(DataInputStream is) throws IOException {
-        String s = getString(is);
-        Hypo[] hypos = getListHypo(is);
-        String[] strs = getListString(is);
+    private AbsCat getAbsCat() throws IOException {
+        String s = getString();
+        Hypo[] hypos = getListHypo();
+        String[] strs = getListString();
         AbsCat abcC = new AbsCat(s,hypos, strs);
         return abcC;
     }
 
 
 
-    private static AbsFun[] getListAbsFun(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
+    private AbsFun[] getListAbsFun() throws IOException {
+        int npoz = getInteger();
         AbsFun[] absFuns = new AbsFun[npoz];
 
         if(npoz == 0)
             return absFuns;
 
         else for (int i=0; i<npoz; i++)
-                 absFuns[i] = getAbsFun(is);
+                 absFuns[i] = getAbsFun();
 
         return absFuns;
     }
 
-    private static AbsCat[] getListAbsCat(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
+    private AbsCat[] getListAbsCat() throws IOException {
+        int npoz = getInteger();
         AbsCat[] absCats = new AbsCat[npoz];
         if(npoz == 0)
             return absCats;
         else
             for (int i=0; i<npoz; i++)
-                absCats[i] = getAbsCat(is);
+                absCats[i] = getAbsCat();
 
         return absCats;
     }
 
 
-    private static Type getType(DataInputStream is) throws IOException {
-        Hypo[] hypos = getListHypo(is);
-        String s = getString(is);
-        Expr[] exprs = getListExpr(is);
+    private Type getType() throws IOException {
+        Hypo[] hypos = getListHypo();
+        String s = getString();
+        Expr[] exprs = getListExpr();
         return new Type(hypos, s,exprs);
 
     }
 
-    private static Hypo getHypo(DataInputStream is) throws IOException { int btype = is.read();
+    private Hypo getHypo() throws IOException { 
+       int btype = mDataInputStream.read();
         boolean b = btype == 0 ? false : true;
-        String s = getString(is);
-        Type t = getType(is);
+        String s = getString();
+        Type t = getType();
         Hypo hh = new Hypo (b,s,t);
         return hh;
     }
 
-    private static Hypo[] getListHypo(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
+    private Hypo[] getListHypo() throws IOException {
+        int npoz = getInteger();
         Hypo[] hypos = new Hypo[npoz];
         for (int i=0; i<npoz; i++)
-            hypos[i]=getHypo(is);
+            hypos[i]=getHypo();
         return hypos;
     }
 
-    private static Expr[] getListExpr(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
+    private Expr[] getListExpr( ) throws IOException {
+        int npoz = getInteger();
         Expr[] exprs = new Expr[npoz];
         for(int i=0; i<npoz; i++)
-            exprs[i]=getExpr(is);
+            exprs[i]=getExpr();
         return exprs;
     }
 
-    private static Expr getExpr(DataInputStream is) throws IOException {
-        int sel = is.read();
+    private Expr getExpr( ) throws IOException {
+        int sel = mDataInputStream.read();
         Expr expr = null;
         switch (sel) {
         case 0 : //lambda abstraction
-            int bt = is.read();
+            int bt = mDataInputStream.read();
             boolean btype = bt == 0 ? false : true ;
-            String str = getString(is);
-            Expr e1 = getExpr(is);
+            String str = getString();
+            Expr e1 = getExpr();
             expr = new LambdaExp(btype,str,e1);
             break;
         case 1 : //expression application
-            Expr e11 = getExpr(is);
-            Expr e2 = getExpr(is);
+            Expr e11 = getExpr();
+            Expr e2 = getExpr();
             expr = new AppExp(e11,e2);
             break;
         case 2 : //literal expression
-            RLiteral lit = getLiteral(is);
+            RLiteral lit = getLiteral();
             expr = new LiteralExp(lit);
             break;
         case 3 : //meta variable
-            int id = getInteger(is);
+            int id = getInteger();
             expr = new MetaExp(id);
             break;
         case 4 : //abstract function name
-            String s = getString(is);
+            String s = getString();
             expr = new AbsNameExp(s);
             break;
         case 5 : //variable
-            int v = getInteger(is);
+            int v = getInteger();
             expr = new VarExp(v);
             break;
         case 6 : //type annotated expression
-            Expr e = getExpr(is);
-            Type t = getType(is);
+            Expr e = getExpr();
+            Type t = getType();
             expr = new TypedExp(e,t);
             break;
         case 7 : //implicit argument
-            Expr ee = getExpr(is);
+            Expr ee = getExpr();
             expr = new ImplExp(ee);
             break;
         default : throw new IOException("invalid tag for expressions : "+sel);
@@ -233,44 +233,44 @@ class NewReader {
     }
 
 
-    private static Eq[] getListEq(DataInputStream is) throws IOException {
-        int npoz = getInteger(is);
+    private Eq[] getListEq( ) throws IOException {
+        int npoz = getInteger();
         Eq[] eqs = new Eq[npoz];
         for (int i=0; i<npoz;i++)
-            eqs[i]=getEq(is);
+            eqs[i]=getEq();
         return eqs;
     }
 
-    private static Pattern getPattern(DataInputStream is) throws IOException {
-        int sel = is.read();
+    private Pattern getPattern( ) throws IOException {
+        int sel = mDataInputStream.read();
         Pattern patt = null;
         switch (sel) {
         case 0 : //application pattern
-            String str = getString(is);
-            Pattern[] patts = getListPattern(is);
+            String str = getString();
+            Pattern[] patts = getListPattern();
             patt = new AppPattern(str,patts);
             break;
         case 1 : //variable pattern
-            String s = getString(is);
+            String s = getString();
             patt = new VarPattern(s);
             break;
         case 2 : //variable as pattern
-            String sp = getString(is);
-            Pattern p = getPattern(is);
+            String sp = getString();
+            Pattern p = getPattern();
             patt = new VarAsPattern(sp,p);
             break;
         case 3 : //wild card pattern
             patt = new WildCardPattern();
             break;
         case 4 : //literal pattern
-            RLiteral lit = getLiteral(is);
+            RLiteral lit = getLiteral();
             patt = new LiteralPattern(lit);
             break;
         case 5 : //implicit argument
-            Pattern pp = getPattern(is);
+            Pattern pp = getPattern();
             patt = new ImpArgPattern(pp);
         case 6 : //inaccessible pattern
-            Expr e = getExpr(is);
+            Expr e = getExpr();
             patt = new InaccPattern(e);
             break;
         default : throw new IOException("invalid tag for patterns : "+sel);
@@ -279,17 +279,17 @@ class NewReader {
         return patt;
     }
 
-    private static RLiteral getLiteral(DataInputStream is) throws IOException {
-        int sel = is.read();
+    private RLiteral getLiteral( ) throws IOException {
+        int sel = mDataInputStream.read();
         RLiteral ss = null;
         switch (sel)
-            {case 0 : String str = getString(is);
+            {case 0 : String str = getString();
                     ss = new StringLit(str);
                     break;
-            case 1 : int i = getInteger(is);
+            case 1 : int i = getInteger();
                 ss = new IntLit(i);
                 break;
-            case 2 : double d = is.readDouble();
+            case 2 : double d = mDataInputStream.readDouble();
                 ss = new FloatLit(d);
                 break;
             default : throw new IOException("Incorrect literal tag "+sel);
@@ -301,31 +301,29 @@ class NewReader {
     /* ************************************************* */
     /* Reading concrete grammar                          */
     /* ************************************************* */
-    private static Concrete getConcrete(DataInputStream is,
-                                        String startCat) throws IOException
+    private Concrete getConcrete(String startCat) throws IOException
     {
-        String name = getString(is);
-        Map<String,RLiteral> flags = getListFlag(is);
+        String name = getString();
+        Map<String,RLiteral> flags = getListFlag();
         // We don't use the print names, but we need to read them to skip them
-        getListPrintName(is);
-        Sequence[] seqs = getListSequence(is);
-        CncFun[] cncFuns = getListCncFun(is, seqs);
-        ProductionSet[] prods = getListProductionSet(is, cncFuns);
-        Map<String, CncCat> cncCats = getListCncCat(is);
-        int i = getInteger(is);
+        getListPrintName();
+        Sequence[] seqs = getListSequence();
+        CncFun[] cncFuns = getListCncFun(seqs);
+        ProductionSet[] prods = getListProductionSet(cncFuns);
+        Map<String, CncCat> cncCats = getListCncCat();
+        int i = getInteger();
         return new Concrete(name,flags,seqs,cncFuns,prods,cncCats,i,startCat);
     }
 
-    private static Concrete[] getListConcretes(DataInputStream is,
-                                               String startCat)
+    private Concrete[] getListConcretes(String startCat)
         throws IOException
     {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         Concrete[] concretes = new Concrete[npoz];
         if(npoz == 0) return concretes;
         else
             for (int i=0; i<npoz; i++)
-                concretes[i] = getConcrete(is, startCat);
+                concretes[i] = getConcrete(startCat);
         return concretes;
     }
 
@@ -333,65 +331,65 @@ class NewReader {
     /* Reading print names                               */
     /* ************************************************* */
     // FIXME : not used, we should avoid creating the objects
-    private static PrintName getPrintName(DataInputStream is) throws IOException
+    private PrintName getPrintName( ) throws IOException
     {
-        String absName = getString(is);
-        String printName = getString(is);
+        String absName = getString();
+        String printName = getString();
         return new PrintName(absName, printName);
 
     }
 
-    private static PrintName[] getListPrintName(DataInputStream is)
+    private PrintName[] getListPrintName( )
         throws IOException
     {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         PrintName[] pnames = new PrintName[npoz];
         if(npoz == 0) return pnames;
         else
             for (int i=0; i<npoz; i++)
-                pnames[i] = getPrintName(is);
+                pnames[i] = getPrintName();
         return pnames;
     }
 
     /* ************************************************* */
     /* Reading sequences                                 */
     /* ************************************************* */
-    private static Sequence getSequence(DataInputStream is) throws IOException {
-        Symbol[] symbols = getListSymbol(is);
+    private Sequence getSequence( ) throws IOException {
+        Symbol[] symbols = getListSymbol();
         return new Sequence(symbols);
     }
 
-    private static Sequence[] getListSequence(DataInputStream is)
+    private Sequence[] getListSequence( )
         throws IOException
     {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         Sequence[] seqs = new Sequence[npoz];
         for(int i=0; i<npoz; i++)
-            seqs[i]=getSequence(is);
+            seqs[i]=getSequence();
         return seqs;
     }
 
-    private static Symbol getSymbol(DataInputStream is) throws IOException {
-        int sel = is.read();
+    private Symbol getSymbol( ) throws IOException {
+        int sel = mDataInputStream.read();
         Symbol symb = null;
         switch (sel) {
         case 0 : //constituent argument
-            int i1 = getInteger(is);
-            int i2 = getInteger(is);
+            int i1 = getInteger();
+            int i2 = getInteger();
             symb = new ArgConstSymbol(i1,i2);
             break;
         case 1 : //constituent argument -- what is the difference ?
-            int i11 = getInteger(is);
-            int i12 = getInteger(is);
+            int i11 = getInteger();
+            int i12 = getInteger();
             symb = new ArgConstSymbol(i11,i12);
             break;
         case 2 : //sequence of tokens
-            String[] strs = getListString(is);
+            String[] strs = getListString();
             symb = new ToksSymbol(strs);
             break;
         case 3 : //alternative tokens
-            String[] altstrs = getListString(is);
-            Alternative[] as = getListAlternative(is);
+            String[] altstrs = getListString();
+            Alternative[] as = getListAlternative();
             symb = new AlternToksSymbol(altstrs,as);
             break;
         default : throw new IOException("invalid tag for symbols : "+sel);
@@ -400,42 +398,42 @@ class NewReader {
         return symb;
     }
 
-    private static Alternative[] getListAlternative(DataInputStream is)
+    private Alternative[] getListAlternative( )
         throws IOException
     {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         Alternative[] alts = new Alternative[npoz];
         for(int i=0;i<npoz;i++)
-            alts[i] = getAlternative(is);
+            alts[i] = getAlternative();
         return alts;
     }
 
-    private static Alternative getAlternative(DataInputStream is)
+    private Alternative getAlternative( )
         throws IOException
     {
-        String[] s1 = getListString(is);
-        String[] s2 = getListString(is);
+        String[] s1 = getListString();
+        String[] s2 = getListString();
         return new Alternative(s1,s2);
     }
 
-    private static Symbol[] getListSymbol(DataInputStream is)
+    private Symbol[] getListSymbol( )
         throws IOException
     {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         Symbol[] symbols = new Symbol[npoz];
         for(int i=0; i<npoz; i++)
-            symbols[i]=getSymbol(is);
+            symbols[i]=getSymbol();
         return symbols;
     }
 
     /* ************************************************* */
     /* Reading concrete functions                        */
     /* ************************************************* */
-    private static CncFun getCncFun(DataInputStream is, Sequence[] sequences)
+    private CncFun getCncFun(Sequence[] sequences)
         throws IOException
     {
-        String name = getString(is);
-        int[] sIndices = getListInteger(is);
+        String name = getString();
+        int[] sIndices = getListInteger();
         int l = sIndices.length;
         Sequence[] seqs = new Sequence[l];
         for (int i = 0 ; i < l ; i++)
@@ -443,14 +441,13 @@ class NewReader {
         return new CncFun(name,seqs);
     }
 
-    private static CncFun[] getListCncFun(DataInputStream is,
-                                          Sequence[] sequences)
+    private CncFun[] getListCncFun(Sequence[] sequences)
         throws IOException
     {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         CncFun[] cncFuns = new CncFun[npoz];
         for(int i=0; i<npoz; i++)
-            cncFuns[i]=getCncFun(is, sequences);
+            cncFuns[i]=getCncFun(sequences);
         return cncFuns;
     }
 
@@ -462,12 +459,11 @@ class NewReader {
      * @param is is the input stream to read from
      * @param cncFuns is the list of concrete function
      */
-    private static ProductionSet getProductionSet(DataInputStream is,
-					     CncFun[] cncFuns)
+    private ProductionSet getProductionSet(CncFun[] cncFuns)
 	throws IOException
     {
-	int id = getInteger(is);
-	Production[] prods = getListProduction(is, id, cncFuns);
+	int id = getInteger();
+	Production[] prods = getListProduction( id, cncFuns);
 	ProductionSet ps = new ProductionSet(id,prods);
 	return ps;
     }
@@ -477,14 +473,13 @@ class NewReader {
      * @param is is the input stream to read from
      * @param cncFuns is the list of concrete function
      */
-    private static ProductionSet[] getListProductionSet(DataInputStream is,
-						   CncFun[] cncFuns)
+    private ProductionSet[] getListProductionSet(CncFun[] cncFuns)
 	throws IOException
     {
-	int npoz = getInteger(is);
+	int npoz = getInteger();
 	ProductionSet[] prods = new ProductionSet[npoz];
 	for(int i=0; i<npoz; i++)
-	    prods[i]= getProductionSet(is, cncFuns);
+	    prods[i]= getProductionSet(cncFuns);
 	return prods;
     }
 
@@ -495,15 +490,14 @@ class NewReader {
      * read only once for the whole production set)
      * @param cncFuns is the list of concrete function
      */
-    private static Production[] getListProduction(DataInputStream is,
-					     int leftCat,
+    private Production[] getListProduction(int leftCat,
 					     CncFun[] cncFuns)
 	throws IOException
     {
-	int npoz = getInteger(is);
+	int npoz = getInteger();
 	Production[] prods = new Production[npoz];
 	for(int i=0; i<npoz; i++)
-	    prods[i]=getProduction(is, leftCat, cncFuns);
+	    prods[i]=getProduction(leftCat, cncFuns);
 	return prods;
     }
 
@@ -516,21 +510,20 @@ class NewReader {
      *                function of the production (only given by its index in
      *                the list)
      */
-    private static Production getProduction(DataInputStream is,
-                                            int leftCat,
+    private Production getProduction(int leftCat,
                                             CncFun[] cncFuns)
         throws IOException
     {
-	int sel = is.read();
+	int sel = mDataInputStream.read();
 	Production prod = null;
 	switch (sel) {
 	case 0 : //application
-	    int i = getInteger(is);
-	    int[] iis = getListInteger(is);
+	    int i = getInteger();
+	    int[] iis = getListInteger();
 	    prod = new ApplProduction(leftCat, cncFuns[i],iis);
 	    break;
 	case 1 : //coercion
-	    int id = getInteger(is);
+	    int id = getInteger();
 	    prod = new CoerceProduction(leftCat, id);
 	    break;
 	default : throw new IOException("invalid tag for productions : "+sel);
@@ -541,27 +534,27 @@ class NewReader {
     /* ************************************************* */
     /* Reading concrete categories                       */
     /* ************************************************* */
-    private static CncCat getCncCat(DataInputStream is) throws IOException
+    private CncCat getCncCat( ) throws IOException
     {
-        String sname = getString(is);
-        int firstFId = getInteger(is);
-        int lastFId = getInteger(is);
-        String[] ss = getListString(is);
+        String sname = getString();
+        int firstFId = getInteger();
+        int lastFId = getInteger();
+        String[] ss = getListString();
         return new CncCat(sname,firstFId,lastFId,ss);
     }
 
-    private static Map<String, CncCat> getListCncCat(DataInputStream is) throws IOException
+    private Map<String, CncCat> getListCncCat( ) throws IOException
     {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         Map<String, CncCat> cncCats = new HashMap<String,CncCat>();
         String name;
         int firstFID, lastFID;
         String[] ss;
         for(int i=0; i<npoz; i++) {
-            name = getString(is);
-            firstFID = getInteger(is);
-            lastFID = getInteger(is);
-            ss = getListString(is);
+            name = getString();
+            firstFID = getInteger();
+            lastFID = getInteger();
+            ss = getListString();
             cncCats.put(name, new CncCat(name,firstFID,lastFID,ss));
         }
         return cncCats;
@@ -570,15 +563,15 @@ class NewReader {
     /* ************************************************* */
     /* Reading flags                                     */
     /* ************************************************* */
-    private static Map<String,RLiteral> getListFlag(DataInputStream is)
+    private Map<String,RLiteral> getListFlag( )
         throws IOException {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         Map<String,RLiteral> flags = new HashMap<String,RLiteral>();
         if (npoz == 0)
             return flags;
         for (int i=0; i<npoz; i++) {
-            String ss = getString(is);
-            RLiteral lit = getLiteral(is);
+            String ss = getString();
+            RLiteral lit = getLiteral();
             flags.put(ss, lit);
         }
         return flags;
@@ -587,21 +580,21 @@ class NewReader {
     /* ************************************************* */
     /* Reading strings                                   */
     /* ************************************************* */
-    private static String getString(DataInputStream is) throws IOException {
+    private String getString( ) throws IOException {
         // using a byte array for efficiency
         ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         int r ;
         int lg = 0;
         for (int i=0; i<npoz; i++)
-            {r = is.read();
+            {r = mDataInputStream.read();
                 if(r <= 0x7f) lg = 0;
                 else if ((r >= 0xc0) && (r <= 0xdf))
                     lg = 1;
                 /*
                   {bytes = new byte[2];
                   bytes[0] = (byte) r;
-                  bytes[1] = (byte) is.read();
+                  bytes[1] = (byte) mDataInputStream.read();
                   letter = new String(bytes, "UTF-8");
                   } */
                 else if ((r >= 0xe0) && (r <= 0xef))
@@ -615,20 +608,20 @@ class NewReader {
                 else throw new IOException("Undefined for now !!! ");
                 os.write((byte)r);
                 for(int j=1; j<=lg; j++)
-                    os.write((byte)is.read());
+                    os.write((byte)mDataInputStream.read());
             }
         return os.toString("UTF-8"); 
     }
 
-    private static String[] getListString(DataInputStream is)
+    private String[] getListString( )
         throws IOException
     {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         String[] strs = new String[npoz];
         if(npoz == 0)
             return strs;
         else {for (int i=0; i<npoz; i++)
-                strs[i] = getString(is);
+                strs[i] = getString();
         }
         return strs;
     }
@@ -636,36 +629,36 @@ class NewReader {
     /* ************************************************* */
     /* Reading integers                                  */
     /* ************************************************* */
-    private static int getInteger(DataInputStream is) throws IOException {
+    private int getInteger( ) throws IOException {
         /*
        int res = 0;
        int x = 0;
        int i = 0;
        do {
-       x = is.read();
+       x = mDataInputStream.read();
        res |= x << (i++)*7;
        } while (x > 0x7F);
 
        return res; */
-	long rez = (long) is.read();
+	long rez = (long) mDataInputStream.read();
 	if (rez <= 0x7f) return (int)rez;
-	else { int ii = getInteger(is);
+	else { int ii = getInteger();
             rez = (ii <<7) | (rez & 0x7f);
             return (int) rez;
         }
 
     }
 
-    private static int[] getListInteger(DataInputStream is) throws IOException
+    private int[] getListInteger( ) throws IOException
     {
-        int npoz = getInteger(is);
+        int npoz = getInteger();
         int[] vec = new int[npoz];
         for(int i=0; i<npoz; i++)
-            vec[i] = getInteger(is);
+            vec[i] = getInteger();
         return vec;
     }
 
-    private static int makeInt16(int j1, int j2) {
+    private int makeInt16(int j1, int j2) {
         int i = 0;
         i |= j1 & 0xFF;
         i <<= 8;
