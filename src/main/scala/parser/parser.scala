@@ -50,6 +50,7 @@ class Parser(val grammar:Concrete) {
    * @param tokens list of tokens to parse
    * */
   def parse(tokens:Seq[String]):Unit = parse(tokens, this.grammar.startCat)
+  def parse(txt:String):Unit = parse(txt.split(" "), this.grammar.startCat)
 
   def printStats() {
     println("Parser for language: " + this.grammar.name())
