@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.*;
+import java.io.ByteArrayOutputStream;
+
 
 class NewReader {
     private static Logger log =
@@ -586,12 +588,11 @@ class NewReader {
     /* Reading strings                                   */
     /* ************************************************* */
     private static String getString(DataInputStream is) throws IOException {
+        // using a byte array for efficiency
+        ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
         int npoz = getInteger(is);
-        byte[] bytes;
         int r ;
-        String letter="";
         int lg = 0;
-        StringBuffer bf = new StringBuffer();
         for (int i=0; i<npoz; i++)
             {r = is.read();
                 if(r <= 0x7f) lg = 0;
@@ -612,14 +613,11 @@ class NewReader {
                 else if ((r >= 0xfc) && (r <= 0xfd))
                     lg =5;
                 else throw new IOException("Undefined for now !!! ");
-                bytes = new byte[1 + lg];
-                bytes[0] = (byte) r;
+                os.write((byte)r);
                 for(int j=1; j<=lg; j++)
-                    bytes[j] = (byte) is.read();
-                letter = new String(bytes,"UTF-8");
-                bf.append(letter);
+                    os.write((byte)is.read());
             }
-        return new String(bf.toString().getBytes(),"UTF-8");
+        return os.toString("UTF-8"); 
     }
 
     private static String[] getListString(DataInputStream is)
