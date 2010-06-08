@@ -5,6 +5,8 @@ import org.grammaticalframework.parser.Parser;
 import org.grammaticalframework.linearizer.Linearizer;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
+import java.util.Vector;
+
 import java.lang.RuntimeException;
 
 
@@ -31,7 +33,14 @@ class Translator {
       if (trees.length < 1)
          return "/!\\ No translation";
       try {
-         return this.mLinearizer.renderLin(this.mLinearizer.linearize(trees[0])).toString();
+	  Vector<String> words = 
+	      this.mLinearizer.renderLin(this.mLinearizer.linearize(trees[0]));
+	  StringBuffer sb = new StringBuffer();
+	  for (String w : words) {
+	      sb.append(w);
+	      sb.append(" ");
+	  }
+	  return sb.toString();
       } catch (java.lang.Exception e) {
          return "Error during linearization";
       }

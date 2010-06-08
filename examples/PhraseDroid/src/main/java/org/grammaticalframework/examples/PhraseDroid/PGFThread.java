@@ -5,39 +5,46 @@ import org.grammaticalframework.reader.Concrete;
 import org.grammaticalframework.parser.Parser;
 import org.grammaticalframework.linearizer.Linearizer;
 import java.io.InputStream;
+import java.io.IOException;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
 class PGFThread extends Thread {
     static private int TRANSLATE = 3;
-   private Translator mTranslator; // The pgf object to use
-   private MainActivity activity;  // the user that will receive the translations
-   public Handler mHandler;        // an Handler to receive messages
+    private MainActivity activity;
+    public Handler mHandler;        // an Handler to receive messages
     
-   PGFThread(MainActivity activity, Translator mTranslator) {
-      this.mTranslator = mTranslator;
+   PGFThread(MainActivity activity) {
       this.activity = activity;
     }
     
     public void run() {
-        final Translator trans = this.mTranslator;
-        Looper.prepare();
-        mHandler = new Handler() {
-            public void handleMessage(Message msg) {
-                if (msg.what == TRANSLATE) {
-                    String txt = (String)msg.obj;
-		    final String translation = mTranslator.translate(txt);
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            activity.setTranslation(translation);
-                        }
-                    });
-                }
-            }
-        };
-        Looper.loop();
+	try {
+	    InputStream is =
+		this.activity.getResources().openRawResource(R.raw.two);
+	    long begin_time = System.currentTimeMillis();
+	    PGF pgf = PGF.readFromInputStream(is);
+	    long end_time = System.currentTimeMillis();
+	    final Translator trans =
+		new Translator(pgf, "PhrasebookEng", "PhrasebookFre");
+	    activity.setText("PGF read in " + (end_time - begin_time) + " ms",
+			     false);
+	    activity.onPgfReady();
+	    Looper.prepare();
+	    mHandler = new Handler() {
+		    public void handleMessage(Message msg) {
+			if (msg.what == TRANSLATE) {
+			    String txt = (String)msg.obj;
+			    String translation = trans.translate(txt);
+			    activity.setText(translation, true);
+			}
+		    }
+		};
+	    Looper.loop();
+	} catch (IOException e) {
+	    activity.onPgfError(e.toString());
+	}
     }
     
     public void translate(String txt) {
