@@ -14,12 +14,14 @@ import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
 class MainActivity extends TTSActivity {
 
-  var currentText = "";
+  var currentText = ""
+  var resultView:TextView = null;
+  var mPGFThread:PGFThread = null;
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.main)
-    setupLanguage(  )
+    setupLanguage()
 
     // Get pointers to the ui elements
     val phraseField = findViewById(R.id.phrase).asInstanceOf[EditText]
@@ -27,58 +29,35 @@ class MainActivity extends TTSActivity {
       findViewById(R.id.translate_button).asInstanceOf[Button]
     val speakButton =
       findViewById(R.id.speak_button).asInstanceOf[Button]
-    val resultView = findViewById(R.id.result_view).asInstanceOf[TextView]
+    resultView = findViewById(R.id.result_view).asInstanceOf[TextView]
 
     // Read the pgf
     val begin_time = System.currentTimeMillis()
     val pgf_is = this.getResources().openRawResource(R.raw.two)
     val pgf = PGF.readFromInputStream(pgf_is)
-    val parser = new Parser(pgf.concrete("PhrasebookEng"))
-    val linearizer = new Linearizer(pgf, pgf.concrete("PhrasebookFre"))
     val end_time = System.currentTimeMillis()
     resultView.setText("PGF read in " + (end_time - begin_time) + " ms")
-
-    // translate action
+    val mTranslator = new Translator(pgf, "PhrasebookEng", "PhrasebookFre")
+    this.mPGFThread = new PGFThread(this, mTranslator)
+    this.mPGFThread.start()
+    
+    // setup translate action
     translateButton.setOnClickListener( new View.OnClickListener() {
       def onClick(v:View) = {
-      val phrase = phraseField.getText.toString
-      currentText = translate(parser,linearizer,phrase)
-        resultView.setText(currentText)
+        val phrase = phraseField.getText.toString
+        mPGFThread.translate(phrase)
       }
     })
-    // speak action
+    // setup speak action
     speakButton.setOnClickListener( new View.OnClickListener() {
       def onClick(v:View) = say(currentText)
     })
   }
 
-  def parse(parser:Parser, txt:String):String = {
-    val begin_time = System.currentTimeMillis()
-    val tokens = txt.split(" ")
-    parser.parse(tokens)
-    val end_time = System.currentTimeMillis()
-    val parse_time = end_time - begin_time
-    val trees = parser.getTrees
-    var s = ""
-    trees.map(PrettyPrinter.print).foreach(s += _)
-    s+="("+parse_time+" ms)"
-    return s
+  def setTranslation(translation:String) = {
+      this.currentText = translation
+      this.resultView.setText(currentText)
   }
 
-  def translate(parser:Parser, linearizer:Linearizer, txt:String):String = {
-    val begin_time = System.currentTimeMillis()
-    val tokens = txt.split(" ")
-    parser.parse(tokens)
-    val trees = parser.getTrees
-    val inter_time = System.currentTimeMillis()
-    var s = ""
-    trees.foreach( t => {
-      s += linearizer.renderLin(linearizer.linearize(t)).toArray.mkString(" ")
-    })
-    val end_time = System.currentTimeMillis()
-    return s
-  }
-
-  override def onLanguageIsReady()= {
-  }
+  override def onLanguageIsReady()= {}
 }
