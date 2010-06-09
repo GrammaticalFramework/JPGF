@@ -83,11 +83,11 @@ class NewReader {
      */
     private Abstract getAbstract() throws IOException
     {
-        String s = getString();
+        String name = getIdent();
         Map<String,RLiteral> flags = getListFlag();
         AbsFun[] absFuns = getListAbsFun();
         AbsCat[] absCats = getListAbsCat();
-        return new Abstract(s,flags,absFuns,absCats);
+        return new Abstract(name,flags,absFuns,absCats);
     }
 
     private Pattern[] getListPattern() throws IOException {
@@ -107,20 +107,20 @@ class NewReader {
 
 
     private AbsFun getAbsFun() throws IOException {
-        String s = getString();
+        String name = getIdent();
         Type t = getType();
         int i = getInteger();
         int maybe = mDataInputStream.read();
-        if (maybe == 0) return new AbsFun(s,t,i,new Eq[0]);
+        if (maybe == 0) return new AbsFun(name,t,i,new Eq[0]);
         Eq[] eqs = getListEq();
-        return new AbsFun(s,t,i,eqs);
+        return new AbsFun(name,t,i,eqs);
     }
 
     private AbsCat getAbsCat() throws IOException {
-        String s = getString();
+        String name = getIdent();
         Hypo[] hypos = getListHypo();
-        String[] strs = getListString();
-        AbsCat abcC = new AbsCat(s,hypos, strs);
+        String[] strs = getListIdent();
+        AbsCat abcC = new AbsCat(name,hypos, strs);
         return abcC;
     }
 
@@ -154,18 +154,18 @@ class NewReader {
 
     private Type getType() throws IOException {
         Hypo[] hypos = getListHypo();
-        String s = getString();
+        String returnCat = getIdent();
         Expr[] exprs = getListExpr();
-        return new Type(hypos, s,exprs);
+        return new Type(hypos, returnCat, exprs);
 
     }
 
     private Hypo getHypo() throws IOException { 
        int btype = mDataInputStream.read();
         boolean b = btype == 0 ? false : true;
-        String s = getString();
+        String varName = getIdent();
         Type t = getType();
-        Hypo hh = new Hypo (b,s,t);
+        Hypo hh = new Hypo (b,varName,t);
         return hh;
     }
 
@@ -192,9 +192,9 @@ class NewReader {
         case 0 : //lambda abstraction
             int bt = mDataInputStream.read();
             boolean btype = bt == 0 ? false : true ;
-            String str = getString();
+            String varName = getIdent();
             Expr e1 = getExpr();
-            expr = new LambdaExp(btype,str,e1);
+            expr = new LambdaExp(btype,varName,e1);
             break;
         case 1 : //expression application
             Expr e11 = getExpr();
@@ -210,8 +210,8 @@ class NewReader {
             expr = new MetaExp(id);
             break;
         case 4 : //abstract function name
-            String s = getString();
-            expr = new AbsNameExp(s);
+            String absFun = getIdent();
+            expr = new AbsNameExp(absFun);
             break;
         case 5 : //variable
             int v = getInteger();
@@ -246,18 +246,18 @@ class NewReader {
         Pattern patt = null;
         switch (sel) {
         case 0 : //application pattern
-            String str = getString();
+            String absFun = getIdent();
             Pattern[] patts = getListPattern();
-            patt = new AppPattern(str,patts);
+            patt = new AppPattern(absFun,patts);
             break;
         case 1 : //variable pattern
-            String s = getString();
-            patt = new VarPattern(s);
+            String varName = getIdent();
+           patt = new VarPattern(varName);
             break;
         case 2 : //variable as pattern
-            String sp = getString();
+            String pVarName = getIdent();
             Pattern p = getPattern();
-            patt = new VarAsPattern(sp,p);
+            patt = new VarAsPattern(pVarName,p);
             break;
         case 3 : //wild card pattern
             patt = new WildCardPattern();
@@ -303,7 +303,7 @@ class NewReader {
     /* ************************************************* */
     private Concrete getConcrete(String startCat) throws IOException
     {
-        String name = getString();
+        String name = getIdent();
         Map<String,RLiteral> flags = getListFlag();
         // We don't use the print names, but we need to read them to skip them
         getListPrintName();
@@ -333,7 +333,7 @@ class NewReader {
     // FIXME : not used, we should avoid creating the objects
     private PrintName getPrintName( ) throws IOException
     {
-        String absName = getString();
+        String absName = getIdent();
         String printName = getString();
         return new PrintName(absName, printName);
 
@@ -432,7 +432,7 @@ class NewReader {
     private CncFun getCncFun(Sequence[] sequences)
         throws IOException
     {
-        String name = getString();
+        String name = getIdent();
         int[] sIndices = getListInteger();
         int l = sIndices.length;
         Sequence[] seqs = new Sequence[l];
@@ -536,7 +536,7 @@ class NewReader {
     /* ************************************************* */
     private CncCat getCncCat( ) throws IOException
     {
-        String sname = getString();
+        String sname = getIdent();
         int firstFId = getInteger();
         int lastFId = getInteger();
         String[] ss = getListString();
@@ -551,7 +551,7 @@ class NewReader {
         int firstFID, lastFID;
         String[] ss;
         for(int i=0; i<npoz; i++) {
-            name = getString();
+            name = getIdent();
             firstFID = getInteger();
             lastFID = getInteger();
             ss = getListString();
@@ -570,7 +570,7 @@ class NewReader {
         if (npoz == 0)
             return flags;
         for (int i=0; i<npoz; i++) {
-            String ss = getString();
+            String ss = getIdent();
             RLiteral lit = getLiteral();
             flags.put(ss, lit);
         }
@@ -623,6 +623,30 @@ class NewReader {
         else {for (int i=0; i<npoz; i++)
                 strs[i] = getString();
         }
+        return strs;
+    }
+
+    /**
+     * Some string (like categories identifiers) are not allowed to
+     * use the full utf8 tables but only ascii caracters.
+     * We can read them faster using this knowledge.
+     **/
+    private String getIdent( ) throws IOException {
+        // using a byte array for efficiency
+        ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+        int nbChar = getInteger();
+	byte[] bytes = new byte[nbChar];
+	this.mDataInputStream.read(bytes);
+	return new String(bytes, "UTF-8");
+    }
+
+    private String[] getListIdent( )
+        throws IOException
+    {
+        int nb = getInteger();
+        String[] strs = new String[nb];
+        for (int i=0; i<nb; i++)
+	    strs[i] = getIdent();
         return strs;
     }
 
