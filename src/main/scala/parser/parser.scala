@@ -60,9 +60,11 @@ class Parser(val grammar:Concrete) {
   def getTrees = ps.getTrees()
 }
 
-
+/* ************************************************************************* */
+/** ParseState
+ * The parse-state keeps is the core of the parser.
+ * */
 private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
-  val log = Logger.getLogger("org.grammaticalframework.parser")
   private val startCat = this.grammar.startCat
   private var trie = new ParseTrie
   private val chart = new Chart(10,this.length) // TODO: 10 is a bad value...
@@ -126,7 +128,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
     val p = item.position
     //log.fine("Processing active item " + item + " from the agenda")
     item.nextSymbol match {
-      // before s∈T
+      // ------------------------- before s∈T -------------------------
       case Some(tok:ToksSymbol) => {
         //log.fine("Case before s∈T")
         val tokens = tok.tokens
@@ -144,10 +146,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
         newAgenda += i
       }
 
-        //
-      //// before <d,r>
-      //
-
+      // ------------------------- before <d,r> -----------------------
       case Some(arg:ArgConstSymbol) => {
         //log.finest("Case before <d,r>")
         val d = arg.arg
@@ -173,7 +172,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
         }
       }
 
-      // ** at the end
+      // ------------------------- at the end --------------------------
       case None => {
         //log.finest("Case at the end")
         chart.getCategory(A, l, j, this.position) match {
@@ -203,10 +202,8 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
     }
   }
 
-  /* ************************************ *
-   * Overrides
-   * ************************************ */
-
+  /* Overrides */
+  
   override def toString() =
     "= ParseState =\n" +
     "== Chart ==\n" +
@@ -215,7 +212,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
     this.trie.toString()
 }
 
-
+/* ************************************************************************* */
 private class ActiveItem(val begin : Int,
                  val category:Int,
                  val function:CncFun,
@@ -255,14 +252,7 @@ private class ActiveItem(val begin : Int,
 }
 
 
-
-
-
-
-
-
-
-
+/* ************************************************************************* */
 /**
  * The ParseTries are used to keep track of the possible next symbols.
  *
