@@ -124,8 +124,6 @@ class NewReader {
         return abcC;
     }
 
-
-
     private AbsFun[] getListAbsFun() throws IOException {
         int npoz = getInteger();
         AbsFun[] absFuns = new AbsFun[npoz];
@@ -282,18 +280,22 @@ class NewReader {
     private RLiteral getLiteral( ) throws IOException {
         int sel = mDataInputStream.read();
         RLiteral ss = null;
-        switch (sel)
-            {case 0 : String str = getString();
-                    ss = new StringLit(str);
-                    break;
-            case 1 : int i = getInteger();
-                ss = new IntLit(i);
-                break;
-            case 2 : double d = mDataInputStream.readDouble();
-                ss = new FloatLit(d);
-                break;
-            default : throw new IOException("Incorrect literal tag "+sel);
-            }
+        switch (sel) {
+	case 0 :
+	    String str = getString();
+	    ss = new StringLit(str);
+	    break;
+	case 1 :
+	    int i = getInteger();
+	    ss = new IntLit(i);
+	    break;
+	case 2 :
+	    double d = mDataInputStream.readDouble();
+	    ss = new FloatLit(d);
+	    break;
+	default :
+	    throw new IOException("Incorrect literal tag "+sel);
+	}
         ss.sel=sel;
         return ss;
     }
@@ -586,30 +588,35 @@ class NewReader {
         int npoz = getInteger();
         int r ;
         int lg = 0;
-        for (int i=0; i<npoz; i++)
-            {r = mDataInputStream.read();
-                if(r <= 0x7f) lg = 0;
-                else if ((r >= 0xc0) && (r <= 0xdf))
-                    lg = 1;
-                /*
-                  {bytes = new byte[2];
-                  bytes[0] = (byte) r;
-                  bytes[1] = (byte) mDataInputStream.read();
-                  letter = new String(bytes, "UTF-8");
-                  } */
-                else if ((r >= 0xe0) && (r <= 0xef))
-                    lg = 2;
-                else if ((r >= 0xf0) && (r <= 0xf4))
-                    lg = 3;
-                else if ((r >= 0xf8) && (r <= 0xfb))
-                    lg = 4;
-                else if ((r >= 0xfc) && (r <= 0xfd))
-                    lg =5;
-                else throw new IOException("Undefined for now !!! ");
-                os.write((byte)r);
-                for(int j=1; j<=lg; j++)
-                    os.write((byte)mDataInputStream.read());
-            }
+        for (int i=0; i<npoz; i++) {
+	    r = mDataInputStream.read();
+    	    os.write((byte)r);
+	    if (r <= 0x7f) 
+		lg = 0;
+	    else if ((r >= 0xc0) && (r <= 0xdf))
+		os.write((byte)mDataInputStream.read());   //lg = 1;
+	    else if ((r >= 0xe0) && (r <= 0xef)) {
+		os.write((byte)mDataInputStream.read());   //lg = 2;
+		os.write((byte)mDataInputStream.read());
+	    } else if ((r >= 0xf0) && (r <= 0xf4)) {
+		os.write((byte)mDataInputStream.read());   //lg = 3;
+		os.write((byte)mDataInputStream.read());
+		os.write((byte)mDataInputStream.read());
+	    } else if ((r >= 0xf8) && (r <= 0xfb)) {
+		os.write((byte)mDataInputStream.read());   //lg = 4;
+		os.write((byte)mDataInputStream.read());
+		os.write((byte)mDataInputStream.read());
+		os.write((byte)mDataInputStream.read());
+	    } else if ((r >= 0xfc) && (r <= 0xfd)) {
+		os.write((byte)mDataInputStream.read());   //lg =5;
+		os.write((byte)mDataInputStream.read());
+		os.write((byte)mDataInputStream.read());
+		os.write((byte)mDataInputStream.read());
+		os.write((byte)mDataInputStream.read());
+	    } else throw new IOException("Undefined for now !!! ");
+	    //for(int j=1; j<=lg; j++)
+	        //os.write((byte)mDataInputStream.read());
+	}
         return os.toString("UTF-8"); 
     }
 
@@ -654,23 +661,14 @@ class NewReader {
     /* Reading integers                                  */
     /* ************************************************* */
     private int getInteger( ) throws IOException {
-        /*
-       int res = 0;
-       int x = 0;
-       int i = 0;
-       do {
-       x = mDataInputStream.read();
-       res |= x << (i++)*7;
-       } while (x > 0x7F);
-
-       return res; */
-	long rez = (long) mDataInputStream.read();
-	if (rez <= 0x7f) return (int)rez;
-	else { int ii = getInteger();
+	long rez = (long)mDataInputStream.read();
+	if (rez <= 0x7f)
+	    return (int)rez;
+	else {
+	    int ii = getInteger();
             rez = (ii <<7) | (rez & 0x7f);
-            return (int) rez;
+            return (int)rez;
         }
-
     }
 
     private int[] getListInteger( ) throws IOException
