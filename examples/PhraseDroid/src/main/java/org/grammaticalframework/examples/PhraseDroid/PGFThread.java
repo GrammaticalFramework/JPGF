@@ -22,7 +22,7 @@ class PGFThread extends Thread {
     public void run() {
 	try {
 	    InputStream is =
-		this.activity.getResources().openRawResource(R.raw.two);
+		this.activity.getResources().openRawResource(R.raw.phrasebook);
 	    long begin_time = System.currentTimeMillis();
 	    PGF pgf = PGF.readFromInputStream(is);
 	    long end_time = System.currentTimeMillis();
