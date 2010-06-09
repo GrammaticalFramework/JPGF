@@ -23,6 +23,15 @@ public class Abstract {
     public String name() {
         return name;
     }
+
+    public String startcat() {
+	RLiteral cat = this.flags.get("startcat");
+        if (cat == null)
+            return "Sentence";
+        else
+            return ((StringLit)cat).getValue();
+    }
+
     public AbsFun[] getAbsFuns() {return absFuns;}
     public AbsCat[] getAbsCats() {return absCats;}
 

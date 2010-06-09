@@ -44,9 +44,9 @@ class NewReader {
             ii[i]=mDataInputStream.read();
         // Reading the global flags
         Map<String,RLiteral> flags = getListFlag();
-        String startCat = getStartCat(flags);
         // Reading the abstract
         Abstract abs = getAbstract();
+        String startCat = abs.startcat();
         // Reading the concrete grammars
         Concrete[] concretes = getListConcretes(startCat);
         // builds and returns the pgf object.
