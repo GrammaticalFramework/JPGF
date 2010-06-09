@@ -35,10 +35,10 @@ class Parser(val grammar:Concrete) {
   def parse(tokens : Seq[String], startCat: CncCat):Unit = {
     ps = new ParseState(this, this.grammar, tokens.length)
     for (token <- tokens) {
-      log.fine("Scanning token " + token)
+      //log.fine("Scanning token " + token)
       if (!ps.scan(token)) {
-        log.fine("Scan failed...")
-        log.finer(this.ps.toString())
+        //log.fine("Scan failed...")
+        //log.finer(this.ps.toString())
         return
       }
     }
@@ -96,7 +96,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
         }
       }
     }
-    log.finer(this.trie.toString)
+    //log.finer(this.trie.toString)
     return true
   }
 
@@ -112,13 +112,10 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
   }
 
   private def compute() = {
-    log.finer("Computing parse state for k=" + this.position)
     while (!agenda.isEmpty) {
       val e:ActiveItem = agenda.pop();
       processActiveItem(e)
     }
-    log.finest("After computation(k=" + this.position + ") the trie is : \n" +
-               this.trie.toString())
   }
 
   private def processActiveItem(item:ActiveItem) = {
@@ -128,11 +125,11 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
     val B = item.domain
     val l = item.constituent
     val p = item.position
-    log.finest("Processing active item " + item + " from the agenda")
+    //log.fine("Processing active item " + item + " from the agenda")
     item.nextSymbol match {
       // before s∈T
       case Some(tok:ToksSymbol) => {
-        log.finest("Case before s∈T")
+        //log.fine("Case before s∈T")
         val tokens = tok.tokens
         val i = new ActiveItem(j, A, f, B, l, p + 1)
         // SCAN
@@ -143,8 +140,8 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
                         a}
           case Some(a) => a
         }
-        log.finest("Adding item " + i + " for terminals "
-                   + tokens.map(_.toString))
+        //log.fine("Adding item " + i + " for terminals "
+        //           + tokens.map(_.toString) + "(from item : " + item + ")")
         newAgenda += i
       }
 
@@ -153,7 +150,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
       //
 
       case Some(arg:ArgConstSymbol) => {
-        log.finest("Case before <d,r>")
+        //log.finest("Case before <d,r>")
         val d = arg.arg
         val r = arg.cons
         val Bd = item.domain(d)
@@ -161,7 +158,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
           for (prod <- chart.getProductions(Bd)) {
             val it = new ActiveItem(this.position, Bd, prod.function,
                                     prod.domain, r, 0)
-            log.finest("Adding " + it + " to the agenda*")
+            //log.finest("Adding " + it + " to the agenda*")
             agenda += it
           }
         }
@@ -171,7 +168,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
             val newDomain = B.subArray(0, B.length)
             newDomain(d) = catN
             val it = new ActiveItem(j, A, f, newDomain, l, p + 1)
-            log.finest("Adding " + it + " to the agenda")
+            //log.finest("Adding " + it + " to the agenda")
             agenda += it
           }
         }
@@ -179,17 +176,17 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
 
       // ** at the end
       case None => {
-        log.finest("Case at the end")
+        //log.finest("Case at the end")
         chart.getCategory(A, l, j, this.position) match {
           case None => {
             val N = chart.generateFreshCategory(A, l, j, this.position)
             for( (ip,d) <- chart.active(j).get(A,l)) {
-              log.finest("combine with " + ip + " (" + d + ")")
+              //log.finest("combine with " + ip + " (" + d + ")")
               val domain = ip.domain.subArray(0, ip.domain.length)
               domain(d) = N
               val i = new ActiveItem(ip.begin, ip.category, ip.function,
                                      domain, ip.constituent, ip.position + 1)
-              log.finest("Adding " + i + " to the agenda")
+              //log.finest("Adding " + i + " to the agenda")
               agenda += i
             }
             chart.addProduction(N, f, B)
@@ -197,7 +194,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
           case Some(n) => {
             for((xprime, dprime, r) <- chart.active(this.position).get(n)) {
               val i = new ActiveItem(this.position, n, f, B, r, 0)
-              log.finest("Adding "+ i + " to the agenda")
+              //log.finest("Adding "+ i + " to the agenda")
               agenda += i
             }
             chart.addProduction(n, f, B)
