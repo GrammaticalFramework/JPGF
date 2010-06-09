@@ -28,6 +28,8 @@ object BasicParserTest {
     // Testing whith the phrasebook
     grammar = new TestGrammar("pgf/Phrasebook.pgf", "PhrasebookFre")
     grammar.parseAndPrint("le restaurant est ouvert le lundi")
+    grammar = new TestGrammar("pgf/Phrasebook.pgf", "PhrasebookEng")
+    grammar.parseAndPrint("how far is the university by train ?")
   }
 }
 
