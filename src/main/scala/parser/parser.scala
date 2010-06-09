@@ -101,14 +101,13 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
   }
 
   private def init() = {
-    log.finer("Initializing parse state with start cat " + this.startCat)
-    for (
-      id <- startCat.firstID until startCat.lastID + 1 ;
-      prod <- chart.getProductions(id) ) {
-        val it = new ActiveItem(0, id, prod.function,
-                                prod.domain, 0, 0)
-        agenda += it
-      }
+    //println("Initializing parse state with category : " + startCat)
+    for (id <- startCat.firstID until (startCat.lastID + 1) ;
+	 prod <- chart.getProductions(id) ) {
+	   val it = new ActiveItem(0, id, prod.function,
+                                   prod.domain, 0, 0)
+           agenda += it
+	 }
   }
 
   private def compute() = {
