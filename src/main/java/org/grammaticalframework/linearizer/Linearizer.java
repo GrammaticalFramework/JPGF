@@ -235,23 +235,37 @@ return rez;
 
 /** flattens a bracketed token
 **/
-public Vector<String> untokn(BracketedTokn bt)
+public Vector<String> untokn(BracketedTokn bt, String after)
 {if (bt instanceof LeafKS) 
   {String[] d = ((LeafKS) bt).getStrs();
    Vector<String> rez = new Vector<String>();
-   for(int i=0; i<d.length;i++)
+   for(int i=d.length-1; i>=0;i--)
 	   rez.add(d[i]);
    return rez;}
 else if (bt instanceof LeafKP) {
 	String[] d = ((LeafKP) bt).getStrs();
+	Alternative[] alts = ((LeafKP) bt).getAlts();
 	Vector<String> rez = new Vector<String>();
-	for(int i = 0; i<d.length; i++)
-		rez.add(d[i]);
-	return rez;}
+	for (int i =0; i<alts.length; i++)
+	{String[] ss2 = alts[i].getAlt2();
+	for (int j = 0; j<ss2.length; j++)
+		 if (after.startsWith(ss2[j]))
+		    {String[] ss1 = alts[i].getAlt1();
+                     for(int k = ss1.length-1; k>=0; k--)
+		    	 rez.add(ss1[i]);
+		    return rez;
+		    }
+	}
+    for(int i = d.length-1;i>=0; i--)
+	rez.add(d[i]);
+	return rez;
+     }
 else {Vector<String> rez = new Vector<String>();
 	 Vector<BracketedTokn> bs = ((Bracket) bt).getBracketedToks();
-      for(int i=0; i<bs.size();i++)
-    	rez.addAll(untokn(bs.elementAt(i)));
+      for(int i=bs.size()-1; i>=0;i--)
+    	{rez.addAll(untokn(bs.elementAt(i),after));
+	    after = rez.lastElement();
+    	 }  	
       return rez;}}
 
     /** flattens the result of the linearization
@@ -260,16 +274,20 @@ else {Vector<String> rez = new Vector<String>();
     // because we want all the translations separated and not glued together
     // like it is done now.
     // FIXME : the param should probably be only one LinTriple.
-    public Vector<String> renderLin(Vector<LinTriple> v) {
-        Vector<String> rez= new Vector<String>();
-        for(int i=0; i<v.size();i++) {
-            Vector<Vector<BracketedTokn>> vtemp = v.elementAt(i).getLinTable();
-            for(int j=0; j<vtemp.size(); j++)
-                for(int k=0; k<vtemp.elementAt(j).size(); k++)
-                    rez.addAll(untokn(vtemp.elementAt(j).elementAt(k)));
-        }
-        return rez;
-    }
+public Vector<String> renderLin(Vector<LinTriple> v)
+{Vector<String> rez= new Vector<String>();
+Vector<String> rezF= new Vector<String>(); 
+{Vector<Vector<BracketedTokn>> vtemp = v.elementAt(0).getLinTable();
+String after = "";  
+for(int k=vtemp.elementAt(0).size()-1; k>=0; k--)
+	{rez.addAll(untokn(vtemp.elementAt(0).elementAt(k),after));
+	 after = rez.lastElement();
+	}
+	}
+for (int i=0; i<rez.size();i++)
+rezF.add(0,rez.elementAt(i));
+return rezF;
+}
 
     public Vector<LinTriple> linearize(Tree e) throws Exception {
         return this.lin0(new Vector<String>(), new Vector<String>(),
