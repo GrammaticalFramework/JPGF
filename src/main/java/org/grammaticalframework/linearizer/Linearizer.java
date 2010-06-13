@@ -324,8 +324,15 @@ return rez;
         if(tree instanceof Lambda) {
             xs.add(((Lambda)tree).ident_);
             return lin0(xs,ys,mb_cty,mb_fid,((Lambda)tree).tree_);}
-        else if(xs.isEmpty())
-            return lin(ys,mb_cty,mb_fid,tree,new Vector<Tree>());
+        else if(xs.isEmpty()) {
+        	Vector<Tree> es = new Vector<Tree>();
+	        if (tree instanceof Application) 
+   	             do {es.add(((Application)tree).tree_2);
+   	                 tree = ((Application)tree).tree_1; } while(tree instanceof Application);
+            if (tree instanceof Function) 
+            	 return apply(xs, mb_cty,mb_fid, ((Function)tree).ident_,es);
+            else throw new RuntimeException("undefined construction for expressions !!!");
+            }
         else {
             xs.addAll(ys);
             Vector<Tree> exprs = new Vector<Tree>();
@@ -470,38 +477,6 @@ for(int i=0; i<hypos.length;i++)
 return rez;
 }
 
-
-
-/** intermediate linearization helper function
-**/
-    public Vector<LinTriple> lin(Vector<String> xs,
-                                 CncType mb_cty,
-                                 Integer n_fid,
-                                 Tree e,
-                                 Vector<Tree> es)
-        throws LinearizerException
-    {
-        Vector<LinTriple> rez = new Vector<LinTriple>();
-        if(e instanceof Application) {
-            es.add(((Application)e).tree_2);
-            return lin(xs,mb_cty,n_fid,((Application)e).tree_1,es);
-        } else if ((e instanceof Literal) && (es.isEmpty())) {
-            Lit ll = ((Literal) e).lit_;
-            if (ll instanceof StringLiteral)
-                rez.add(new LinTriple(n_fid+1, new CncType("String",n_fid),ss(((StringLiteral)ll).string_)));
-            else if (ll instanceof IntLiteral)
-                rez.add(new LinTriple(n_fid+1, new CncType("Int",n_fid), ss(""+((IntLiteral)ll).integer_)));
-            else rez.add(new LinTriple(n_fid+1, new CncType("Float",n_fid), ss(""+((FloatLiteral)ll).double_)));
-            return rez;
-        } else if (e instanceof MetaVariable)
-            throw new RuntimeException("linearization for meta expressions is not implemented yet!");
-        else if (e instanceof Function)
-            return apply(xs, mb_cty,n_fid, ((Function)e).ident_,es);
-        else if (e instanceof Variable)
-            throw new RuntimeException("linearization for variable expressions is not implemented yet!");
-        else throw
-                 new RuntimeException("linearization for typed expressions or expressions with implicit arguments is not implemented yet!");
-    }
 
 /** creates a simple vector of vectors of bracketed tokens containing a string value
 **/
