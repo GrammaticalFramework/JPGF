@@ -276,10 +276,7 @@ else {Vector<String> rez = new Vector<String>();
 
     /** flattens the result of the linearization
      **/
-    // FIXME : should return smething of type String[][] and not String[]
-    // because we want all the translations separated and not glued together
-    // like it is done now.
-    // FIXME : the param should probably be only one LinTriple.
+
 public Vector<String> renderLin(LinTriple v)
 {Vector<String> rez= new Vector<String>();
 Vector<String> rezF= new Vector<String>(); 
