@@ -24,19 +24,25 @@ public class Linearizer {
      * @param concrete the concrete grammar to use.
      **/
     public Linearizer(PGF pgf, Concrete concrete)
-       throws Exception
+       throws LinearizerException
     {
         this.pgf = pgf;
         this.cnc = concrete;
         this.lProd = getLProductions();
     }
 
+    class LinearizerException extends Exception
+    {LinearizerException() {}
+     LinearizerException(String s) {super(s);}
+    }
+    
+    
     /** constructs the l-productions of the concrete syntax for
      * a given language
      **/
     public HashMap<String,HashMap<Integer,HashSet<Production>>>
         getLProductions()
-        throws NullPointerException
+        throws LinearizerException
     {
         HashMap<Integer,HashSet<Production>> emptyMap =
             new HashMap<Integer,HashSet<Production>>();
@@ -274,10 +280,10 @@ else {Vector<String> rez = new Vector<String>();
     // because we want all the translations separated and not glued together
     // like it is done now.
     // FIXME : the param should probably be only one LinTriple.
-public Vector<String> renderLin(Vector<LinTriple> v)
+public Vector<String> renderLin(LinTriple v)
 {Vector<String> rez= new Vector<String>();
 Vector<String> rezF= new Vector<String>(); 
-{Vector<Vector<BracketedTokn>> vtemp = v.elementAt(0).getLinTable();
+{Vector<Vector<BracketedTokn>> vtemp = v.getLinTable();
 String after = "";  
 for(int k=vtemp.elementAt(0).size()-1; k>=0; k--)
 	{rez.addAll(untokn(vtemp.elementAt(0).elementAt(k),after));
@@ -289,7 +295,14 @@ rezF.add(0,rez.elementAt(i));
 return rezF;
 }
 
-    public Vector<LinTriple> linearize(Tree e) throws Exception {
+public Vector<Vector<String>> renderAllLins(Vector<LinTriple> v)
+{Vector<Vector<String>> rez = new Vector<Vector<String>>();
+for(int i=0; i<v.size();i++)
+	rez.add(renderLin(v.elementAt(i)));
+return rez;
+	}
+
+    public Vector<LinTriple> linearize(Tree e) throws LinearizerException {
         return this.lin0(new Vector<String>(), new Vector<String>(),
                          null, new Integer(0), e);
     }
@@ -307,7 +320,7 @@ return rezF;
                                   Vector<String> ys,
                                   CncType mb_cty,
                                   Integer mb_fid,
-                                  Tree tree) throws Exception
+                                  Tree tree) throws LinearizerException
     {
         // if tree is a lambda, we add the variable to the list of bound
         // variables and we linearize the subtree.
@@ -346,7 +359,7 @@ return rezF;
                                     Integer n_fid,
                                     String f,
                                     Vector<Tree> es)
-        throws Exception
+        throws LinearizerException
     {
         HashMap<Integer,HashSet<Production>> prods = lProd.get(f);
         if (prods == null) {
@@ -364,7 +377,7 @@ return rezF;
                 for(int ind =copy_ctys.size()-1; ind >=0; ind--)
                     ctys.add(copy_ctys.elementAt(ind));
                 if (es.size() != ctys.size())
-                    throw new Exception("lengths of es and ctys don't match"+es.toString()+" -- "+ctys.toString());
+                    throw new LinearizerException("lengths of es and ctys don't match"+es.toString()+" -- "+ctys.toString());
                 Sequence[] lins = vApp.elementAt(i).getCncFun().sequences();
                 String cat = vApp.elementAt(i).getCncType().getCId();
                 Vector<Tree> copy_expr = new Vector<Tree>();
@@ -385,7 +398,7 @@ return rezF;
 
 
 
-public Vector<AppResult> getApps(HashMap<Integer,HashSet<Production>> prods, CncType mb_cty, String f ) throws Exception
+public Vector<AppResult> getApps(HashMap<Integer,HashSet<Production>> prods, CncType mb_cty, String f ) throws LinearizerException
 {if (mb_cty == null)
 	if (f.equals("_V") || f.equals("_B")) return new Vector<AppResult>();
          else 
@@ -411,7 +424,7 @@ else {int fid = mb_cty.getFId();
 }
 
 
-public Vector<AppResult> toApp(CncType cty, Production p, String f, HashMap<Integer,HashSet<Production>> prods) throws Exception
+public Vector<AppResult> toApp(CncType cty, Production p, String f, HashMap<Integer,HashSet<Production>> prods) throws LinearizerException
 {Vector<AppResult> rez = new Vector<AppResult>();
  if(p instanceof ApplProduction)
      {int[] args = ((ApplProduction)p).getArgs();
@@ -432,7 +445,7 @@ public Vector<AppResult> toApp(CncType cty, Production p, String f, HashMap<Inte
 	    Type t = null;
 	    for(int i=0; i<absFuns.length;i++)
 	     	 if(f.equals(absFuns[i].getName())) t = absFuns[i].getType(); 
-	    if(t == null) throw new Exception(" f not found in the abstract syntax");
+	    if(t == null) throw new LinearizerException(" f not found in the abstract syntax");
             Vector<String> catSkel = catSkeleton(t);
 	    String res = catSkel.elementAt(0);
             for(int i=0; i<args.length;i++)
@@ -469,7 +482,7 @@ return rez;
                                  Integer n_fid,
                                  Tree e,
                                  Vector<Tree> es)
-        throws Exception
+        throws LinearizerException
     {
         Vector<LinTriple> rez = new Vector<LinTriple>();
         if(e instanceof Application) {
@@ -484,13 +497,13 @@ return rez;
             else rez.add(new LinTriple(n_fid+1, new CncType("Float",n_fid), ss(""+((FloatLiteral)ll).double_)));
             return rez;
         } else if (e instanceof MetaVariable)
-            throw new Exception("linearization for meta expressions is not implemented yet!");
+            throw new RuntimeException("linearization for meta expressions is not implemented yet!");
         else if (e instanceof Function)
             return apply(xs, mb_cty,n_fid, ((Function)e).ident_,es);
         else if (e instanceof Variable)
-            throw new Exception("linearization for variable expressions is not implemented yet!");
+            throw new RuntimeException("linearization for variable expressions is not implemented yet!");
         else throw
-                 new Exception("linearization for typed expressions or expressions with implicit arguments is not implemented yet!");
+                 new RuntimeException("linearization for typed expressions or expressions with implicit arguments is not implemented yet!");
     }
 
 /** creates a simple vector of vectors of bracketed tokens containing a string value
@@ -559,7 +572,7 @@ return bt;
                                     Vector<CncType> cncTypes,
                                     Vector<Tree> exps,
                                     Vector<String> xs)
-        throws Exception
+        throws LinearizerException
     {
         Vector<RezDesc> rez = new Vector<RezDesc>();
         if(exps.isEmpty()) {

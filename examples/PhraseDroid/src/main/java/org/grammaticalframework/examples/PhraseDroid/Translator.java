@@ -34,7 +34,7 @@ class Translator {
          return "/!\\ No translation";
       try {
 	  Vector<String> words = 
-	      this.mLinearizer.renderLin(this.mLinearizer.linearize(trees[0]));
+	      this.mLinearizer.renderLin(this.mLinearizer.linearize(trees[0]).elementAt(0));
 	  StringBuffer sb = new StringBuffer();
 	  for (String w : words) {
 	      sb.append(w);

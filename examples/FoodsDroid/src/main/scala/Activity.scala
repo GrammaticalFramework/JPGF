@@ -46,7 +46,7 @@ class MainActivity extends Activity {
     var s = ""
 
     trees.foreach( t => {
-      s += linearizer.renderLin(linearizer.linearize(t)).toArray.mkString(" ")
+      s += linearizer.renderLin(linearizer.linearize(t).elementAt(0)).toArray.mkString(" ")
     })
     return s
   }
