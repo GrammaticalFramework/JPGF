@@ -11,43 +11,67 @@ import android.view.inputmethod.*;
 import android.widget.*;
 import android.graphics.*;
 import se.fnord.android.layout.*;
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.Vector;
+
+import org.grammaticalframework.reader.PGF;
+import org.grammaticalframework.parser.ParseState;
+import org.grammaticalframework.parser.Parser;
 
 public class FridgeMagnets extends Activity {
     /** Called when the activity is first created. */
-	String[] words = {"hello","buy","I","you","have","please","where",
-			          "how","go","Gothenburg","London","rakia","wine",
-			          "whisky","man","woman","boy","girl","to"};
+    String[] words = new String[0];
+    Vector<String> sentence = new Vector<String>();
 
-	private Controller controller = new Controller();
-	private EditText searchBox = null;
-	
+    private Controller controller = new Controller();
+    private EditText searchBox = null;
+    private PGF mPGF;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        Arrays.sort(words);
-
+	// Setting up the pgf
+	try {
+	    InputStream is =
+		this.getResources().openRawResource(R.raw.foods);
+	    mPGF = PGF.readFromInputStream(is);
+	} catch (IOException e) {}
         refreshBagOfWords(null);
-
         View main = findViewById(R.id.main_view);
         main.setFocusableInTouchMode(true);
         main.setOnKeyListener(controller);
+	Button clearButton = (Button)findViewById(R.id.clear_button);
+	clearButton.setOnClickListener( new View.OnClickListener() {
+		public void onClick(View v) {
+		    clear();
+		}
+	    });
+
     }
 
     private void applyMagnetStyles(TextView view) {
         view.setTextColor(Color.BLACK);
         view.setBackgroundColor(Color.WHITE);
         view.setSingleLine(true);
-        view.setPadding(2, 2, 2, 2);
+        view.setPadding(10, 10, 10, 10);
         view.setClickable(true);
+    }
+    
+    private void clear() {
+	PredicateLayout l = (PredicateLayout) findViewById(R.id.magnets_sentence);
+        l.removeAllViews();
+	sentence = new Vector<String>();
+	refreshBagOfWords(null);
     }
 	
     private void refreshBagOfWords(String prefix) {
-        PredicateLayout l = (PredicateLayout) findViewById(R.id.magnets_bag);
-        
+        PredicateLayout l = (PredicateLayout)findViewById(R.id.magnets_bag);
         l.removeAllViews();
-        
+	ParseState ps = mPGF.parse(this.sentence.toArray(new String[this.sentence.size()]),"FoodsEng");
+	this.words = ps.predict();
+        Arrays.sort(words);
         for (int i = 0; i < words.length; i++) {
 	    if (prefix != null && !words[i].startsWith(prefix))
 		continue;
@@ -56,7 +80,7 @@ public class FridgeMagnets extends Activity {
             t.setText(words[i]);
             t.setOnTouchListener(controller);
 	    applyMagnetStyles(t);
-            l.addView(t, new PredicateLayout.LayoutParams(3, 3));
+            l.addView(t, new PredicateLayout.LayoutParams(1, 1));
         }		
     }
     
@@ -67,6 +91,8 @@ public class FridgeMagnets extends Activity {
 	t.setText(word);
 	applyMagnetStyles(t);
 	l.addView(t, new PredicateLayout.LayoutParams(3, 3));
+	this.sentence.add(word);
+	this.refreshBagOfWords(null);
     }
     
     private void showSearchBox() {
