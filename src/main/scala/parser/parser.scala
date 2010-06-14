@@ -64,7 +64,7 @@ class Parser(val grammar:Concrete) {
 
 /* ************************************************************************* */
 /** ParseState
- * The parse-state keeps is the core of the parser.
+ * The parse-state is the core of the parser.
  * */
 private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
   private val startCat = this.grammar.startCat
@@ -262,6 +262,15 @@ private class ActiveItem(val begin : Int,
 /* ************************************************************************* */
 /**
  * The ParseTries are used to keep track of the possible next symbols.
+ * It is a trie where the symbol (edge labels) are string (words) and the values (node) are agendas
+ * (stacks of ActiveItems)
+ * The parse tries is used in the parsing algorithm when a dot is before a token. Then the dot is
+ * moved after the tokens and the resulting active item is added to the trie (to the agenda indexed by
+ * the words of the token.)
+ * Then the scan operation is a simple lookup in the trie...
+ * The trie is also used for predictions.
+ * In gf, a token in a rule can consist of multiple words (separated by a whitespace), thus the trie is
+ * needed and cannot be replaced by a simple map.
  *
  * @param value the value at this node.
  * */
