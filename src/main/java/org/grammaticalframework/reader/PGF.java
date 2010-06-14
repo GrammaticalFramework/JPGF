@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.grammaticalframework.parser.ParseState;
+
 public class PGF {
 
     private int majorVersion;
@@ -25,6 +27,22 @@ public class PGF {
         this.concretes = new HashMap<String,Concrete>();
         for(Concrete cnc : concretes)
             this.concretes.put( cnc.name(), cnc);
+    }
+
+    /* ************************************************* */
+    /* Parsing API                                       */
+    /* ************************************************* */
+    /**
+     * 
+     */
+    public ParseState parse(String[] words, String language) {
+	ParseState ps = new ParseState(null, this.concrete(language), words.length);
+	for (String w : words) {
+	    if (!ps.scan(w)) {
+		break;
+	    }
+	}
+	return ps;
     }
 
     /* ************************************************* */
