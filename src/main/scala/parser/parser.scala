@@ -26,7 +26,7 @@ class Parser(val grammar:Concrete) {
   def printState = println(this.ps.toString())
 
   /**
-   * Parse the given list of tokens with the given root category. Return
+   * Parse the given list of tokens with the given root category. Returns
    * nothing, the internal state of the parser is updated.
    *
    * @param token list of tokens to parse
