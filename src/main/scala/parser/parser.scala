@@ -57,6 +57,8 @@ class Parser(val grammar:Concrete) {
     println("Productions: " + this.ps.toString())
   }
 
+  def predict() = this.ps.predict
+
   def getTrees = ps.getTrees()
 }
 
@@ -76,6 +78,11 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
   )
   init()
   compute()
+  
+  /**
+   * returns the set of possible next words
+   * */
+  def predict():Array[String] = this.trie.predict
 
   def getTrees():List[AbsSynTree] = {
     val chart = this.chart
@@ -304,6 +311,8 @@ private class ParseTrie(var value:Stack[ActiveItem]) {
 
   def getSubTrie(key:String):Option[ParseTrie] =
     this.getSubTrie(key::Nil)
+
+  def predict():Array[String] = this.child.keySet.toArray
 
   override def toString() = this.toStringWithPrefix("")
 
