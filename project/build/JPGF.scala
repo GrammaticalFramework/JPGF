@@ -25,6 +25,12 @@ class JPGFProject(info: ProjectInfo) extends ParentProject(info)
             new AndroidApp(_),             // Project class
             library)                       // Dependencies
 
+  lazy val fridge =
+    project("examples" / "Fridge",
+            "Fridge",
+            new AndroidApp(_),
+            library)
+
   class AndroidApp(info: ProjectInfo) extends AndroidProject(info)
   with AndroidDefaults
 }
