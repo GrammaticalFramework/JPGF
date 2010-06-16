@@ -26,8 +26,9 @@ class PGFThread extends Thread {
 	    long begin_time = System.currentTimeMillis();
 	    PGF pgf = PGF.readFromInputStream(is);
 	    long end_time = System.currentTimeMillis();
+	    String sourceLang = (String)activity.getResources().getText(R.string.source_concrete);
 	    final Translator trans =
-		new Translator(pgf, "PhrasebookEng", "PhrasebookFre");
+		new Translator(pgf, sourceLang, "PhrasebookFre");
 	    activity.setText("PGF read in " + (end_time - begin_time) + " ms",
 			     false);
 	    activity.onPgfReady();
