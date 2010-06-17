@@ -15,7 +15,7 @@ import android.widget.Toast;
  **/
 class PGFThread extends Thread {
     static private int TRANSLATE = 3;
-    private TTSActivity activity;
+    private PhrasedroidActivity activity;
     public Handler mHandler;        // an Handler to receive messages
     private Language sLang;         // Source language
     private Language tLang;         // Target language
@@ -27,7 +27,7 @@ class PGFThread extends Thread {
      * @param sLang the source language
      * @param tLang the target language
      **/
-    public PGFThread(TTSActivity activity, Language sLang, Language tLang) {
+    public PGFThread(PhrasedroidActivity activity, Language sLang, Language tLang) {
 	this.activity = activity;
 	this.sLang = sLang;
 	this.tLang = tLang;

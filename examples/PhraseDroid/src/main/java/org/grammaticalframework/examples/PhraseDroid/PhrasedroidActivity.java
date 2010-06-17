@@ -11,7 +11,7 @@ import android.view.*;
 import android.widget.*;
 import java.util.Locale;
 
-public abstract class TTSActivity extends Activity
+public abstract class PhrasedroidActivity extends Activity
     implements TextToSpeech.OnInitListener,
 	       View.OnClickListener
 {

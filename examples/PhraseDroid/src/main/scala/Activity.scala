@@ -14,7 +14,7 @@ import _root_.org.grammaticalframework.parser.{Parser}
 import _root_.org.grammaticalframework.linearizer.Linearizer
 import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
-class MainActivity extends TTSActivity {
+class MainActivity extends PhrasedroidActivity {
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
