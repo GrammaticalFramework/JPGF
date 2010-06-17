@@ -50,6 +50,8 @@ public abstract class PhrasedroidActivity extends Activity
 	startTTSInit();
 	// Setup UI
 	setContentView(R.layout.main);
+	// Get pointers to the ui elements
+	resultView = (TextView)findViewById(R.id.result_view);
 	// setup translate button
 	((Button) findViewById(R.id.translate_button)).setOnClickListener(this);
 	// setup speak action

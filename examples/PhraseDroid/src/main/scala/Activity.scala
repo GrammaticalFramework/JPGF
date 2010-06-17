@@ -14,20 +14,4 @@ import _root_.org.grammaticalframework.parser.{Parser}
 import _root_.org.grammaticalframework.linearizer.Linearizer
 import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
-class MainActivity extends PhrasedroidActivity {
-
-  override def onCreate(savedInstanceState: Bundle) {
-    super.onCreate(savedInstanceState)
-
-    // Get pointers to the ui elements
-    resultView = findViewById(R.id.result_view).asInstanceOf[TextView]
-
-
-    // setup speak action
-    findViewById(R.id.speak_button).asInstanceOf[Button].setOnClickListener(
-      new View.OnClickListener() {
-	def onClick(v:View) = say(currentText)
-      })
-  }
-
-}
+class MainActivity extends PhrasedroidActivity
