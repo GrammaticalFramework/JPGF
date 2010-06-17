@@ -12,12 +12,14 @@ import java.lang.RuntimeException;
 
 class Translator {
 
-   private PGF mPGF;          // The pgf object to use
-   private Parser mParser;       // The Parser object to use
+   private PGF mPGF;                 // The pgf object to use
+   private Parser mParser;           // The Parser object to use
    private Linearizer mLinearizer;   // The Linearizer object to use
 
    Translator(PGF mPGF, String sLang, String tLang) {
       this.mPGF = mPGF;
+      if (mPGF.concrete(sLang) == null)
+	  throw new RuntimeException("Cannot create the Parser : language not found " + sLang);
       this.mParser = new Parser(mPGF.concrete(sLang));
       try {
          this.mLinearizer = new Linearizer(mPGF, mPGF.concrete(tLang));

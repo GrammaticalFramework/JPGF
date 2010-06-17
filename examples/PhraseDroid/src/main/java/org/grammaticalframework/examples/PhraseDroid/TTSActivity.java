@@ -1,47 +1,167 @@
 package org.grammaticalframework.examples.PhraseDroid;
+
 import android.app.Activity;
-import android.speech.tts.TextToSpeech;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.view.*;
+import android.widget.*;
 import java.util.Locale;
 
-public abstract class TTSActivity extends Activity implements TextToSpeech.OnInitListener {
-   private boolean tts_ready = false;
-   private TextToSpeech mTts;
-   static int MY_DATA_CHECK_CODE = 2347453;
+public abstract class TTSActivity extends Activity
+    implements TextToSpeech.OnInitListener,
+	       View.OnClickListener
+{
+    private boolean tts_ready = false;
+    private TextToSpeech mTts;
+    static final int MY_TTS_CHECK_CODE = 2347453;
+    static final int MENU_CHANGE_LANGUAGE = 3634543;
+    private Language sLang = Language.ENGLISH;
+    private Language tLang = Language.FRENCH;
+    protected PGFThread mPGFThread;
 
-   public abstract void onLanguageIsReady();
-   public void setupLanguage() {
-      Intent checkIntent = new Intent();
-      checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-      startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
-   }
-   
-   public void say(String txt) {
-      this.mTts.speak(txt, TextToSpeech.QUEUE_ADD, null);
-   }
+    String currentText = "";
 
-   protected void onActivityResult(
-           int requestCode, int resultCode, Intent data) {
-       if (requestCode == MY_DATA_CHECK_CODE) {
-           if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-               // success, create the TTS instance
-               mTts = new TextToSpeech(this, this);
-           } else {
-               // missing data, install it
-               Intent installIntent = new Intent();
-               installIntent.setAction(
-                   TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-               startActivity(installIntent);
-           }
-       }
-   }
-   
-   // Implementing onInitListener
-   public void onInit(int status) {
-      if (status == TextToSpeech.SUCCESS) {
-         mTts.setLanguage(Locale.FRANCE);
-         this.tts_ready = true;
+    // UI elements
+    TextView resultView;
+
+    // ************************************* Activity Lifecycle **************************************
+    public void onCreate(Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+	// Setup TTS
+	startTTSInit();
+	// Setup UI
+	setContentView(R.layout.main);
+	// setup translate button
+	((Button) findViewById(R.id.translate_button)).setOnClickListener(this);
+	// setup speak action
+	((Button) findViewById(R.id.speak_button)).setOnClickListener(this);
+    }
+
+    // *************************************** Configuration *****************************************
+    public void setupLanguages(Language sLang, Language tLang) {
+	this.sLang = sLang;
+	this.tLang = tLang;
+	// Setup the thread for the pgf
+	// FIXME : localize the dialog...
+	final ProgressDialog progress =
+	    ProgressDialog.show(this, "", "Loading Grammar. Please wait...", true);
+	mPGFThread = new PGFThread(this, sLang, tLang);
+	mPGFThread.onPGFReady(new Runnable() {
+		public void run() {
+		    runOnUiThread(new Runnable() { public void run() {
+			progress.dismiss();
+			Toast.makeText(getApplicationContext(),
+				       "Blabla", Toast.LENGTH_SHORT).show();
+
+} });
+		}});
+	mPGFThread.start();
+	if (this.tts_ready)
+	    mTts.setLanguage(this.tLang.locale);
+    }
+
+    public void changeTargetLanguage(Language l) {
+	this.setupLanguages(this.sLang, l);
+    }
+    // ***************************************** UI Actions *******************************************
+    // needed by View.onClickListener
+    public void onClick(View v) {
+	if (v == findViewById(R.id.translate_button)) {
+	    setText("Translating...", false);
+	    String phrase = ((EditText)findViewById(R.id.phrase)).getText().toString();
+	    mPGFThread.translate(phrase);
+	} else if (v == findViewById(R.id.speak_button))
+	    say(currentText);
+    }
+
+    public void setText(String t, boolean sayable) {
+	final String text = t;
+	if (sayable)
+	    this.currentText = text;
+	else
+	    this.currentText = "";
+	runOnUiThread(new Runnable() {
+		public void run() { resultView.setText(text); }
+	    });
+    }
+
+
+  // *****************************************  ACTIVITY MENU ******************************************
+
+  /* Creates the menu items */
+  public boolean onCreateOptionsMenu(Menu menu) {
+      menu.add(0, MENU_CHANGE_LANGUAGE, 0, "Change Language");
+      return true;
+  }
+  
+  /* Handles menu item selections */
+  public boolean onOptionsItemSelected(MenuItem item) {
+      switch (item.getItemId()) {
+      case MENU_CHANGE_LANGUAGE:
+	  final Language[] tls = this.sLang.getAvailableTargetLanguages();
+	  final String[] items = new String[tls.length];
+	  int i = 0;
+	  for (Language l : tls) {
+	      items[i] = l.getName();
+	      i++ ;
+	  }
+	  AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	  // FIXME: localize...
+	  builder.setTitle("Pick a language");
+	  builder.setItems(items, new DialogInterface.OnClickListener() {
+		  public void onClick(DialogInterface dialog, int item) {
+		      changeTargetLanguage(tls[item]);
+		  }
+	      });
+	  AlertDialog alert = builder.create();
+	  alert.show();
+	  return true;
       }
-      this.onLanguageIsReady();
-   }
+      return false;
+  }
+
+    // ********************************************  TTS  ********************************************* 
+
+    public void say(String txt) {
+	if (this.tts_ready)
+	    this.mTts.speak(txt, TextToSpeech.QUEUE_ADD, null);
+    }
+    
+    // Text-To-Speech initialization is done in three (asychronous) steps coresponding
+    // to the three methods below :
+    
+    // First : we check if the TTS data is present on the system
+    public void startTTSInit() {
+	Intent checkIntent = new Intent();
+	checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+	startActivityForResult(checkIntent, MY_TTS_CHECK_CODE);
+    }
+
+    // Second: if the data is present, we initialise the TTS engine
+    // (otherwise we ask to install it)
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	if (requestCode == MY_TTS_CHECK_CODE) {
+	    if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+		// success, create the TTS instance
+		mTts = new TextToSpeech(this, this);
+	    } else {
+		// missing data, install it
+		Intent installIntent = new Intent();
+		installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+		startActivity(installIntent);
+	    }
+	}
+    }
+    
+    // Finally: once the TTS engine is initialized, we set-up the language.
+    public void onInit(int status) {
+	if (status == TextToSpeech.SUCCESS) {
+	    this.tts_ready = true;
+	    mTts.setLanguage(this.tLang.locale);
+	}
+    }
 }
