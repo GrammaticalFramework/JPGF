@@ -587,12 +587,10 @@ class NewReader {
         ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
         int npoz = getInteger();
         int r ;
-        int lg = 0;
         for (int i=0; i<npoz; i++) {
 	    r = mDataInputStream.read();
     	    os.write((byte)r);
-	    if (r <= 0x7f) 
-		lg = 0;
+	    if (r <= 0x7f) {}                              //lg = 0;
 	    else if ((r >= 0xc0) && (r <= 0xdf))
 		os.write((byte)mDataInputStream.read());   //lg = 1;
 	    else if ((r >= 0xe0) && (r <= 0xef)) {
@@ -639,8 +637,6 @@ class NewReader {
      * We can read them faster using this knowledge.
      **/
     private String getIdent( ) throws IOException {
-        // using a byte array for efficiency
-        ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
         int nbChar = getInteger();
 	byte[] bytes = new byte[nbChar];
 	this.mDataInputStream.read(bytes);
