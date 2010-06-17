@@ -32,18 +32,19 @@ enum Language {
 	return tls;
     }
     
-    static public Language getDefaultSourceLanguage() {
-	Locale d = Locale.getDefault();
-	if (d.getLanguage() == "de")
+    static public Language fromCode(String code) {
+	if (code.equals("de"))
 	    return GERMAN;
-	else if (d.getLanguage() == "es")
+	else if (code.equals("es"))
 	    return SPANISH;
-	else if (d.getLanguage() == "fr")
+	else if (code.equals("fr"))
 	    return FRENCH;
-	else if (d.getLanguage() == "it")
+	else if (code.equals("it"))
 	    return ITALIAN;
-	else
+	else if (code.equals("en"))
 	    return ENGLISH;
+	else
+	    return null;
     }
 
     static public int getPGFResource(Language l1, Language l2) {

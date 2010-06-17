@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.*;
@@ -15,10 +16,14 @@ public abstract class PhrasedroidActivity extends Activity
     implements TextToSpeech.OnInitListener,
 	       View.OnClickListener
 {
-    private boolean tts_ready = false;
-    private TextToSpeech mTts;
+    // CONSTANTS
+    public static final String PREFS_NAME = "PhrasedroidPrefs";
+    public static final String TLANG_PREF_KEY = "targetLanguageCode";
     static final int MY_TTS_CHECK_CODE = 2347453;
     static final int MENU_CHANGE_LANGUAGE = 3634543;
+
+    private boolean tts_ready = false;
+    private TextToSpeech mTts;
     private Language sLang = Language.ENGLISH;
     private Language tLang = Language.FRENCH;
     protected PGFThread mPGFThread;
@@ -31,6 +36,18 @@ public abstract class PhrasedroidActivity extends Activity
     // ************************************* Activity Lifecycle **************************************
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
+	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+	// Setup languages
+	// FIXME : do Source language	
+	// Target language
+	String tLangCode = settings.getString(TLANG_PREF_KEY, null);
+	if (tLangCode == null)
+	    tLangCode = "fr";
+	Language target = Language.fromCode(tLangCode);
+	if (target == null)
+	    throw new RuntimeException("Unknown language code '" + tLangCode + "'");
+	this.setupLanguages(Language.ENGLISH, target);
+
 	// Setup TTS
 	startTTSInit();
 	// Setup UI
@@ -115,6 +132,8 @@ public abstract class PhrasedroidActivity extends Activity
 	  builder.setItems(items, new DialogInterface.OnClickListener() {
 		  public void onClick(DialogInterface dialog, int item) {
 		      changeTargetLanguage(tls[item]);
+		      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		      settings.edit().putString(TLANG_PREF_KEY, tls[item].locale.getLanguage()).commit();
 		  }
 	      });
 	  AlertDialog alert = builder.create();

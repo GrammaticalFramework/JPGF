@@ -18,8 +18,6 @@ class MainActivity extends PhrasedroidActivity {
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
-    // Setup languages
-    this.setupLanguages(Language.ENGLISH, Language.FRENCH)
 
     // Get pointers to the ui elements
     resultView = findViewById(R.id.result_view).asInstanceOf[TextView]
