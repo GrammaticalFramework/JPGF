@@ -12,8 +12,8 @@ import java.io.ByteArrayOutputStream;
 
 
 class NewReader {
-    private static Logger log =
-        Logger.getLogger("org.grammaticalframework.pgf");
+    //private static Logger log =
+    //    Logger.getLogger("org.grammaticalframework.pgf");
     private DataInputStream mDataInputStream;
 
     /* ************************************************* */
@@ -53,9 +53,6 @@ class NewReader {
         PGF pgf = new PGF(makeInt16(ii[0],ii[1]),
                           makeInt16(ii[2],ii[3]),
                           flags, abs, concretes);
-
-        log.finest("The resulting PGF is : "+ pgf.toString());
-        log.fine("the end");
         mDataInputStream.close();
         return pgf;
     }
@@ -612,8 +609,6 @@ class NewReader {
 		os.write((byte)mDataInputStream.read());
 		os.write((byte)mDataInputStream.read());
 	    } else throw new IOException("Undefined for now !!! ");
-	    //for(int j=1; j<=lg; j++)
-	        //os.write((byte)mDataInputStream.read());
 	}
         return os.toString("UTF-8"); 
     }
