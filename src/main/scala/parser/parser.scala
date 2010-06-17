@@ -6,7 +6,7 @@ import org.grammaticalframework.Trees.Absyn.{ Tree => AbsSynTree }
 
 import org.grammaticalframework.util.Trie
 import scala.collection.mutable.Stack
-import java.util.logging._;
+//import java.util.logging._;
 
 /**
  * This is the main parser class.
@@ -19,7 +19,7 @@ import java.util.logging._;
  * */
 class Parser(val grammar:Concrete) {
 
-  private val log = Logger.getLogger("org.grammaticalframework.parser")
+  //private val log = Logger.getLogger("org.grammaticalframework.parser")
 
   private var ps = new ParseState(this, this.grammar, 0)
 

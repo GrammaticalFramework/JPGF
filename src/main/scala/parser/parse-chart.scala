@@ -6,12 +6,8 @@ import org.grammaticalframework.reader.{
   CncFun,
   CoerceProduction => Coercion,
   Production => AnyProduction }
-import java.util.logging._;
 
 private class Chart(var nextCat:Int, val length:Int) {
-
-  val log = Logger.getLogger("PGF.Parsing")
-
 
   /** **********************************************************************
    * Handling Active Items (the S_k's)
@@ -32,7 +28,7 @@ private class Chart(var nextCat:Int, val length:Int) {
     if (productionSets.entryExists(p.getCategory(), p.==))
       return false
     else {
-      log.finest("Adding production " + p + " in chart.")
+      //log.finest("Adding production " + p + " in chart.")
       productionSets.add(p.getCategory(), p)
       this.nextCat = this.nextCat.max(p.getCategory() + 1)
       return true
@@ -98,7 +94,7 @@ private class Chart(var nextCat:Int, val length:Int) {
  * */
 private class ActiveSet {
 
-  val log = Logger.getLogger("org.grammaticalframework.parser")
+  //val log = Logger.getLogger("org.grammaticalframework.parser")
 
   val store = new HashMap[Int, MultiMap[Int, (ActiveItem,Int)]]
 
@@ -116,7 +112,7 @@ private class ActiveSet {
           return false
         else {
           map.add(cons, (item,cons2))
-          log.finest("Adding " + (cat,cons) + " -> " + (item,cons2) + " to ActiveSet")
+          //log.finest("Adding " + (cat,cons) + " -> " + (item,cons2) + " to ActiveSet")
           return true
         }
     }

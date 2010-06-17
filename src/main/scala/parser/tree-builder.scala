@@ -6,16 +6,15 @@ import org.grammaticalframework.reader.{
   CncFun,
   CncCat
 }
-
-import java.util.logging._;
+//import java.util.logging._;
 
 
 object TreeBuilder {
 
-  val log = Logger.getLogger("org.grammaticalframework.parser.TreeBuilder")
+  //val log = Logger.getLogger("org.grammaticalframework.parser.TreeBuilder")
 
   def buildTrees( chart:Chart, startCat:CncCat, length:Int ):List[Tree] = {
-    log.fine("Building trees with start category " + (0, startCat, 0, length))
+    //log.fine("Building trees with start category " + (0, startCat, 0, length))
     (startCat.firstID until startCat.lastID + 1).flatMap( catID =>
       chart.getCategory(catID, 0, 0, length) match {
         case None => Nil
@@ -24,7 +23,7 @@ object TreeBuilder {
   }
 
   def mkTreesForCat(cat : Int, chart:Chart):List[Tree] = {
-    log.fine("Making trees for category "+ cat)
+    //log.fine("Making trees for category "+ cat)
     for {p <- chart.getProductions(cat).toList;
          t <- mkTreesForProduction(p, chart)}
     yield t
