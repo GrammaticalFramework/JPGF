@@ -7,7 +7,7 @@
     <activity
 	android:label="@string/app_name"
 	android:name=".MainActivity"
-        android:icon="@drawable/franceflag256">
+        android:icon="@drawable/icon256">
 
       <intent-filter>
         <action android:name="android.intent.action.MAIN"></action>
