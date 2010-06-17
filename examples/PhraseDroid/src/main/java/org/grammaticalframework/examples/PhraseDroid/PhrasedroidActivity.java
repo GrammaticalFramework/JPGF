@@ -40,9 +40,7 @@ public abstract class PhrasedroidActivity extends Activity
 	// Setup languages
 	// FIXME : do Source language	
 	// Target language
-	String tLangCode = settings.getString(TLANG_PREF_KEY, null);
-	if (tLangCode == null)
-	    tLangCode = "fr";
+	String tLangCode = settings.getString(TLANG_PREF_KEY, "fr");
 	Language target = Language.fromCode(tLangCode);
 	if (target == null)
 	    throw new RuntimeException("Unknown language code '" + tLangCode + "'");
@@ -71,10 +69,8 @@ public abstract class PhrasedroidActivity extends Activity
 		public void run() {
 		    runOnUiThread(new Runnable() { public void run() {
 			progress.dismiss();
-			Toast.makeText(getApplicationContext(),
-				       "Blabla", Toast.LENGTH_SHORT).show();
 
-} });
+		    }});
 		}});
 	mPGFThread.start();
 	if (this.tts_ready)
