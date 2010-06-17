@@ -633,14 +633,14 @@ class NewReader {
 
     /**
      * Some string (like categories identifiers) are not allowed to
-     * use the full utf8 tables but only ascii caracters.
+     * use the full utf8 tables but only latin 1 caracters.
      * We can read them faster using this knowledge.
      **/
     private String getIdent( ) throws IOException {
         int nbChar = getInteger();
 	byte[] bytes = new byte[nbChar];
 	this.mDataInputStream.read(bytes);
-	return new String(bytes, "UTF-8");
+	return new String(bytes, "ISO-8859-1");
     }
 
     private String[] getListIdent( )
