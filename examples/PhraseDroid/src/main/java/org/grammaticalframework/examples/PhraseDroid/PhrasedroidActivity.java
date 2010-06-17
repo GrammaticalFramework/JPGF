@@ -11,6 +11,7 @@ import android.speech.tts.TextToSpeech;
 import android.view.*;
 import android.widget.*;
 import java.util.Locale;
+import java.util.Arrays;
 
 public abstract class PhrasedroidActivity extends Activity
     implements TextToSpeech.OnInitListener,
@@ -38,20 +39,24 @@ public abstract class PhrasedroidActivity extends Activity
 	super.onCreate(savedInstanceState);
 	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 	// Setup languages
-	// FIXME : do Source language	
+	// FIXME : do Source language
+	Locale l = Locale.getDefault();
+	Language source = Language.fromCode(l.getLanguage());
+	if (source == null)
+	    source = Language.ENGLISH;
 	// Target language
-	String tLangCode = settings.getString(TLANG_PREF_KEY, "fr");
+	String tLangCode = settings.getString(TLANG_PREF_KEY, null);
 	Language target = Language.fromCode(tLangCode);
-	if (target == null)
-	    throw new RuntimeException("Unknown language code '" + tLangCode + "'");
-	this.setupLanguages(Language.ENGLISH, target);
+	if (target == null || !Arrays.asList(source.getAvailableTargetLanguages()).contains(target))
+	    target = source.getDefaultTargetLanguage();
+	this.setupLanguages(source, target);
 
 	// Setup TTS
 	startTTSInit();
 	// Setup UI
 	setContentView(R.layout.main);
 	// Get pointers to the ui elements
-	resultView = (TextView)findViewById(R.id.result_view);
+	resultView = (TextView) findViewById(R.id.result_view);
 	// setup translate button
 	((Button) findViewById(R.id.translate_button)).setOnClickListener(this);
 	// setup speak action

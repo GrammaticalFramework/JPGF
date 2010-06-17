@@ -32,6 +32,13 @@ enum Language {
 	return tls;
     }
     
+    public Language getDefaultTargetLanguage() {
+	switch (this) {
+	case ENGLISH: return FRENCH;
+	default: return ENGLISH;
+	}
+    }
+    
     static public Language fromCode(String code) {
 	if (code.equals("de"))
 	    return GERMAN;

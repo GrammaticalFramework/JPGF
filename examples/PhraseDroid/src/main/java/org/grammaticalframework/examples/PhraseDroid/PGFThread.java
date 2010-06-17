@@ -36,6 +36,8 @@ class PGFThread extends Thread {
     public void run() {
 	try {
 	    int phrasebook_resource = Language.getPGFResource(this.sLang, this.tLang);
+	    if (phrasebook_resource == -1)
+		throw new RuntimeException("PGF not foud for languages " + sLang + " and " + tLang);
 	    InputStream is =
 		this.activity.getResources().openRawResource(phrasebook_resource);
 	    final long begin_time = System.currentTimeMillis();
