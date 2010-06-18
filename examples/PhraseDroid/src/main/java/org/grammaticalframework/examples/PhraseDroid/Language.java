@@ -40,7 +40,9 @@ enum Language {
     }
     
     static public Language fromCode(String code) {
-	if (code.equals("de"))
+	if(code == null)
+	    return null;
+	else if (code.equals("de"))
 	    return GERMAN;
 	else if (code.equals("es"))
 	    return SPANISH;
