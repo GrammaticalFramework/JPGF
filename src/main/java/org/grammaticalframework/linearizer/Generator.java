@@ -16,11 +16,10 @@ public class Generator {
     private HashMap<String,HashSet<String>> dirRules;
     private HashMap<String,HashSet<String>> indirRules;
 
-
-/** generates a random expression of a given category
- * does not handle dependent categories or categories with implicit arguments
-**/
-    public Generator(String file, PGF _pgf) throws Exception {
+    /** generates a random expression of a given category
+     * does not handle dependent categories or categories with implicit arguments
+     **/
+    public Generator(PGF _pgf) throws Exception {
         this.random = new Random();
         this.pgf = _pgf;
         this.dirRules = new HashMap<String,HashSet<String>>();
