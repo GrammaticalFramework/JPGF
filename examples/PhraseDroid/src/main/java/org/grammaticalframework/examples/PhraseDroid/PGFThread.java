@@ -1,9 +1,6 @@
 package org.grammaticalframework.examples.PhraseDroid;
 
 import org.grammaticalframework.reader.PGF;
-import org.grammaticalframework.reader.Concrete;
-import org.grammaticalframework.parser.Parser;
-import org.grammaticalframework.linearizer.Linearizer;
 import java.io.InputStream;
 import java.io.IOException;
 import android.os.Handler;
