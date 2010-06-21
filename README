@@ -1,0 +1,22 @@
+= JPGF Library =
+
+This library aims at making possible to use PGF files, produce by the grammatical framework gf compiler in java program. On of the goal is to build application for android devices.
+
+= Compilation =
+
+The project use a scala build system called sbt.
+For conveignence the sbt jar file is included with the project.
+to build the library you have to start sbt (with the script provided)
+   $ sh sbt
+and then, on the sbt shell
+    project JPGF library
+    compile
+
+To test the demo PhraseDroid application on your phone, you need to have the android-sdk and to plug your phone via usb. Then the operation is automated by sbt : 
+   project PhraseDroid 
+   reinstall-device
+
+= More information =
+
+The web page of the project : www.grammaticalframework.org/android/
+you can also write me an email : gdetrez@crans.org
