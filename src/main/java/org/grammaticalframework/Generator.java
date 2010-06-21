@@ -1,4 +1,4 @@
-package org.grammaticalframework.linearizer;
+package org.grammaticalframework;
 
 import org.grammaticalframework.Trees.Absyn.*;
 import org.grammaticalframework.reader.*;
