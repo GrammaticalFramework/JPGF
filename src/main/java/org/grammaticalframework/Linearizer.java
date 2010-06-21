@@ -1,4 +1,4 @@
-package org.grammaticalframework.linearizer;
+package org.grammaticalframework;
 
 import java.io.FileInputStream;
 import java.util.Vector;
@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.grammaticalframework.reader.*;
 import org.grammaticalframework.Trees.Absyn.*;
+import org.grammaticalframework.linearizer.*;
 
 public class Linearizer {
 

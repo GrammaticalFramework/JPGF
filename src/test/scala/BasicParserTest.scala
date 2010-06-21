@@ -2,8 +2,7 @@ package org.grammaticalframework.parser
 
 import org.grammaticalframework.reader.PGF
 import org.grammaticalframework.Trees.PrettyPrinter
-import org.grammaticalframework.linearizer.Linearizer
-import org.grammaticalframework.Generator
+import org.grammaticalframework.{Linearizer, Generator}
 
 import java.util.logging._;
 

@@ -9,7 +9,7 @@ import _root_.android.content.res.Resources
 
 import _root_.org.grammaticalframework.reader.{NewReader, PGF, Concrete}
 import _root_.org.grammaticalframework.parser.{Parser}
-import _root_.org.grammaticalframework.linearizer.{Linearizer}
+import _root_.org.grammaticalframework.{Linearizer}
 import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
 class MainActivity extends Activity {

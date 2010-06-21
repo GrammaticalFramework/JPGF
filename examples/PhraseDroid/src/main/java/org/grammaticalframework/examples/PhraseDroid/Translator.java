@@ -2,7 +2,7 @@ package org.grammaticalframework.examples.PhraseDroid;
 
 import org.grammaticalframework.reader.PGF;
 import org.grammaticalframework.parser.Parser;
-import org.grammaticalframework.linearizer.Linearizer;
+import org.grammaticalframework.Linearizer;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
 import java.util.Vector;
