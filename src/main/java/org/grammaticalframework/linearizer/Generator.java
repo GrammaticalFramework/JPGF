@@ -49,43 +49,39 @@ public class Generator {
     /** generates a category with a random direct rule
      * suitable for simple expressions
      **/
+    // FIXME why is 'type' for ???
+    // FIXME couldn't dirFuns be an array ?
     public Tree getDirect(String type, HashSet<String> dirFuns) {
-	Iterator<String> it = dirFuns.iterator();
+	int rand = this.random.nextInt(dirFuns.size());
+	return new Function((String)dirFuns.toArray()[rand]);
+    }
+    
+    /** generates a category with a random indirect rule
+     * creates more complex expressions
+     **/
+    public Tree getIndirect(String type, HashSet<String> indirFuns) throws Exception {
+	Iterator<String> it = indirFuns.iterator();
 	Vector<String> vs = new Vector<String>();
 	while(it.hasNext())
-	    vs.add(it.next());
-	int rand = random.nextInt(vs.size()); 
-	return new Function(vs.elementAt(rand));	     	
+	    vs.add(it.next()); 
+	int rand = random.nextInt(vs.size());
+	String funcName = vs.elementAt(rand);
+	AbsFun[] absFuns = pgf.getAbstract().getAbsFuns();
+	for(int i=0; i<absFuns.length;i++)
+	    if(absFuns[i].getName().equals(funcName))
+		{Hypo[] hypos = absFuns[i].getType().getHypos();
+		    String[] tempCats = new String[hypos.length];
+		    Tree[] exps = new Tree[hypos.length];
+		    for(int k=0; k<hypos.length;k++)
+			{tempCats[k]=hypos[k].getType().getName();
+			    exps[k]=gen(tempCats[k]);
+			    if(exps[k] == null) return null;}
+		    Tree rez = new Function(funcName);
+		    for(int j=0;j<exps.length;j++)
+			rez = new Application (rez, exps[j]);
+		    return rez;}
+	return null;
     }
-
-	
-/** generates a category with a random indirect rule
- * creates more complex expressions
-**/
-public Tree getIndirect(String type, HashSet<String> indirFuns) throws Exception
-{Iterator<String> it = indirFuns.iterator();
-Vector<String> vs = new Vector<String>();
-while(it.hasNext())
-      vs.add(it.next()); 
-int rand = random.nextInt(vs.size());
-String funcName = vs.elementAt(rand);
-AbsFun[] absFuns = pgf.getAbstract().getAbsFuns();
-for(int i=0; i<absFuns.length;i++)
-      if(absFuns[i].getName().equals(funcName))
-	    {Hypo[] hypos = absFuns[i].getType().getHypos();
-	     String[] tempCats = new String[hypos.length];
-	     Tree[] exps = new Tree[hypos.length];
-	     for(int k=0; k<hypos.length;k++)
-	    	   {tempCats[k]=hypos[k].getType().getName();
-	    	    exps[k]=gen(tempCats[k]);
-	    	    if(exps[k] == null) return null;}
-	     Tree rez = new Function(funcName);
-	     for(int j=0;j<exps.length;j++)
-	    	   rez = new Application (rez, exps[j]);
-	     return rez;}
-return null;
-}
-
 	
 /** generates a random expression of a given category
  * the empirical probability of using direct rules is 60%
