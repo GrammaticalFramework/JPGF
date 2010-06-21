@@ -1,6 +1,6 @@
 package org.grammaticalframework.examples.PhraseDroid;
 
-import org.grammaticalframework.reader.PGF;
+import org.grammaticalframework.PGF;
 import java.io.InputStream;
 import java.io.IOException;
 import android.os.Handler;

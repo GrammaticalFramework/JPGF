@@ -1,6 +1,6 @@
 package org.grammaticalframework.examples.PhraseDroid;
 
-import org.grammaticalframework.reader.PGF;
+import org.grammaticalframework.PGF;
 import org.grammaticalframework.parser.Parser;
 import org.grammaticalframework.Linearizer;
 import org.grammaticalframework.Trees.Absyn.Tree;

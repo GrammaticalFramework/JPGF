@@ -1,4 +1,4 @@
-package org.grammaticalframework.reader;
+package org.grammaticalframework;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -10,8 +10,10 @@ import java.util.HashMap;
 import java.util.logging.*;
 import java.io.ByteArrayOutputStream;
 
+import org.grammaticalframework.reader.*;
 
-class NewReader {
+
+class PGFReader {
     //private static Logger log =
     //    Logger.getLogger("org.grammaticalframework.pgf");
     private DataInputStream mDataInputStream;
@@ -28,7 +30,7 @@ class NewReader {
         throws FileNotFoundException, IOException
     {
         InputStream stream = new FileInputStream(filename);
-        return new NewReader().readInputStream(stream);
+        return new PGFReader().readInputStream(stream);
     }
 
     /**
@@ -223,7 +225,6 @@ class NewReader {
             break;
         default : throw new IOException("invalid tag for expressions : "+sel);
         }
-        expr.sel=sel;
         return expr;
     }
 
@@ -270,7 +271,6 @@ class NewReader {
             break;
         default : throw new IOException("invalid tag for patterns : "+sel);
         }
-        patt.sel = sel;
         return patt;
     }
 
@@ -293,7 +293,6 @@ class NewReader {
 	default :
 	    throw new IOException("Incorrect literal tag "+sel);
 	}
-        ss.sel=sel;
         return ss;
     }
 
@@ -393,7 +392,6 @@ class NewReader {
             break;
         default : throw new IOException("invalid tag for symbols : "+sel);
         }
-        symb.sel = sel;
         return symb;
     }
 

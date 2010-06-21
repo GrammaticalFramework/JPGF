@@ -7,9 +7,9 @@ import _root_.android.widget._
 import _root_.android.view.View
 import _root_.android.content.res.Resources
 
-import _root_.org.grammaticalframework.reader.{NewReader, PGF, Concrete}
+import _root_.org.grammaticalframework.reader.{Concrete}
 import _root_.org.grammaticalframework.parser.{Parser}
-import _root_.org.grammaticalframework.{Linearizer}
+import _root_.org.grammaticalframework.{Linearizer, PGF}
 import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
 class MainActivity extends Activity {
