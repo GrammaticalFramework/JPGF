@@ -16,6 +16,8 @@ public class Linearizer {
     private Concrete cnc ;
     private HashMap<String,HashMap<Integer,HashSet<Production>>> lProd;
 
+    /* ******************************************** API ******************************************** */
+
     /** linearizes an expression to a bracketed token
      * and further on to a string
      * not implemented to dependent categories, implicit argument,
@@ -31,12 +33,35 @@ public class Linearizer {
         this.lProd = getLProductions();
     }
 
-    class LinearizerException extends Exception
-    {LinearizerException() {}
-     LinearizerException(String s) {super(s);}
+    /**
+     * Linearize a tree to a vector of tokens.
+     **/
+    public Vector<String> linearizeTokens(Tree absyn)  throws LinearizerException {
+	return this.renderLin(this.linearize(absyn).elementAt(0));
+    }
+
+    /**
+     * Linearize a tree to a string.
+     **/
+    public String linearizeString(Tree absyn) throws LinearizerException {
+	Vector<String> words = 
+	    this.renderLin(this.linearize(absyn).elementAt(0));
+	StringBuffer sb = new StringBuffer();
+	for (String w : words) {
+	    sb.append(w);
+	    sb.append(" ");
+	}
+	return sb.toString();
+    }
+
+    class LinearizerException extends Exception {
+	LinearizerException() {}
+	LinearizerException(String s) {super(s);}
     }
     
     
+    /* ************************************** Implementation *************************************** */
+
     /** constructs the l-productions of the concrete syntax for
      * a given language
      **/
