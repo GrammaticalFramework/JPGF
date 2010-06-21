@@ -48,7 +48,7 @@ public class Generator {
     /** generates a category with a random direct rule
      * suitable for simple expressions
      **/
-    // FIXME why is 'type' for ???
+    // FIXME what is 'type' for ???
     // FIXME couldn't dirFuns be an array ?
     public Tree getDirect(String type, HashSet<String> dirFuns) {
 	int rand = this.random.nextInt(dirFuns.size());
