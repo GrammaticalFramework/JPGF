@@ -11,10 +11,10 @@ import java.util.Vector;
 
 public class Generator {
 
-	private Random random;
-	private PGF pgf;
-	private HashMap<String,HashSet<String>> dirRules;
-	private HashMap<String,HashSet<String>> indirRules;
+    private Random random;
+    private PGF pgf;
+    private HashMap<String,HashSet<String>> dirRules;
+    private HashMap<String,HashSet<String>> indirRules;
 
 
 /** generates a random expression of a given category
