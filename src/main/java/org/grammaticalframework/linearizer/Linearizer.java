@@ -54,7 +54,7 @@ public class Linearizer {
 	return sb.toString();
     }
 
-    class LinearizerException extends Exception {
+    public class LinearizerException extends Exception {
 	LinearizerException() {}
 	LinearizerException(String s) {super(s);}
     }
@@ -65,7 +65,7 @@ public class Linearizer {
     /** constructs the l-productions of the concrete syntax for
      * a given language
      **/
-    public HashMap<String,HashMap<Integer,HashSet<Production>>>
+    private HashMap<String,HashMap<Integer,HashSet<Production>>>
         getLProductions()
         throws LinearizerException
     {
@@ -76,7 +76,7 @@ public class Linearizer {
 
     /** aligns the indexes for the l-productions
      **/
-    public HashMap<String,HashMap<Integer,HashSet<Production>>>
+    private HashMap<String,HashMap<Integer,HashSet<Production>>>
         linIndex(HashMap<Integer,HashSet<Production>> productions)
     {
         HashMap<String,HashMap<Integer,HashSet<Production>>> vtemp =
@@ -122,7 +122,7 @@ return vtemp;
      * @param p the production
      * @param productions ???
      **/
-    public Vector<String>
+    private Vector<String>
         getFunctions(Production p,
                      HashMap<Integer,HashSet<Production>> productions)
     {
@@ -151,7 +151,7 @@ return prods.containsKey(new Integer(i));
 
 /** filters a set of productions according to filterRule
 **/
-public HashSet<Production> filterProdSet1(HashMap<Integer,HashSet<Production>> prods0, HashSet<Production> set)
+private HashSet<Production> filterProdSet1(HashMap<Integer,HashSet<Production>> prods0, HashSet<Production> set)
 {HashSet<Production> set1 = new HashSet<Production>();
  Iterator<Production> it = set.iterator();
  while(it.hasNext()){
@@ -163,7 +163,7 @@ public HashSet<Production> filterProdSet1(HashMap<Integer,HashSet<Production>> p
     /** filters an IntMap of productions according to filterProdsSet1
      *
      **/
-    public HashMap<Integer,HashSet<Production>>
+    private HashMap<Integer,HashSet<Production>>
     filterProductions(HashMap<Integer,HashSet<Production>> prods0,
                       HashMap<Integer,HashSet<Production>> prods)
     {
@@ -206,7 +206,7 @@ public HashSet<Production> filterProdSet1(HashMap<Integer,HashSet<Production>> p
 
     /** checks if a production satisfies conditionProd recursively
 **/
-public boolean filterRule(HashMap<Integer,HashSet<Production>> prods, Production p)
+private boolean filterRule(HashMap<Integer,HashSet<Production>> prods, Production p)
 {if (p instanceof ApplProduction)
   {ApplProduction ap = (ApplProduction) p;
   for(int i=0; i<ap.getArgs().length; i++)
@@ -218,7 +218,7 @@ return conditionProd(((CoerceProduction) p).getInitId(),prods);
 
 /** checks if a production just has a variable argument
 **/
-public boolean is_ho_prod(Production p)
+private boolean is_ho_prod(Production p)
 {if (p instanceof ApplProduction)
    {int[] args = ((ApplProduction) p).getArgs();
     if(args.length == 1 && args[0] == -4) return true;}
@@ -228,7 +228,7 @@ public boolean is_ho_prod(Production p)
 
 /** gets list of forest ids from the categories in ho_cats
 **/
-public HashSet<Integer> ho_fids()
+private HashSet<Integer> ho_fids()
 {HashSet<Integer> rezTemp = new HashSet<Integer>();
 Vector<String> ho_cats = ho_cats();
 CncCat[] cncCats = this.cnc.getCncCat();
@@ -242,7 +242,7 @@ return rezTemp;}
 
     /**get all names of types from Concrete
      **/
-    public Vector<String> ho_cats() {
+    private Vector<String> ho_cats() {
         Vector<String> rezTemp = new Vector<String>();
         Abstract abstr = pgf.getAbstract();
         AbsFun[] absFuns = abstr.getAbsFuns();
@@ -256,7 +256,7 @@ return rezTemp;}
 
 /**gets the types from the hypotheses of a type
 **/
-public String[] hypoArgsOfType(Type t)
+private String[] hypoArgsOfType(Type t)
 {Hypo[] hypos = t.getHypos();
 String[] rez = new String[hypos.length];
 for(int i=0; i<hypos.length; i++)
@@ -266,7 +266,7 @@ return rez;
 
 /** flattens a bracketed token
 **/
-public Vector<String> untokn(BracketedTokn bt, String after)
+private Vector<String> untokn(BracketedTokn bt, String after)
 {if (bt instanceof LeafKS) 
   {String[] d = ((LeafKS) bt).getStrs();
    Vector<String> rez = new Vector<String>();
@@ -302,7 +302,7 @@ else {Vector<String> rez = new Vector<String>();
     /** flattens the result of the linearization
      **/
 
-public Vector<String> renderLin(LinTriple v)
+private Vector<String> renderLin(LinTriple v)
 {Vector<String> rez= new Vector<String>();
 Vector<String> rezF= new Vector<String>(); 
 {Vector<Vector<BracketedTokn>> vtemp = v.getLinTable();
@@ -317,14 +317,14 @@ rezF.add(0,rez.elementAt(i));
 return rezF;
 }
 
-public Vector<Vector<String>> renderAllLins(Vector<LinTriple> v)
+private Vector<Vector<String>> renderAllLins(Vector<LinTriple> v)
 {Vector<Vector<String>> rez = new Vector<Vector<String>>();
 for(int i=0; i<v.size();i++)
 	rez.add(renderLin(v.elementAt(i)));
 return rez;
 	}
 
-    public Vector<LinTriple> linearize(Tree e) throws LinearizerException {
+    private Vector<LinTriple> linearize(Tree e) throws LinearizerException {
         return this.lin0(new Vector<String>(), new Vector<String>(),
                          null, new Integer(0), e);
     }
@@ -338,7 +338,7 @@ return rez;
      * @param e is the tree to linearize
      * @return all the possible linearized tuples for this tree.
      **/
-    public Vector<LinTriple> lin0(Vector<String> xs,
+    private Vector<LinTriple> lin0(Vector<String> xs,
                                   Vector<String> ys,
                                   CncType mb_cty,
                                   Integer mb_fid,
@@ -383,7 +383,7 @@ return rez;
      * @param es the argument of the function to linearize
      * @return All the possible linearization for the application of f to es
      **/
-    public Vector<LinTriple> apply( Vector<String> xs,
+    private Vector<LinTriple> apply( Vector<String> xs,
                                     CncType mb_cty,
                                     Integer n_fid,
                                     String f,
@@ -427,7 +427,7 @@ return rez;
 
 
 
-public Vector<AppResult> getApps(HashMap<Integer,HashSet<Production>> prods, CncType mb_cty, String f ) throws LinearizerException
+private Vector<AppResult> getApps(HashMap<Integer,HashSet<Production>> prods, CncType mb_cty, String f ) throws LinearizerException
 {if (mb_cty == null)
 	if (f.equals("_V") || f.equals("_B")) return new Vector<AppResult>();
          else 
@@ -453,7 +453,7 @@ else {int fid = mb_cty.getFId();
 }
 
 
-public Vector<AppResult> toApp(CncType cty, Production p, String f, HashMap<Integer,HashSet<Production>> prods) throws LinearizerException
+private Vector<AppResult> toApp(CncType cty, Production p, String f, HashMap<Integer,HashSet<Production>> prods) throws LinearizerException
 {Vector<AppResult> rez = new Vector<AppResult>();
  if(p instanceof ApplProduction)
      {int[] args = ((ApplProduction)p).getArgs();
@@ -493,7 +493,7 @@ public Vector<AppResult> toApp(CncType cty, Production p, String f, HashMap<Inte
 
 /** computes the types of the arguments of a function type
 **/	
-public Vector<String> catSkeleton(Type t)
+private Vector<String> catSkeleton(Type t)
 {Vector<String> rez = new Vector<String>();
 rez.add(t.getName());
 Hypo[] hypos = t.getHypos();
@@ -505,7 +505,7 @@ return rez;
 
 /** creates a simple vector of vectors of bracketed tokens containing a string value
 **/
-public Vector<Vector<BracketedTokn>> ss(String s)
+private Vector<Vector<BracketedTokn>> ss(String s)
 {Vector<Vector<BracketedTokn>> bt = new Vector<Vector<BracketedTokn>>();
 Vector<BracketedTokn> v = new Vector<BracketedTokn>();
 String[] sts = new String[1];
@@ -517,7 +517,7 @@ return bt;
 
 /** computes the sequence of bracketed tokens associated to a symbol
 **/
-public Vector<BracketedTokn> compute(Symbol s, Vector<CncType> cncTypes, Vector<Vector<Vector<BracketedTokn>>> linTables)
+private Vector<BracketedTokn> compute(Symbol s, Vector<CncType> cncTypes, Vector<Vector<Vector<BracketedTokn>>> linTables)
 {if(s instanceof ArgConstSymbol)
    {int arg = ((ArgConstSymbol) s).arg();
     int cons = ((ArgConstSymbol) s).cons();
@@ -537,7 +537,7 @@ else {String[] toks = ((ToksSymbol)s).tokens();
 /** retrieves a sequence of bracketed tokens from an intermediate result of the linearization
  * according to 2 indices from a production
 **/
-public Vector<BracketedTokn> getArg(int d, int r, Vector<CncType> cncTypes, Vector<Vector<Vector<BracketedTokn>>> linTables)
+private Vector<BracketedTokn> getArg(int d, int r, Vector<CncType> cncTypes, Vector<Vector<Vector<BracketedTokn>>> linTables)
 {if(cncTypes.size() <= d) return new Vector<BracketedTokn>();
 CncType cncType = cncTypes.elementAt(d);
 Vector<Vector<BracketedTokn>> lin = linTables.elementAt(d);
@@ -553,7 +553,7 @@ return bt;
 
 /** computes a sequence of bracketed tokens from the sequence of symbols of a concrete function
 **/
-public Vector<BracketedTokn> computeSeq(Sequence seqId, Vector<CncType> cncTypes, Vector<Vector<Vector<BracketedTokn>>> linTables)
+private Vector<BracketedTokn> computeSeq(Sequence seqId, Vector<CncType> cncTypes, Vector<Vector<Vector<BracketedTokn>>> linTables)
 {Vector<BracketedTokn> bt = new Vector<BracketedTokn>();
 Symbol[] symbs = seqId.getSymbols();
 for(int j=0;j<symbs.length;j++)
@@ -565,7 +565,7 @@ return bt;
     /** shuffles the results of of the intermediate linearization,
      * for generating all the possible combinations
      **/
-    public Vector<RezDesc> descend( int n_fid,
+    private Vector<RezDesc> descend( int n_fid,
                                     Vector<CncType> cncTypes,
                                     Vector<Tree> exps,
                                     Vector<String> xs)
@@ -602,7 +602,7 @@ return bt;
     }
 
 /**checks if a production is application production**/
-public boolean isApp(Production p) {
+private boolean isApp(Production p) {
 return (p instanceof ApplProduction);
 }
 
