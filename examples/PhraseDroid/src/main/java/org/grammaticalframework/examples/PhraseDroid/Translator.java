@@ -35,14 +35,7 @@ class Translator {
       if (trees.length < 1)
          return "/!\\ No translation";
       try {
-	  Vector<String> words = 
-	      this.mLinearizer.renderLin(this.mLinearizer.linearize(trees[0]).elementAt(0));
-	  StringBuffer sb = new StringBuffer();
-	  for (String w : words) {
-	      sb.append(w);
-	      sb.append(" ");
-	  }
-	  return sb.toString();
+	  return this.mLinearizer.linearizeString(trees[0]);
       } catch (java.lang.Exception e) {
          return "Error during linearization";
       }
