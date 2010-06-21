@@ -47,16 +47,16 @@ public class Generator {
     }
 
     /** generates a category with a random direct rule
- * suitable for simple expressions
-**/
-public Tree getDirect(String type, HashSet<String> dirFuns)
-{Iterator<String> it = dirFuns.iterator();
-Vector<String> vs = new Vector<String>();
-while(it.hasNext())
-    vs.add(it.next());
-int rand = random.nextInt(vs.size()); 
-return new Function(vs.elementAt(rand));	     	
-}
+     * suitable for simple expressions
+     **/
+    public Tree getDirect(String type, HashSet<String> dirFuns) {
+	Iterator<String> it = dirFuns.iterator();
+	Vector<String> vs = new Vector<String>();
+	while(it.hasNext())
+	    vs.add(it.next());
+	int rand = random.nextInt(vs.size()); 
+	return new Function(vs.elementAt(rand));	     	
+    }
 
 	
 /** generates a category with a random indirect rule
