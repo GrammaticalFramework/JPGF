@@ -82,86 +82,94 @@ public class Generator {
 	return null;
     }
 	
-/** generates a random expression of a given category
- * the empirical probability of using direct rules is 60%
- * this decreases the probability of having infinite trees for infinite grammars
-**/
-public Tree gen(String type) throws Exception
-{if(type.equals("Integer"))   return new Literal(new IntLiteral(generateInt()));
-    else if(type.equals("Float"))   return new Literal(new FloatLiteral(generateFloat()));
-     else if(type.equals("String"))  return new Literal(new StringLiteral(generateString()));
-int depth = random.nextInt(5); //60% constants, 40% functions 
-HashSet<String> dirFuns = dirRules.get(type);
-HashSet<String> indirFuns = indirRules.get(type);
-boolean isEmptyDir = dirFuns.isEmpty();
-boolean isEmptyIndir = indirFuns.isEmpty();
-if(isEmptyDir && isEmptyIndir) throw new Exception ("Cannot generate any expression of type "+type);	
-if(isEmptyDir)   return getIndirect(type,indirFuns);
-if(isEmptyIndir)    return getDirect(type,dirFuns);
-if(depth <= 2 ) return getDirect(type,dirFuns);
-return getIndirect(type,indirFuns);
-}
-	
-	
-/** generates a number of expressions of a given category
- * the expressions are independent
- * the probability of having simple expressions is higher
-**/
-public Vector<Tree> generateMany(String type, int count) throws Exception
-{int contor = 0;
-Vector<Tree> rez = new Vector<Tree>();
-if(contor >= count) return rez;
-HashSet<String> dirFuns = dirRules.get(type);
-HashSet<String> indirFuns = indirRules.get(type);
-Iterator<String> itDir = dirFuns.iterator();
-while(itDir.hasNext())
-   {Tree interm = getDirect(type,dirFuns);
-    if(interm != null) 
-        {contor ++;
-         rez.add(interm);
-         if(contor == count) return rez;}}
-    itDir = indirFuns.iterator();
-    while(itDir.hasNext())
-	{Tree interm = getIndirect(type,indirFuns);
-	 if(interm != null) 
-             {contor ++;
-              rez.add(interm);
-              if(contor == count) return rez;}}
-return rez;	
-}
+    /** generates a random expression of a given category
+     * the empirical probability of using direct rules is 60%
+     * this decreases the probability of having infinite trees for infinite grammars
+     **/
+    public Tree gen(String type) throws Exception {
+	if(type.equals("Integer"))
+	    return new Literal(new IntLiteral(generateInt()));
+	else if(type.equals("Float"))
+	    return new Literal(new FloatLiteral(generateFloat()));
+	else if(type.equals("String"))
+	    return new Literal(new StringLiteral(generateString()));
+	int depth = random.nextInt(5); //60% constants, 40% functions 
+	HashSet<String> dirFuns = dirRules.get(type);
+	HashSet<String> indirFuns = indirRules.get(type);
+	boolean isEmptyDir = dirFuns.isEmpty();
+	boolean isEmptyIndir = indirFuns.isEmpty();
+	if(isEmptyDir && isEmptyIndir)
+	    throw new Exception ("Cannot generate any expression of type "+type);	
+	if(isEmptyDir)
+	    return getIndirect(type,indirFuns);
+	if(isEmptyIndir)
+	    return getDirect(type,dirFuns);
+	if(depth <= 2 )
+	    return getDirect(type,dirFuns);
+	return getIndirect(type,indirFuns);
+    }
 
-/** generates a random string
-**/
-	
-public String generateString() 
-{String[] ss = { "x", "y", "foo", "bar" };
-return ss[random.nextInt(ss.length)];}
+    /** generates a number of expressions of a given category
+     * the expressions are independent
+     * the probability of having simple expressions is higher
+     **/
+    public Vector<Tree> generateMany(String type, int count) throws Exception {
+	int contor = 0;
+	Vector<Tree> rez = new Vector<Tree>();
+	if(contor >= count) return rez;
+	HashSet<String> dirFuns = dirRules.get(type);
+	HashSet<String> indirFuns = indirRules.get(type);
+	Iterator<String> itDir = dirFuns.iterator();
+	while(itDir.hasNext()) {
+	    Tree interm = getDirect(type,dirFuns);
+	    if(interm != null) 
+		{contor ++;
+		    rez.add(interm);
+		    if(contor == count) return rez;}}
+	itDir = indirFuns.iterator();
+	while(itDir.hasNext())
+	    {Tree interm = getIndirect(type,indirFuns);
+		if(interm != null) 
+		    {contor ++;
+			rez.add(interm);
+			if(contor == count) return rez;}}
+	return rez;	
+    }
+    
+    /** generates a random string
+     **/
+    
+    public String generateString() {
+	String[] ss = { "x", "y", "foo", "bar" };
+	return ss[random.nextInt(ss.length)];
+    }
 
-
-/** generates a random integer
-**/
-public int generateInt() 
-{return random.nextInt(100000);}
-
-/** generates a random float
-**/
-public double generateFloat()
-{return random.nextDouble();}
-   
-	
-	
-/*
-public static void main(String[] args)
-{ try {
-       Generator gg = new Generator("Phrasebook.pgf");
-       Vector<Expr> rez = gg.generateMany("Greeting",9);
-       if(rez != null)
-	    { System.out.println("Rezultatul este "+rez.toString());
-	    System.out.println("Dimensiunea este "+rez.size());}
-	    else System.out.println("Rezultatul este nul");
-	}
-   catch(Exception e) {System.out.println("No such file"+e.toString());}
-}
-*/	
-		
+    /** generates a random integer
+     **/
+    public int generateInt()  {
+	return random.nextInt(100000);
+    }
+    
+    /** generates a random float
+     **/
+    public double generateFloat() {
+	return random.nextDouble();
+    }
+    
+    
+    
+    /*
+      public static void main(String[] args)
+      { try {
+      Generator gg = new Generator("Phrasebook.pgf");
+      Vector<Expr> rez = gg.generateMany("Greeting",9);
+      if(rez != null)
+      { System.out.println("Rezultatul este "+rez.toString());
+      System.out.println("Dimensiunea este "+rez.size());}
+      else System.out.println("Rezultatul este nul");
+      }
+      catch(Exception e) {System.out.println("No such file"+e.toString());}
+      }
+    */	
+    
 }
