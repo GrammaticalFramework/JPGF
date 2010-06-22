@@ -1,6 +1,7 @@
 package org.grammaticalframework.examples.PhraseDroid;
 
 import org.grammaticalframework.PGF;
+import org.grammaticalframework.PGFBuilder;
 import java.io.InputStream;
 import java.io.IOException;
 import android.os.Handler;
@@ -38,7 +39,7 @@ class PGFThread extends Thread {
 	    InputStream is =
 		this.activity.getResources().openRawResource(phrasebook_resource);
 	    final long begin_time = System.currentTimeMillis();
-	    PGF pgf = PGF.readFromInputStream(is);
+	    PGF pgf = PGFBuilder.fromInputStream(is);
 	    final long end_time = System.currentTimeMillis();
 	    String sourceLang = (String)activity.getResources().getText(R.string.source_concrete);
 	    final Translator trans =

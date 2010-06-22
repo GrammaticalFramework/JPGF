@@ -1,7 +1,7 @@
 package org.grammaticalframework.test
 
 import org.grammaticalframework.Trees.PrettyPrinter
-import org.grammaticalframework.{PGF, Parser, Linearizer, Generator}
+import org.grammaticalframework.{PGF, PGFBuilder, Parser, Linearizer, Generator}
 
 import java.util.logging._;
 
@@ -44,7 +44,7 @@ object BasicParserTest {
 
 
 class TestGrammar(pgfFile:String, langName:String) {
-  val grammar:PGF = PGF.readFromFile(pgfFile)
+  val grammar:PGF = PGFBuilder.fromFile(pgfFile)
   val parser = new Parser(grammar, langName)
   val linearizer = new Linearizer(grammar, grammar.concrete(langName))
   val generator = new Generator(grammar)

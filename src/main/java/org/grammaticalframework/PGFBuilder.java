@@ -12,12 +12,7 @@ import java.io.ByteArrayOutputStream;
 
 import org.grammaticalframework.reader.*;
 
-
-class PGFReader {
-    //private static Logger log =
-    //    Logger.getLogger("org.grammaticalframework.pgf");
-    private DataInputStream mDataInputStream;
-
+public class PGFBuilder {
     /* ************************************************* */
     /* Public reading functions                          */
     /* ************************************************* */
@@ -26,11 +21,11 @@ class PGFReader {
      *
      * @param filename the path of the pgf file.
      */
-    public static PGF readFile(String filename)
+    public static PGF fromFile(String filename)
         throws FileNotFoundException, IOException
     {
         InputStream stream = new FileInputStream(filename);
-        return new PGFReader().readInputStream(stream);
+        return new PGFReader(stream).readPGF();
     }
 
     /**
@@ -38,8 +33,22 @@ class PGFReader {
      *
      * @param inStream and InputStream to read the pgf binary from.
      */
-    public PGF readInputStream(InputStream inStream) throws IOException {
-        this.mDataInputStream = new DataInputStream(inStream);
+    public static PGF fromInputStream(InputStream stream)
+	throws IOException
+    {
+        return new PGFReader(stream).readPGF();
+    }
+}
+
+class PGFReader {
+    
+    private DataInputStream mDataInputStream;
+    
+    public PGFReader(InputStream is) {
+	this.mDataInputStream = new DataInputStream(is);
+    }
+
+    public PGF readPGF() throws IOException {
         // Reading the PGF version
         int ii[]=new int[4];
         for(int i=0;i<4;i++)

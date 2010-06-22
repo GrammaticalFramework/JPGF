@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import org.grammaticalframework.PGF;
+import org.grammaticalframework.PGFBuilder;
 import org.grammaticalframework.parser.ParseState;
 import org.grammaticalframework.Parser;
 
@@ -37,7 +38,7 @@ public class FridgeMagnets extends Activity {
 	try {
 	    InputStream is =
 		this.getResources().openRawResource(R.raw.foods);
-	    mPGF = PGF.readFromInputStream(is);
+	    mPGF = PGFBuilder.fromInputStream(is);
 	    mParser = new Parser(mPGF, "FoodsEng");
 	} catch (IOException e) {}
 	catch (PGF.UnknownLanguageException e) {}
