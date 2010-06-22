@@ -17,7 +17,7 @@ public class Linearizer {
     private Concrete cnc ;
     private HashMap<String,HashMap<Integer,HashSet<Production>>> lProd;
 
-    /* ******************************************** API ******************************************** */
+    /* ******************************** API ******************************** */
 
     /** linearizes an expression to a bracketed token
      * and further on to a string
@@ -50,7 +50,9 @@ public class Linearizer {
     /**
      * Linearize a tree to a vector of tokens.
      **/
-    public Vector<String> linearizeTokens(Tree absyn)  throws LinearizerException {
+    public Vector<String> linearizeTokens(Tree absyn)
+	throws LinearizerException
+    {
 	return this.renderLin(this.linearize(absyn).elementAt(0));
     }
 
@@ -74,7 +76,7 @@ public class Linearizer {
     }
     
     
-    /* ************************************** Implementation *************************************** */
+    /* ************************** Implementation *************************** */
 
     /** constructs the l-productions of the concrete syntax for
      * a given language
