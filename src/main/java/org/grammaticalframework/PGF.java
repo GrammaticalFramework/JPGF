@@ -16,8 +16,7 @@ public class PGF {
     private Abstract abstr;
     private Map<String, Concrete> concretes;
 
-    /* ******************************************** API ******************************************** */
-
+    /* ******************************** API ******************************** */
     /**
      * Reads a PGF grammar from a file.
      *
@@ -48,14 +47,21 @@ public class PGF {
      * @return the concrete grammar of null if there is no grammr with
      *             that name.
      */
-    public Concrete concrete(String name) {
-        return this.concretes.get(name);
+    public Concrete concrete(String name) throws UnknownLanguageException {
+	Concrete l = this.concretes.get(name);
+        if (l == null)
+	    throw new UnknownLanguageException(name);
+	return l;
     }
 
     public class UnknownLanguageException extends Exception {
-	String language;
+	private String language;
 	public UnknownLanguageException(String language) {
 	    this.language = language;
+	}
+
+	public String getLanguage() {
+	    return this.language;
 	}
     }
 
@@ -72,23 +78,6 @@ public class PGF {
         for(Concrete cnc : concretes)
             this.concretes.put( cnc.name(), cnc);
     }
-
-    /* ************************************************* */
-    /* Parsing API                                       */
-    /* ************************************************* */
-    /**
-     * 
-     */
-    public ParseState parse(String[] words, String language) {
-	ParseState ps = new ParseState(null, this.concrete(language), words.length);
-	for (String w : words) {
-	    if (!ps.scan(w)) {
-		break;
-	    }
-	}
-	return ps;
-    }
-
 
     /* ************************************************* */
     /* Accessing the fields                              */

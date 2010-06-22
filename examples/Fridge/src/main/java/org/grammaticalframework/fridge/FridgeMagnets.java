@@ -17,7 +17,7 @@ import java.util.Vector;
 
 import org.grammaticalframework.PGF;
 import org.grammaticalframework.parser.ParseState;
-import org.grammaticalframework.parser.Parser;
+import org.grammaticalframework.Parser;
 
 public class FridgeMagnets extends Activity {
     /** Called when the activity is first created. */
@@ -27,6 +27,7 @@ public class FridgeMagnets extends Activity {
     private Controller controller = new Controller();
     private EditText searchBox = null;
     private PGF mPGF;
+    private Parser mParser;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,9 @@ public class FridgeMagnets extends Activity {
 	    InputStream is =
 		this.getResources().openRawResource(R.raw.foods);
 	    mPGF = PGF.readFromInputStream(is);
+	    mParser = new Parser(mPGF, "FoodsEng");
 	} catch (IOException e) {}
+	catch (PGF.UnknownLanguageException e) {}
         refreshBagOfWords(null);
         View main = findViewById(R.id.main_view);
         main.setFocusableInTouchMode(true);
@@ -69,7 +72,7 @@ public class FridgeMagnets extends Activity {
     private void refreshBagOfWords(String prefix) {
         PredicateLayout l = (PredicateLayout)findViewById(R.id.magnets_bag);
         l.removeAllViews();
-	ParseState ps = mPGF.parse(this.sentence.toArray(new String[this.sentence.size()]),"FoodsEng");
+	ParseState ps = mParser.parse(this.sentence.toArray(new String[this.sentence.size()]));
 	this.words = ps.predict();
         Arrays.sort(words);
         for (int i = 0; i < words.length; i++) {

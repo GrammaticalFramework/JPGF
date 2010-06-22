@@ -1,7 +1,7 @@
 package org.grammaticalframework.examples.PhraseDroid;
 
 import org.grammaticalframework.PGF;
-import org.grammaticalframework.parser.Parser;
+import org.grammaticalframework.Parser;
 import org.grammaticalframework.Linearizer;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
@@ -18,19 +18,21 @@ class Translator {
 
    Translator(PGF mPGF, String sLang, String tLang) {
       this.mPGF = mPGF;
-      if (mPGF.concrete(sLang) == null)
-	  throw new RuntimeException("Cannot create the Parser : language not found " + sLang);
-      this.mParser = new Parser(mPGF.concrete(sLang));
       try {
-         this.mLinearizer = new Linearizer(mPGF, mPGF.concrete(tLang));
-      } catch (Exception e) {
-         throw new RuntimeException("Cannot create the linearizer : " + e);
+	  this.mParser = new Parser(mPGF, sLang);
+	  try {
+	      this.mLinearizer = new Linearizer(mPGF, mPGF.concrete(tLang));
+	  } catch (Exception e) {
+	      throw new RuntimeException("Cannot create the linearizer : " + e);
+	  }
+      } catch (PGF.UnknownLanguageException e) {
+	  throw new RuntimeException("Cannot create the Parser : language not found " + sLang);
       }
    }
    
    public String translate(String txt) {
-      this.mParser.parse(txt);
-      Tree[] trees = (Tree[])this.mParser.getTrees().toArray().unbox(Tree.class);
+      ;
+      Tree[] trees = (Tree[])this.mParser.parse(txt).getTrees().toArray().unbox(Tree.class);
       StringBuffer s = new StringBuffer();
       if (trees.length < 1)
          return "/!\\ No translation";

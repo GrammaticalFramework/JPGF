@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-
+import org.grammaticalframework.PGF;
 
 public class TestReader {
 

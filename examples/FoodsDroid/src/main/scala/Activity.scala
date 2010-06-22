@@ -8,8 +8,7 @@ import _root_.android.view.View
 import _root_.android.content.res.Resources
 
 import _root_.org.grammaticalframework.reader.{Concrete}
-import _root_.org.grammaticalframework.parser.{Parser}
-import _root_.org.grammaticalframework.{Linearizer, PGF}
+import _root_.org.grammaticalframework.{Linearizer, PGF, Parser}
 import _root_.org.grammaticalframework.Trees.PrettyPrinter
 
 class MainActivity extends Activity {
@@ -21,7 +20,7 @@ class MainActivity extends Activity {
     // Read the pgf
     val pgf_is = this.getResources().openRawResource(R.raw.foods)
     val pgf = PGF.readFromInputStream(pgf_is)
-    val parser = new Parser(pgf.concrete("FoodsEng"))
+    val parser = new Parser(pgf, "FoodsEng")
     val linearizer = new Linearizer(pgf, pgf.concrete("FoodsIta"))
 
     // Get pointers to the ui elements
@@ -41,8 +40,7 @@ class MainActivity extends Activity {
 
   def translate(parser:Parser, linearizer:Linearizer, txt:String):String = {
     val tokens = txt.split(" ")
-    parser.parse(tokens)
-    val trees = parser.getTrees
+    val trees = parser.parse(tokens).getTrees
     var s = ""
 
     trees.foreach( t => {

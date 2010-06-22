@@ -1,8 +1,7 @@
-package org.grammaticalframework.parser
+package org.grammaticalframework.test
 
-import org.grammaticalframework.reader.PGF
 import org.grammaticalframework.Trees.PrettyPrinter
-import org.grammaticalframework.{Linearizer, Generator}
+import org.grammaticalframework.{PGF, Parser, Linearizer, Generator}
 
 import java.util.logging._;
 
@@ -48,7 +47,7 @@ object BasicParserTest {
 
 class TestGrammar(pgfFile:String, langName:String) {
   val grammar:PGF = PGF.readFromFile(pgfFile)
-  val parser = new Parser(grammar.concrete(langName))
+  val parser = new Parser(grammar, langName)
   val linearizer = new Linearizer(grammar, grammar.concrete(langName))
   val generator = new Generator(grammar)
 
@@ -56,12 +55,10 @@ class TestGrammar(pgfFile:String, langName:String) {
     println("Parsing string \"" + txt + "\" with grammar " +
             pgfFile + ":" + langName)
     val tokens = txt.split(" ")
-    parser.parse(tokens)
-    val trees = parser.getTrees
+    val trees = parser.parse(tokens).getTrees
     trees.foreach( t => {
       println(PrettyPrinter.print(t))
-      println(linearizer.renderLin(linearizer.linearize(t).elementAt(0)))
-//      println(linearizer.renderLin(linearizer.linearize(t)))
+      println(linearizer.linearizeString(t))
       println()
     })
   }
@@ -69,7 +66,7 @@ class TestGrammar(pgfFile:String, langName:String) {
   def generateAndPrint():Unit = {
     val tree = generator.gen(grammar.getAbstract().startcat());
     println(PrettyPrinter.print(tree))
-    println(linearizer.renderLin(linearizer.linearize(tree).elementAt(0)))    
+    println(linearizer.linearizeString(tree))
   }
     
 }
