@@ -34,6 +34,19 @@ public class Linearizer {
         this.lProd = getLProductions();
     }
 
+    /** linearizes an expression to a bracketed token
+     * and further on to a string
+     * not implemented to dependent categories, implicit argument,
+     * and higher-order abstract syntax
+     * @param pgf the pgf object that contains the concrete grammar.
+     * @param concrete the name of the concrete grammar to use.
+     **/
+    public Linearizer(PGF pgf, String concrete)
+	throws LinearizerException, PGF.UnknownLanguageException
+    {
+	this(pgf, pgf.concrete(concrete));
+    }
+
     /**
      * Linearize a tree to a vector of tokens.
      **/
