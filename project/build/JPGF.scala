@@ -34,3 +34,4 @@ class JPGFProject(info: ProjectInfo) extends ParentProject(info)
   class AndroidApp(info: ProjectInfo) extends AndroidProject(info)
   with AndroidDefaults
 }
+

@@ -83,14 +83,17 @@ public class PGF {
     /* Accessing the fields                              */
     /* ************************************************* */
 
-    public int getMajorVersion()
-    {return majorVersion;}
+    public int getMajorVersion() {
+	return majorVersion;
+    }
 
-    public int getMinorVersion()
-    {return minorVersion;}
+    public int getMinorVersion() {
+	return minorVersion;
+    }
 
-    public Abstract getAbstract()
-    {return abstr;}
+    public Abstract getAbstract() {
+	return abstr;
+    }
 
     public String toString() {
         String ss =  "PGF : \nmajor version : "+ majorVersion

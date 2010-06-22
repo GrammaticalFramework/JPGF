@@ -3,8 +3,6 @@ package org.grammaticalframework.parser
 import org.grammaticalframework.reader._
 import org.grammaticalframework.intermediateTrees._
 import org.grammaticalframework.Trees.Absyn.{ Tree => AbsSynTree }
-
-import org.grammaticalframework.util.Trie
 import scala.collection.mutable.Stack
 
 /* ************************************************************************* */
@@ -18,9 +16,7 @@ private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int
   private var agenda = new Stack[ActiveItem]
   private var position = 0
   // Adding base productions in the chart
-  this.grammar.productions.foreach(
-    p => this.chart.addProduction(p)
-  )
+  this.grammar.productions.foreach( p => this.chart.addProduction(p) )
   init()
   compute()
   
