@@ -7,14 +7,12 @@ import java.util.logging._;
 
 object BasicParserTest {
   def main(args: Array[String]) {
-    println("Current dir is : " + System.getProperty("user.dir"));
-
     // Setting up logging
-    val logger = Logger.getLogger("org.grammaticalframework.parser")
-    logger.setLevel(Level.INFO)
-    val hdlr = new ConsoleHandler()
-    hdlr.setLevel(Level.FINEST)
-    logger.addHandler(hdlr)
+    //val logger = Logger.getLogger("org.grammaticalframework.parser")
+    //logger.setLevel(Level.INFO)
+    //val hdlr = new ConsoleHandler()
+    //hdlr.setLevel(Level.FINEST)
+    //logger.addHandler(hdlr)
 
     // Testing with the food grammar
     var grammar = new TestGrammar("pgf/Foods.pgf", "FoodsEng")
