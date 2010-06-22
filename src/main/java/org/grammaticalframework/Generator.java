@@ -45,6 +45,10 @@ public class Generator {
         }
     }
 
+    public Tree gen() throws Exception {
+	return this.gen(this.pgf.getAbstract().startcat());
+    }
+
     /** generates a category with a random direct rule
      * suitable for simple expressions
      **/
