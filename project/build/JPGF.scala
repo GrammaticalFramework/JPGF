@@ -10,7 +10,7 @@ class JPGFProject(info: ProjectInfo) extends ParentProject(info)
   override def shouldCheckOutputDirectories = false
   override def updateAction = task { None }
 
-  lazy val library = project(info.projectPath, "JPGF library")
+  lazy val library = project(info.projectPath, "JPGF library", new LibraryProject(_))
 
   // Examples
   lazy val foodDroid =
@@ -33,5 +33,16 @@ class JPGFProject(info: ProjectInfo) extends ParentProject(info)
 
   class AndroidApp(info: ProjectInfo) extends AndroidProject(info)
   with AndroidDefaults
+  class LibraryProject(info: ProjectInfo) extends ProguardProject(info) {
+    override def proguardOptions = List(
+      "-keep class org.grammaticalframework.** { *; }",
+      "-dontoptimize",
+      //"-dontobfuscate",
+      proguardKeepLimitedSerializability,
+      proguardKeepAllScala
+      //"-keep class ch.epfl.** { *; }",
+      //"-keep interface scala.ScalaObject"
+    )
+  }
 }
 
