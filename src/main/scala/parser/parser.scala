@@ -9,7 +9,7 @@ import scala.collection.mutable.Stack
 /** ParseState
  * The parse-state is the core of the parser.
  * */
-private class ParseState(val parser:Parser, val grammar:Concrete, val length:Int) {
+private class ParseState(val grammar:Concrete, val length:Int) {
   private val startCat = this.grammar.startCat
   private var trie = new ParseTrie
   private val chart = new Chart(10,this.length) // TODO: 10 is a bad value...
