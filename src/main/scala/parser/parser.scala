@@ -12,7 +12,7 @@ import scala.collection.mutable.Stack
 private class ParseState(val grammar:Concrete, val length:Int) {
   private val startCat = this.grammar.startCat
   private var trie = new ParseTrie
-  private val chart = new Chart(10,this.length) // TODO: 10 is a bad value...
+  private val chart = new Chart(100,this.length) // TODO: 10 is a bad value...
   private var agenda = new Stack[ActiveItem]
   private var position = 0
   // Adding base productions in the chart
@@ -104,7 +104,6 @@ private class ParseState(val grammar:Concrete, val length:Int) {
           for (prod <- chart.getProductions(Bd)) {
             val it = new ActiveItem(this.position, Bd, prod.function,
                                     prod.domain, r, 0)
-            //log.finest("Adding " + it + " to the agenda*")
             agenda += it
           }
         }

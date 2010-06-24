@@ -5,27 +5,43 @@
    android:layout_height="fill_parent"
    android:orientation="vertical"
    android:padding="10px">
+    <se.fnord.android.layout.PredicateLayout
+       android:id="@+id/phrase_magnets"
+       android:layout_width="wrap_content" 
+       android:layout_height="wrap_content"
+       android:padding="5dip"/>
   <LinearLayout
      android:layout_width="fill_parent"
      android:layout_height="wrap_content"
      android:gravity="right"
-     android:layout_weight="1">
-  <EditText
-     android:id="@+id/phrase"
-     android:layout_width="wrap_content"
-     android:layout_weight="1"
-     android:layout_height="wrap_content"
-     android:text="@string/default_sentence"/>
+     android:layout_weight="0">
+    <Button
+       android:id="@+id/clear_button"
+       android:layout_height="wrap_content"
+       android:layout_weight="1"
+       android:layout_width="wrap_content"
+       android:text="Clear"/>
     <Button
        android:id="@+id/translate_button"
        android:layout_width="wrap_content"
+       android:layout_weight="1"
        android:layout_height="wrap_content"
        android:text="Translate !"/>
-    </LinearLayout>
+  </LinearLayout>
+  <ScrollView
+     android:layout_height="0px"
+     android:layout_weight="1"
+     android:layout_width="fill_parent">
+    <se.fnord.android.layout.PredicateLayout
+       android:id="@+id/words_magnets"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:padding="5dip"/>
+  </ScrollView>
   <LinearLayout
      android:layout_width="fill_parent"
      android:layout_height="wrap_content"
-     android:layout_weight="1">
+     android:layout_weight="0">
     <TextView
        android:id="@+id/result_view"
        android:layout_width="wrap_content"

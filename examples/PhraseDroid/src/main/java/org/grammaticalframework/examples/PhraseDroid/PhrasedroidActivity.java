@@ -1,5 +1,6 @@
 package org.grammaticalframework.examples.PhraseDroid;
 
+import se.fnord.android.layout.PredicateLayout;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -17,6 +18,7 @@ public abstract class PhrasedroidActivity extends Activity
     implements TextToSpeech.OnInitListener,
 	       View.OnClickListener
 {
+
     // Preference Keys
     public static final String PREFS_NAME = "PhrasedroidPrefs";
     public static final String TLANG_PREF_KEY = "targetLanguageCode";
@@ -33,6 +35,10 @@ public abstract class PhrasedroidActivity extends Activity
     private Language tLang = Language.FRENCH;
     protected PGFThread mPGFThread;
 
+    // Magnets
+    private MagnetController phraseMagnets;
+    private MagnetController wordsMagnets;
+
     String currentText = "";
 
     // UI elements
@@ -41,8 +47,27 @@ public abstract class PhrasedroidActivity extends Activity
     // ************************** Activity Lifecycle **************************
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
-	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+	// Setup UI
+	setContentView(R.layout.main);
+	// Get pointers to the ui elements
+	resultView = (TextView) findViewById(R.id.result_view);
+	PredicateLayout p = (PredicateLayout) findViewById(R.id.phrase_magnets);
+ 	this.phraseMagnets = 
+ 	    new MagnetController(p, new MagnetController.OnClickListener() {
+ 		    public void onClick(MagnetController magnets, String item) {
+ 		    }});
+	p = (PredicateLayout) findViewById(R.id.words_magnets);
+ 	this.wordsMagnets = 
+ 	    new MagnetController(p, new MagnetController.OnClickListener() {
+ 		    public void onClick(MagnetController magnets, String item) {
+			addWord(item);
+ 		    }});
+	// setup buttons
+	((Button) findViewById(R.id.translate_button)).setOnClickListener(this);
+	((Button) findViewById(R.id.speak_button)).setOnClickListener(this);
+	((Button) findViewById(R.id.clear_button)).setOnClickListener(this);
 	// Setup languages
+	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 	// FIXME : do Source language
 	Locale l = Locale.getDefault();
 	Language source = Language.fromCode(l.getLanguage());
@@ -58,14 +83,6 @@ public abstract class PhrasedroidActivity extends Activity
 
 	// Setup TTS
 	startTTSInit();
-	// Setup UI
-	setContentView(R.layout.main);
-	// Get pointers to the ui elements
-	resultView = (TextView) findViewById(R.id.result_view);
-	// setup translate button
-	((Button) findViewById(R.id.translate_button)).setOnClickListener(this);
-	// setup speak action
-	((Button) findViewById(R.id.speak_button)).setOnClickListener(this);
     }
 
     public void onDestroy() {
@@ -74,6 +91,18 @@ public abstract class PhrasedroidActivity extends Activity
 	    mTts.shutdown();
     }
 
+    public void addWord(String w) {
+	this.wordsMagnets.removeAllMagnets();
+	this.phraseMagnets.addMagnet(w);
+	String[] words = this.phraseMagnets.getMagnets();
+	this.mPGFThread.scan(words);
+    }
+
+    public void clearPhrase() {
+	this.wordsMagnets.removeAllMagnets();
+	this.phraseMagnets.removeAllMagnets();
+	this.mPGFThread.clear();
+    }
     // *************************** Configuration ******************************
     public void setupLanguages(Language sLang, Language tLang) {
 	this.sLang = sLang;
@@ -103,11 +132,12 @@ public abstract class PhrasedroidActivity extends Activity
     public void onClick(View v) {
 	if (v == findViewById(R.id.translate_button)) {
 	    setText("Translating...", false);
-	    String phrase =
-		((EditText)findViewById(R.id.phrase)).getText().toString();
-	    mPGFThread.translate(phrase);
-	} else if (v == findViewById(R.id.speak_button))
+	    String[] words = this.phraseMagnets.getMagnets();
+	    mPGFThread.translate(words);
+	} else if (v == findViewById(R.id.speak_button)) {
 	    say(currentText);
+	} else if (v == findViewById(R.id.clear_button))
+	      clearPhrase();
     }
 
     public void setText(String t, boolean sayable) {
@@ -119,6 +149,13 @@ public abstract class PhrasedroidActivity extends Activity
 	runOnUiThread(new Runnable() {
 		public void run() { resultView.setText(text); }
 	    });
+    }
+
+    public void setMagnets(final String[] magnets) {
+	Arrays.sort(magnets);
+	runOnUiThread(new Runnable() {public void run() {
+	    wordsMagnets.replaceMagnets(magnets);
+	}});
     }
 
   // *****************************  ACTIVITY MENU *****************************

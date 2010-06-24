@@ -30,7 +30,7 @@ class Translator {
       }
    }
    
-   public String translate(String txt) {
+   public String translate(String[] txt) {
       ;
       Tree[] trees = (Tree[])this.mParser.parse(txt).getTrees().toArray().unbox(Tree.class);
       StringBuffer s = new StringBuffer();
