@@ -63,7 +63,13 @@ public abstract class PhrasedroidActivity extends Activity
 	((Button) findViewById(R.id.speak_button)).setOnClickListener(this);
     }
 
-    // *************************************** Configuration *****************************************
+    public void onDestroy() {
+	super.onDestroy();
+	if (mTts != null)
+	    mTts.shutdown();
+    }
+
+    // *************************** Configuration ******************************
     public void setupLanguages(Language sLang, Language tLang) {
 	this.sLang = sLang;
 	this.tLang = tLang;
