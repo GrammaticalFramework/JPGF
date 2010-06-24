@@ -34,7 +34,7 @@ public abstract class PhrasedroidActivity extends Activity
     // UI elements
     TextView resultView;
 
-    // ************************************* Activity Lifecycle **************************************
+    // ************************** Activity Lifecycle **************************
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);

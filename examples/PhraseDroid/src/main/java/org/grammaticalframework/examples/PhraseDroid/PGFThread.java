@@ -25,7 +25,10 @@ class PGFThread extends Thread {
      * @param sLang the source language
      * @param tLang the target language
      **/
-    public PGFThread(PhrasedroidActivity activity, Language sLang, Language tLang) {
+    public PGFThread(PhrasedroidActivity activity,
+		     Language sLang,
+		     Language tLang)
+    {
 	this.activity = activity;
 	this.sLang = sLang;
 	this.tLang = tLang;
@@ -33,7 +36,8 @@ class PGFThread extends Thread {
     
     public void run() {
 	try {
-	    int phrasebook_resource = Language.getPGFResource(this.sLang, this.tLang);
+	    int phrasebook_resource =
+		Language.getPGFResource(this.sLang, this.tLang);
 	    if (phrasebook_resource == -1)
 		throw new RuntimeException("PGF not found for languages " + sLang + " and " + tLang);
 	    InputStream is =
