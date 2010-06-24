@@ -11,6 +11,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.widget.Toast;
+
+
 /**
  * This is the thread that manage the PGF.
  **/
