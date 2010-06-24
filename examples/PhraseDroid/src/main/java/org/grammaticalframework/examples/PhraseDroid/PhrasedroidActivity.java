@@ -17,11 +17,15 @@ public abstract class PhrasedroidActivity extends Activity
     implements TextToSpeech.OnInitListener,
 	       View.OnClickListener
 {
-    // CONSTANTS
+    // Preference Keys
     public static final String PREFS_NAME = "PhrasedroidPrefs";
     public static final String TLANG_PREF_KEY = "targetLanguageCode";
+
+    // TTS Intent code
     static final int MY_TTS_CHECK_CODE = 2347453;
-    static final int MENU_CHANGE_LANGUAGE = 3634543;
+
+    // Activity menu codes
+    static final int MENU_CHANGE_LANGUAGE = 1;
 
     private boolean tts_ready = false;
     private TextToSpeech mTts;
@@ -47,7 +51,8 @@ public abstract class PhrasedroidActivity extends Activity
 	// Target language
 	String tLangCode = settings.getString(TLANG_PREF_KEY, null);
 	Language target = Language.fromCode(tLangCode);
-	if (target == null || !Arrays.asList(source.getAvailableTargetLanguages()).contains(target))
+	if (target == null || 
+	    !Arrays.asList(source.getAvailableTargetLanguages()).contains(target))
 	    target = source.getDefaultTargetLanguage();
 	this.setupLanguages(source, target);
 
@@ -76,13 +81,13 @@ public abstract class PhrasedroidActivity extends Activity
 	// Setup the thread for the pgf
 	// FIXME : localize the dialog...
 	final ProgressDialog progress =
-	    ProgressDialog.show(this, "", "Loading Grammar. Please wait...", true);
+	    ProgressDialog.show(this, "",
+				"Loading Grammar. Please wait...", true);
 	mPGFThread = new PGFThread(this, sLang, tLang);
 	mPGFThread.onPGFReady(new Runnable() {
 		public void run() {
 		    runOnUiThread(new Runnable() { public void run() {
 			progress.dismiss();
-
 		    }});
 		}});
 	mPGFThread.start();
@@ -93,12 +98,13 @@ public abstract class PhrasedroidActivity extends Activity
     public void changeTargetLanguage(Language l) {
 	this.setupLanguages(this.sLang, l);
     }
-    // ***************************************** UI Actions *******************************************
+    // ***************************** UI Actions *******************************
     // needed by View.onClickListener
     public void onClick(View v) {
 	if (v == findViewById(R.id.translate_button)) {
 	    setText("Translating...", false);
-	    String phrase = ((EditText)findViewById(R.id.phrase)).getText().toString();
+	    String phrase =
+		((EditText)findViewById(R.id.phrase)).getText().toString();
 	    mPGFThread.translate(phrase);
 	} else if (v == findViewById(R.id.speak_button))
 	    say(currentText);
@@ -115,8 +121,7 @@ public abstract class PhrasedroidActivity extends Activity
 	    });
     }
 
-
-  // *****************************************  ACTIVITY MENU ******************************************
+  // *****************************  ACTIVITY MENU *****************************
 
   /* Creates the menu items */
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,8 +146,12 @@ public abstract class PhrasedroidActivity extends Activity
 	  builder.setItems(items, new DialogInterface.OnClickListener() {
 		  public void onClick(DialogInterface dialog, int item) {
 		      changeTargetLanguage(tls[item]);
-		      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		      settings.edit().putString(TLANG_PREF_KEY, tls[item].locale.getLanguage()).commit();
+		      SharedPreferences settings =
+			  getSharedPreferences(PREFS_NAME, 0);
+		      settings
+			  .edit().putString(TLANG_PREF_KEY,
+					    tls[item].locale.getLanguage())
+			  .commit();
 		  }
 	      });
 	  AlertDialog alert = builder.create();
@@ -152,15 +161,15 @@ public abstract class PhrasedroidActivity extends Activity
       return false;
   }
 
-    // ********************************************  TTS  ********************************************* 
+    // ********************************  TTS  *********************************
 
     public void say(String txt) {
 	if (this.tts_ready)
 	    this.mTts.speak(txt, TextToSpeech.QUEUE_ADD, null);
     }
     
-    // Text-To-Speech initialization is done in three (asychronous) steps coresponding
-    // to the three methods below :
+    // Text-To-Speech initialization is done in three (asychronous) steps 
+    // coresponding to the three methods below :
     
     // First : we check if the TTS data is present on the system
     public void startTTSInit() {
