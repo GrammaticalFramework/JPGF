@@ -19,11 +19,17 @@ class JPGFProject(info: ProjectInfo) extends ParentProject(info)
             new AndroidApp(_),             // Project class
             library)                       // Dependencies
 
-  lazy val phraseDroid =
+  lazy val multilingualPhraseDroid =
     project("examples" / "PhraseDroid",    // Project path
-            "PhraseDroid",                 // Project name
+            "Multilingual PhraseDroid",                 // Project name
             new AndroidApp(_),             // Project class
             library)                       // Dependencies
+
+  lazy val phrasedroid_eng2fre =
+    project("examples" / "PhraseDroid-eng2fre",
+            "PhraseDroid English to French",
+            new AndroidApp(_),
+            library)
 
   lazy val fridge =
     project("examples" / "Fridge",
