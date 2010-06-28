@@ -5,16 +5,7 @@
   <uses-sdk android:minSdkVersion="4"></uses-sdk>
   <application android:label="@string/app_name">
     <activity
-	android:label="je suis @string/app_name"
-	android:name=".PhrasedroidActivity"
-        android:icon="@drawable/icon256">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"></action>
-        <category android:name="android.intent.category.LAUNCHER"></category>
-      </intent-filter>
-    </activity>
-    <activity
-	android:label="Bla bla 2"
+	android:label="@string/app_name"
 	android:name=".PhrasedroidActivity"
         android:icon="@drawable/icon256">
       <intent-filter>
