@@ -1,4 +1,4 @@
-package org.grammaticalframework.parser
+  package org.grammaticalframework.parser
 
 import org.grammaticalframework.intermediateTrees._
 import org.grammaticalframework.reader.{

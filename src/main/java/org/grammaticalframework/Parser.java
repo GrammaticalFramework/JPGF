@@ -2,25 +2,29 @@ package org.grammaticalframework;
 
 import org.grammaticalframework.reader.*;
 import org.grammaticalframework.parser.ParseState;
+import org.grammaticalframework.Trees.Absyn.Tree;
+
 
 public class Parser {
     private Concrete language;
     private String startcat;
     /* ******************************** API ******************************** */
     public Parser(PGF pgf, Concrete language) {
-	this.language = language;
-	this.startcat = pgf.getAbstract().startcat();
+        this.language = language;
+        this.startcat = pgf.getAbstract().startcat();
     }
 
     public Parser(PGF pgf, String language)
-	throws PGF.UnknownLanguageException
+        throws PGF.UnknownLanguageException
     {
-	this(pgf, pgf.concrete(language));
+        this(pgf, pgf.concrete(language));
     }
 
+    
     public void setStartcat(String startcat) {
-	this.startcat = startcat;
+        this.startcat = startcat;
     }
+
 
     /**
      * Parse the given list of tokens
@@ -29,11 +33,21 @@ public class Parser {
      **/
     // FIXME: not using the start category ??
     public ParseState parse(String[] tokens) {
-	ParseState ps = new ParseState(this.language, tokens.length);
-	for (String w : tokens)
-	    if (!ps.scan(w))
-		break;
-	return ps;
+        ParseState ps = new ParseState(this.language);
+        for (String w : tokens)
+            if (!ps.scan(w))
+                break;
+        return ps;
+    }
+
+    /**
+     * Parse the given list of tokens
+     * @param tokens the input tokens
+     * @return an array of trees
+     **/
+    // FIXME: not using the start category ??
+    public Tree[] parseToTrees(String[] tokens) {
+        return this.parse(tokens).getTrees();
     }
 
     /**
@@ -43,7 +57,7 @@ public class Parser {
      * @return the corresponding parse-state
      **/
     public ParseState parse(String phrase) {
-	return this.parse(phrase.split(" "));
+        return this.parse(phrase.split(" "));
     }
 
     /**
@@ -53,7 +67,7 @@ public class Parser {
      * @return the corresponding parse-state
      **/
     public ParseState parse() {
-	return this.parse(new String[0]);
+        return this.parse(new String[0]);
     }
 
 }

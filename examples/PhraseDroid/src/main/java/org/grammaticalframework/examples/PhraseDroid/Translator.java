@@ -32,7 +32,7 @@ class Translator {
    
    public String translate(String[] txt) {
       ;
-      Tree[] trees = (Tree[])this.mParser.parse(txt).getTrees().toArray().unbox(Tree.class);
+      Tree[] trees = (Tree[])this.mParser.parse(txt).getTrees();
       StringBuffer s = new StringBuffer();
       if (trees.length < 1)
          return "/!\\ No translation";

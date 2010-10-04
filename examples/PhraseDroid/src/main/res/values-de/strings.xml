@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">Französische PhraseDroid</string>
-    <string name="default_sentence">das Restaurant ist Montags geöffnet .</string>
-    <string name="source_concrete">PhrasebookGer</string>
-</resources>

@@ -34,7 +34,7 @@ public class PGFBuilder {
      * @param inStream and InputStream to read the pgf binary from.
      */
     public static PGF fromInputStream(InputStream stream)
-	throws IOException
+        throws IOException
     {
         return new PGFReader(stream).readPGF();
     }
@@ -45,9 +45,9 @@ class PGFReader {
     private DataInputStream mDataInputStream;
     
     public PGFReader(InputStream is) {
-	this.mDataInputStream = new DataInputStream(is);
+        this.mDataInputStream = new DataInputStream(is);
     }
-
+    
     public PGF readPGF() throws IOException {
         // Reading the PGF version
         int ii[]=new int[4];
@@ -287,21 +287,21 @@ class PGFReader {
         int sel = mDataInputStream.read();
         RLiteral ss = null;
         switch (sel) {
-	case 0 :
-	    String str = getString();
-	    ss = new StringLit(str);
-	    break;
-	case 1 :
-	    int i = getInteger();
-	    ss = new IntLit(i);
-	    break;
-	case 2 :
-	    double d = mDataInputStream.readDouble();
-	    ss = new FloatLit(d);
-	    break;
-	default :
-	    throw new IOException("Incorrect literal tag "+sel);
-	}
+        case 0 :
+            String str = getString();
+            ss = new StringLit(str);
+            break;
+        case 1 :
+            int i = getInteger();
+            ss = new IntLit(i);
+            break;
+        case 2 :
+            double d = mDataInputStream.readDouble();
+            ss = new FloatLit(d);
+            break;
+        default :
+            throw new IOException("Incorrect literal tag "+sel);
+        }
         return ss;
     }
 
@@ -466,12 +466,12 @@ class PGFReader {
      * @param cncFuns is the list of concrete function
      */
     private ProductionSet getProductionSet(CncFun[] cncFuns)
-	throws IOException
+        throws IOException
     {
-	int id = getInteger();
-	Production[] prods = getListProduction( id, cncFuns);
-	ProductionSet ps = new ProductionSet(id,prods);
-	return ps;
+        int id = getInteger();
+        Production[] prods = getListProduction( id, cncFuns);
+        ProductionSet ps = new ProductionSet(id,prods);
+        return ps;
     }
 
     /**
@@ -480,13 +480,13 @@ class PGFReader {
      * @param cncFuns is the list of concrete function
      */
     private ProductionSet[] getListProductionSet(CncFun[] cncFuns)
-	throws IOException
+        throws IOException
     {
-	int npoz = getInteger();
-	ProductionSet[] prods = new ProductionSet[npoz];
-	for(int i=0; i<npoz; i++)
-	    prods[i]= getProductionSet(cncFuns);
-	return prods;
+        int npoz = getInteger();
+        ProductionSet[] prods = new ProductionSet[npoz];
+        for(int i=0; i<npoz; i++)
+            prods[i]= getProductionSet(cncFuns);
+        return prods;
     }
 
     /**
@@ -497,14 +497,14 @@ class PGFReader {
      * @param cncFuns is the list of concrete function
      */
     private Production[] getListProduction(int leftCat,
-					     CncFun[] cncFuns)
-	throws IOException
+                                             CncFun[] cncFuns)
+        throws IOException
     {
-	int npoz = getInteger();
-	Production[] prods = new Production[npoz];
-	for(int i=0; i<npoz; i++)
-	    prods[i]=getProduction(leftCat, cncFuns);
-	return prods;
+        int npoz = getInteger();
+        Production[] prods = new Production[npoz];
+        for(int i=0; i<npoz; i++)
+            prods[i]=getProduction(leftCat, cncFuns);
+        return prods;
     }
 
     /**
@@ -520,21 +520,21 @@ class PGFReader {
                                             CncFun[] cncFuns)
         throws IOException
     {
-	int sel = mDataInputStream.read();
-	Production prod = null;
-	switch (sel) {
-	case 0 : //application
-	    int i = getInteger();
-	    int[] iis = getListInteger();
-	    prod = new ApplProduction(leftCat, cncFuns[i],iis);
-	    break;
-	case 1 : //coercion
-	    int id = getInteger();
-	    prod = new CoerceProduction(leftCat, id);
-	    break;
-	default : throw new IOException("invalid tag for productions : "+sel);
-	}
-	return prod;
+        int sel = mDataInputStream.read();
+        Production prod = null;
+        switch (sel) {
+        case 0 : //application
+            int i = getInteger();
+            int[] iis = getListInteger();
+            prod = new ApplProduction(leftCat, cncFuns[i],iis);
+            break;
+        case 1 : //coercion
+            int id = getInteger();
+            prod = new CoerceProduction(leftCat, id);
+            break;
+        default : throw new IOException("invalid tag for productions : "+sel);
+        }
+        return prod;
     }
 
     /* ************************************************* */
@@ -592,31 +592,31 @@ class PGFReader {
         int npoz = getInteger();
         int r ;
         for (int i=0; i<npoz; i++) {
-	    r = mDataInputStream.read();
-    	    os.write((byte)r);
-	    if (r <= 0x7f) {}                              //lg = 0;
-	    else if ((r >= 0xc0) && (r <= 0xdf))
-		os.write((byte)mDataInputStream.read());   //lg = 1;
-	    else if ((r >= 0xe0) && (r <= 0xef)) {
-		os.write((byte)mDataInputStream.read());   //lg = 2;
-		os.write((byte)mDataInputStream.read());
-	    } else if ((r >= 0xf0) && (r <= 0xf4)) {
-		os.write((byte)mDataInputStream.read());   //lg = 3;
-		os.write((byte)mDataInputStream.read());
-		os.write((byte)mDataInputStream.read());
-	    } else if ((r >= 0xf8) && (r <= 0xfb)) {
-		os.write((byte)mDataInputStream.read());   //lg = 4;
-		os.write((byte)mDataInputStream.read());
-		os.write((byte)mDataInputStream.read());
-		os.write((byte)mDataInputStream.read());
-	    } else if ((r >= 0xfc) && (r <= 0xfd)) {
-		os.write((byte)mDataInputStream.read());   //lg =5;
-		os.write((byte)mDataInputStream.read());
-		os.write((byte)mDataInputStream.read());
-		os.write((byte)mDataInputStream.read());
-		os.write((byte)mDataInputStream.read());
-	    } else throw new IOException("Undefined for now !!! ");
-	}
+            r = mDataInputStream.read();
+            os.write((byte)r);
+            if (r <= 0x7f) {}                              //lg = 0;
+            else if ((r >= 0xc0) && (r <= 0xdf))
+                os.write((byte)mDataInputStream.read());   //lg = 1;
+            else if ((r >= 0xe0) && (r <= 0xef)) {
+                os.write((byte)mDataInputStream.read());   //lg = 2;
+                os.write((byte)mDataInputStream.read());
+            } else if ((r >= 0xf0) && (r <= 0xf4)) {
+                os.write((byte)mDataInputStream.read());   //lg = 3;
+                os.write((byte)mDataInputStream.read());
+                os.write((byte)mDataInputStream.read());
+            } else if ((r >= 0xf8) && (r <= 0xfb)) {
+                os.write((byte)mDataInputStream.read());   //lg = 4;
+                os.write((byte)mDataInputStream.read());
+                os.write((byte)mDataInputStream.read());
+                os.write((byte)mDataInputStream.read());
+            } else if ((r >= 0xfc) && (r <= 0xfd)) {
+                os.write((byte)mDataInputStream.read());   //lg =5;
+                os.write((byte)mDataInputStream.read());
+                os.write((byte)mDataInputStream.read());
+                os.write((byte)mDataInputStream.read());
+                os.write((byte)mDataInputStream.read());
+            } else throw new IOException("Undefined for now !!! ");
+        }
         return os.toString("UTF-8"); 
     }
 
@@ -640,9 +640,9 @@ class PGFReader {
      **/
     private String getIdent( ) throws IOException {
         int nbChar = getInteger();
-	byte[] bytes = new byte[nbChar];
-	this.mDataInputStream.read(bytes);
-	return new String(bytes, "ISO-8859-1");
+        byte[] bytes = new byte[nbChar];
+        this.mDataInputStream.read(bytes);
+        return new String(bytes, "ISO-8859-1");
     }
 
     private String[] getListIdent( )
@@ -651,7 +651,7 @@ class PGFReader {
         int nb = getInteger();
         String[] strs = new String[nb];
         for (int i=0; i<nb; i++)
-	    strs[i] = getIdent();
+            strs[i] = getIdent();
         return strs;
     }
 
@@ -659,11 +659,11 @@ class PGFReader {
     /* Reading integers                                  */
     /* ************************************************* */
     private int getInteger( ) throws IOException {
-	long rez = (long)mDataInputStream.read();
-	if (rez <= 0x7f)
-	    return (int)rez;
-	else {
-	    int ii = getInteger();
+        long rez = (long)mDataInputStream.read();
+        if (rez <= 0x7f)
+            return (int)rez;
+        else {
+            int ii = getInteger();
             rez = (ii <<7) | (rez & 0x7f);
             return (int)rez;
         }

@@ -1,22 +1,13 @@
 package org.grammaticalframework.parser
 
-import scala.collection.mutable._
+import scala.collection.mutable.{ MultiMap, HashMap, Map, Set }
 import org.grammaticalframework.reader.{
   ApplProduction => Production,
   CncFun,
   CoerceProduction => Coercion,
   Production => AnyProduction }
 
-private class Chart(var nextCat:Int, val length:Int) {
-
-  /** **********************************************************************
-   * Handling Active Items (the S_k's)
-   * */
-  // FIXME: array is almost twice as big as a it needs to be.
-  //        could fix this with a non-square array
-  val active = new Array[ActiveSet](length + 1)
-  for (i <- active.indices)
-    active(i) = new ActiveSet
+private class Chart(var nextCat:Int) {
 
   /** **********************************************************************
    * Handling Productions
@@ -29,7 +20,7 @@ private class Chart(var nextCat:Int, val length:Int) {
       return false
     else {
       //log.finest("Adding production " + p + " in chart.")
-      productionSets.add(p.getCategory(), p)
+      productionSets.addBinding(p.getCategory(), p)
       this.nextCat = this.nextCat.max(p.getCategory() + 1)
       return true
     }
@@ -103,16 +94,15 @@ private class ActiveSet {
       case None => {
         val newMap = new HashMap[Int, Set[(ActiveItem,Int)]]
                               with MultiMap[Int, (ActiveItem,Int)]
-        newMap.add(cons,(item,cons2))
+        newMap.addBinding(cons,(item,cons2))
         this.store.update(cat, newMap)
         return true
       }
       case Some(map) =>
-        if (map.entryExists(cons, (item,cons2) ==))
+        if (map.entryExists(cons, (item,cons2).equals))
           return false
         else {
-          map.add(cons, (item,cons2))
-          //log.finest("Adding " + (cat,cons) + " -> " + (item,cons2) + " to ActiveSet")
+          map.addBinding(cons, (item,cons2))
           return true
         }
     }
@@ -120,10 +110,10 @@ private class ActiveSet {
   def get(cat:Int):Iterator[(ActiveItem, Int, Int)] =
     this.store.get(cat) match {
       case None => return Iterator.empty
-      case Some(map) => {
-        for(k <- map.keys ;
-            (item,d) <- map(k).elements)
-          yield (item, d, k)
+      case Some(amap) => {
+        for( k <- amap.keys.iterator ;
+             (item, d) <- amap(k).iterator)
+            yield (item, d, k)
       }
     }
 

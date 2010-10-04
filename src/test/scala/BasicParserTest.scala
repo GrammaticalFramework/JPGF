@@ -39,6 +39,11 @@ object BasicParserTest {
     grammar.generateAndPrint()
     grammar.generateAndPrint()
     grammar.generateAndPrint()
+    
+    println()
+    println("*** Testing prediction ***")
+    grammar = new TestGrammar("pgf/phrasebook_de_en.pgf", "PhrasebookEng")
+    grammar.predictAndPrint()
   }
 }
 
@@ -65,6 +70,12 @@ class TestGrammar(pgfFile:String, langName:String) {
     val tree = generator.gen(grammar.getAbstract().startcat());
     println(PrettyPrinter.print(tree))
     println(linearizer.linearizeString(tree))
+  }
+    
+  def predictAndPrint():Unit = {
+    val predictions = parser.parse().predict();
+    predictions.foreach( p => println(p))
+
   }
     
 }

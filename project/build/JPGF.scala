@@ -39,16 +39,19 @@ class JPGFProject(info: ProjectInfo) extends ParentProject(info)
 
   class AndroidApp(info: ProjectInfo) extends AndroidProject(info)
   with AndroidDefaults
+  
   class LibraryProject(info: ProjectInfo) extends ProguardProject(info) {
+    //proguard
     override def proguardOptions = List(
       "-keep class org.grammaticalframework.** { *; }",
       "-dontoptimize",
-      //"-dontobfuscate",
+      "-dontobfuscate",
       proguardKeepLimitedSerializability,
-      proguardKeepAllScala
-      //"-keep class ch.epfl.** { *; }",
-      //"-keep interface scala.ScalaObject"
+      //proguardKeepAllScala,
+      "-keep interface scala.ScalaObject"
     )
+    override def proguardInJars = Path.fromFile(scalaLibraryJar) +++ super.proguardInJars
+    
   }
 }
 

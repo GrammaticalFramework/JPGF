@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">PhraseDroid</string>
-    <string name="default_sentence">the restaurant is open on Monday .</string>
+    <string name="menu_switch_languages">Switch Languages</string>
+    <string name="menu_change_languages">Change Languages</string>
+    <string name="menu_clear">Clear</string>
     <string name="source_concrete">PhrasebookEng</string>
+    <string name="input_delete">Delete</string>
 </resources>

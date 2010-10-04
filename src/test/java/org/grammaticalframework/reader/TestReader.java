@@ -5,12 +5,13 @@ import java.io.FileInputStream;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.grammaticalframework.PGF;
+import org.grammaticalframework.PGFBuilder;
 
 public class TestReader {
 
     private void tryToReadPGF(String pgffile) {
         try {
-            PGF.readFromFile(pgffile);
+            PGFBuilder.fromFile(pgffile);
         }
         catch(Exception e) {
             assert(1==0);
