@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+   <item android:id="@+id/menu_clear"
+         android:icon="@drawable/ic_menu_clear"
+         android:title="@string/menu_clear" />
+   <item android:id="@+id/menu_switch_languages"
+         android:icon="@drawable/ic_menu_switch"
+         android:title="@string/menu_switch_languages" />
+   <item android:id="@+id/menu_change_languages"
+         android:icon="@drawable/ic_menu_lang"
+         android:title="@string/menu_change_languages" />
+</menu>
