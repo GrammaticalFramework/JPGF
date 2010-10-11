@@ -231,6 +231,7 @@ public abstract class PhrasedroidActivity extends Activity
             clearPhrase();
             return true;
           case R.id.menu_switch_languages:
+	      this.setupLanguages(this.tLang, this.sLang);
             return true;
           case R.id.menu_change_languages:
             showDialog(DIALOG_LANGS_ID);
