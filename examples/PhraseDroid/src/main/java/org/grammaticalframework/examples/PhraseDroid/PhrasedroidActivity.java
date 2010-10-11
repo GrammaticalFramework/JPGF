@@ -3,9 +3,11 @@ package org.grammaticalframework.examples.PhraseDroid;
 import se.fnord.android.layout.PredicateLayout;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -37,6 +39,9 @@ public abstract class PhrasedroidActivity extends Activity
     static final int MENU_CHANGE_SLANGUAGE = 1;
     static final int MENU_CHANGE_TLANGUAGE = 2;
     static final int MENU_SWITCH_LANGUAGES = 3;
+
+    // Dialogs ids
+    static final int DIALOG_LANGS_ID = 1;
 
     private boolean tts_ready = false;
     private TextToSpeech mTts;
@@ -158,7 +163,6 @@ public abstract class PhrasedroidActivity extends Activity
         // Setup the thread for the pgf
         // FIXME : localize the dialog...
         this.progress = ProgressDialog.show(this, "", "Loading Grammar. Please wait...", true);
-        
         mPGFThread = new PGFThread(this, sLang, tLang);
         // mPGFThread.onPGFReady(new Runnable() {
         //         public void run() {
@@ -174,7 +178,6 @@ public abstract class PhrasedroidActivity extends Activity
         this.phraseMagnets.removeAllMagnets();
         // We write the names of the language in the titlebar
         this.setTitle(Html.fromHtml(getString(R.string.app_name) + " (" + sLang.getName()+" &#8594; "+tLang.getName() + ")"));
-        
     }
 
     public void changeTargetLanguage(Language l) {
@@ -229,33 +232,64 @@ public abstract class PhrasedroidActivity extends Activity
           case R.id.menu_switch_languages:
             return true;
           case R.id.menu_change_languages:
-            final Language[] tls = this.sLang.getAvailableTargetLanguages();
-            final String[] items = new String[tls.length];
-            int i = 0;
-            for (Language l : tls) {
-                items[i] = l.getName();
-                i++ ;
-            }
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            // FIXME: localize...
-            builder.setTitle("Pick a language");
-            builder.setItems(items, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    changeTargetLanguage(tls[item]);
-                    SharedPreferences settings =
-                        getSharedPreferences(PREFS_NAME, 0);
-                    settings
-                      .edit().putString(TLANG_PREF_KEY,
-                                        tls[item].locale.getLanguage())
-                      .commit();
-                }
-              });
-          AlertDialog alert = builder.create();
-          alert.show();
-          return true;
+            showDialog(DIALOG_LANGS_ID);
+            //TextView text = (TextView) dialog.findViewById(R.id.text);
+            //text.setText("Hello, this is a custom dialog!");
+            //ImageView image = (ImageView) dialog.findViewById(R.id.image);
+            //image.setImageResource(R.drawable.android);
+            //final Language[] tls = this.sLang.getAvailableTargetLanguages();
+            //final String[] items = new String[tls.length];
+            //int i = 0;
+            //for (Language l : tls) {
+            //    items[i] = l.getName();
+            //    i++ ;
+            //}
+            //AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            //// FIXME: localize...
+            //builder.setTitle("Pick a language");
+            //builder.setItems(items, new DialogInterface.OnClickListener() {
+            //    public void onClick(DialogInterface dialog, int item) {
+            //        changeTargetLanguage(tls[item]);
+            //        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+            //        settings
+            //          .edit().putString(TLANG_PREF_KEY,
+            //                            tls[item].locale.getLanguage())
+            //          .commit();
+            //    }
+            //  });
+            //AlertDialog alert = builder.create();
+            //alert.show();
+            return true;
       }
       return false;
   }
+
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog;
+        switch(id) {
+          case DIALOG_LANGS_ID:
+            Context mContext = this; //getApplicationContext();
+            dialog = new Dialog(mContext);
+            dialog.setContentView(R.layout.languages);
+            dialog.setTitle("Languages");
+            // Populatting
+            Spinner ts = (Spinner)dialog.findViewById(R.id.tlang_spinner);
+            Spinner ss = (Spinner)dialog.findViewById(R.id.slang_spinner);
+            final Language languages[] = Language.values();
+	    	ArrayAdapter<Language> adapter = 
+                new ArrayAdapter<Language>( 
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    languages );
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            ts.setAdapter(adapter);
+            ss.setAdapter(adapter);
+            break;
+          default:
+            dialog = null;
+        }
+        return dialog;
+    }
 
     // ********************************  TTS  *********************************
 

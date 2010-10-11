@@ -1,8 +1,19 @@
 <resources>
+    <!-- App -->
     <string name="app_name">PhraseDroid</string>
+
+    <!-- Menu -->
     <string name="menu_switch_languages">Switch Languages</string>
     <string name="menu_change_languages">Change Languages</string>
     <string name="menu_clear">Clear</string>
+
+    <!-- Others -->
     <string name="source_concrete">PhrasebookEng</string>
+
+    <!-- Buttons & dialogs -->
     <string name="input_delete">Delete</string>
+    <string name="please_choose_tlang">Target language : </string>
+    <string name="please_choose_slang">Source language : </string>
+    <string name="language_prompt">Choose Language</string>
+
 </resources>
