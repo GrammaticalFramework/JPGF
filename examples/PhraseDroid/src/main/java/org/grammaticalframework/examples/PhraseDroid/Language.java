@@ -56,6 +56,11 @@ public enum Language {
             return null;
     }
 
+
+    public String toString() {
+	return this.getName();
+    }
+
     static public int getPGFResource(Language l1, Language l2) {
         switch (l1) {
         case GERMAN: switch (l2) {

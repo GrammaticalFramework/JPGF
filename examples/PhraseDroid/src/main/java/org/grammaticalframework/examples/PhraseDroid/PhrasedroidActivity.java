@@ -31,6 +31,7 @@ public abstract class PhrasedroidActivity extends Activity
     // Preference Keys
     public static final String PREFS_NAME = "PhrasedroidPrefs";
     public static final String TLANG_PREF_KEY = "targetLanguageCode";
+    public static final String SLANG_PREF_KEY = "sourceLanguageCode";
 
     // TTS Intent code
     static final int MY_TTS_CHECK_CODE = 2347453;
@@ -269,18 +270,46 @@ public abstract class PhrasedroidActivity extends Activity
         switch(id) {
           case DIALOG_LANGS_ID:
             Context mContext = this; //getApplicationContext();
-            dialog = new Dialog(mContext);
-            dialog.setContentView(R.layout.languages);
-            dialog.setTitle("Languages");
+	    AlertDialog.Builder builder;
+	    AlertDialog alertDialog;
+
+	    LayoutInflater inflater =
+		(LayoutInflater)mContext
+		.getSystemService(LAYOUT_INFLATER_SERVICE);
+	    View layout =
+		inflater.inflate(R.layout.languages,
+				 (ViewGroup) findViewById(R.id.setlang_root));
+
+	    // We get pointers to the two spinners
+            final Spinner ts = (Spinner)layout.findViewById(R.id.tlang_spinner);
+            final Spinner ss = (Spinner)layout.findViewById(R.id.slang_spinner);
+
+	    // We build the dialog
+	    builder = new AlertDialog.Builder(mContext);
+	    builder.setView(layout)
+		.setCancelable(true)
+		.setPositiveButton("Save",
+				   new DialogInterface.OnClickListener() {
+				       public void onClick(DialogInterface dialog, int id) {
+					   setupLanguages((Language)ss.getSelectedItem(),
+							  (Language)ts.getSelectedItem());
+				       }
+				   })
+		.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+			    dialog.cancel();
+			}
+		    });
+
+	    alertDialog = builder.create();
+            dialog = alertDialog;
+            //dialog.setTitle("Languages");
             // Populatting
-            Spinner ts = (Spinner)dialog.findViewById(R.id.tlang_spinner);
-            Spinner ss = (Spinner)dialog.findViewById(R.id.slang_spinner);
             final Language languages[] = Language.values();
-	    	ArrayAdapter<Language> adapter = 
-                new ArrayAdapter<Language>( 
-                    this,
-                    android.R.layout.simple_spinner_item,
-                    languages );
+	    ArrayAdapter<Language> adapter = 
+                new ArrayAdapter<Language>( this,
+					   android.R.layout.simple_spinner_item,
+					   languages );
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             ts.setAdapter(adapter);
             ss.setAdapter(adapter);
