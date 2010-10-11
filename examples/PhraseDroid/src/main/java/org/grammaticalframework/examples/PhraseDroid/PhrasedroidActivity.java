@@ -110,6 +110,22 @@ public abstract class PhrasedroidActivity extends Activity
         this.mPGFThread.scan(w);
     }
 
+    public void rmWord() {
+	// remove all clickable magnets
+        this.wordsMagnets.removeAllMagnets();
+	// get the current words of the phrase
+        String[] oldPhrase = this.phraseMagnets.getMagnets();
+	// create a new phrase with all of them but the last one
+	String[] newPhrase = new String[oldPhrase.length - 1];
+	for (int i = 0 ; i < oldPhrase.length - 1;i++) {
+            newPhrase[i] = oldPhrase[i];
+	}
+        this.phraseMagnets.replaceMagnets(newPhrase);
+        ((Button) findViewById(R.id.delete_button)).setEnabled(false);
+	// parse this new phrase in one batch
+        this.mPGFThread.parse(newPhrase);
+    }
+
     public void clearPhrase() {
         this.wordsMagnets.removeAllMagnets();
         this.phraseMagnets.removeAllMagnets();
@@ -123,6 +139,10 @@ public abstract class PhrasedroidActivity extends Activity
             this.setText(t.text, true);
         else
             this.setText("", false);
+        if (this.phraseMagnets.size() > 0)
+            runOnUiThread(new Runnable() {public void run() {
+                ((Button) findViewById(R.id.delete_button)).setEnabled(true);
+            }});
     }
     
     public void pgf_ready() {
@@ -166,7 +186,7 @@ public abstract class PhrasedroidActivity extends Activity
         if (v == findViewById(R.id.speak_button)) {
             say(currentText);
         } else if (v == findViewById(R.id.delete_button))
-              clearPhrase();
+              rmWord();
     }
 
     public void setText(String t, boolean sayable) {

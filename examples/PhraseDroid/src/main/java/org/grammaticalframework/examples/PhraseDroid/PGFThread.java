@@ -28,6 +28,7 @@ class PGFThread extends Thread {
     // Message actions
     static final private int PS_RESET = 1;
     static final private int PS_SCAN = 2;
+    static final private int PS_PARSE = 3;
 
     private PhrasedroidActivity activity;
     public Handler mHandler;        // an Handler to receive messages
@@ -102,6 +103,14 @@ class PGFThread extends Thread {
         this.mHandler.sendMessage(msg);
     }
     
+    public void parse(String[] ws) {
+        if (DBG) Log.i(TAG, "PGFThread called for parsing");
+        Message msg = Message.obtain();
+        msg.what = PS_PARSE;
+        msg.obj = ws;
+        this.mHandler.sendMessage(msg);
+    }
+    
     
     /* ***********************************************************************
      * INTERFACE
@@ -131,12 +140,16 @@ class PGFThread extends Thread {
         /**/
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case PS_RESET:
-                    this.ps_reset();
-                    break;
-            case PS_SCAN:
+              case PS_RESET:
+                this.ps_reset();
+                break;
+              case PS_SCAN:
                 String word = (String)msg.obj;
                 this.ps_scan(word);
+                break;
+              case PS_PARSE:
+                String[] words = (String[])msg.obj;
+                this.ps_parse(words);
                 break;
             }
         }
@@ -162,9 +175,16 @@ class PGFThread extends Thread {
             }
             activity.new_parse_result(mParseState.predict(), translation);
         }
+
         private void ps_reset() {
             if (DBG) Log.i(TAG, "Reset ParseState");
             this.mParseState = mParser.parse();
+            activity.new_parse_result(mParseState.predict(),null);
+        }
+        
+        private void ps_parse(String[] ws) {
+            if (DBG) Log.i(TAG, "New ParseState : parsing phrase");
+            this.mParseState = mParser.parse(ws);
             activity.new_parse_result(mParseState.predict(),null);
         }
         

@@ -22,7 +22,8 @@
          android:layout_weight="0"
          android:layout_width="wrap_content"
          android:drawableLeft="@drawable/ic_input_delete"
-         android:drawablePadding="0px" />
+         android:drawablePadding="0px" 
+         android:enabled="false" />
    </LinearLayout>
    <View
       android:layout_height="2px"

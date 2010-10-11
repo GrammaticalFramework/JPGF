@@ -45,6 +45,10 @@ class MagnetController implements View.OnTouchListener {
 	return this.mMagnets.toArray(new String[this.mMagnets.size()]);
     }
 
+    public int size() {
+        return this.mMagnets.size();
+    }
+
     private void applyMagnetStyles(TextView view) {
         view.setTextColor(Color.BLACK);
         view.setBackgroundColor(Color.WHITE);
