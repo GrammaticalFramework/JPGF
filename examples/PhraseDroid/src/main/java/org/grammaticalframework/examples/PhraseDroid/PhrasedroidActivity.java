@@ -165,12 +165,6 @@ public abstract class PhrasedroidActivity extends Activity
         // FIXME : localize the dialog...
         this.progress = ProgressDialog.show(this, "", "Loading Grammar. Please wait...", true);
         mPGFThread = new PGFThread(this, sLang, tLang);
-        // mPGFThread.onPGFReady(new Runnable() {
-        //         public void run() {
-        //             runOnUiThread(new Runnable() { public void run() {
-        //                 progress.dismiss();
-        //             }});
-        //         }});
         mPGFThread.start();
         if (this.tts_ready)
             mTts.setLanguage(this.tLang.locale);
@@ -227,45 +221,19 @@ public abstract class PhrasedroidActivity extends Activity
     /* Handles menu item selections */
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-          case R.id.menu_clear:
+	case R.id.menu_clear:
             clearPhrase();
             return true;
-          case R.id.menu_switch_languages:
-	      this.setupLanguages(this.tLang, this.sLang);
+	case R.id.menu_switch_languages:
+	    this.setupLanguages(this.tLang, this.sLang);
             return true;
-          case R.id.menu_change_languages:
+	case R.id.menu_change_languages:
             showDialog(DIALOG_LANGS_ID);
-            //TextView text = (TextView) dialog.findViewById(R.id.text);
-            //text.setText("Hello, this is a custom dialog!");
-            //ImageView image = (ImageView) dialog.findViewById(R.id.image);
-            //image.setImageResource(R.drawable.android);
-            //final Language[] tls = this.sLang.getAvailableTargetLanguages();
-            //final String[] items = new String[tls.length];
-            //int i = 0;
-            //for (Language l : tls) {
-            //    items[i] = l.getName();
-            //    i++ ;
-            //}
-            //AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            //// FIXME: localize...
-            //builder.setTitle("Pick a language");
-            //builder.setItems(items, new DialogInterface.OnClickListener() {
-            //    public void onClick(DialogInterface dialog, int item) {
-            //        changeTargetLanguage(tls[item]);
-            //        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-            //        settings
-            //          .edit().putString(TLANG_PREF_KEY,
-            //                            tls[item].locale.getLanguage())
-            //          .commit();
-            //    }
-            //  });
-            //AlertDialog alert = builder.create();
-            //alert.show();
             return true;
-      }
-      return false;
-  }
-
+	}
+	return false;
+    }
+    
     protected Dialog onCreateDialog(int id) {
         Dialog dialog;
         switch(id) {

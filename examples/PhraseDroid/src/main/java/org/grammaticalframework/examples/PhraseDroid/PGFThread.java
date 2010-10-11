@@ -55,35 +55,14 @@ class PGFThread extends Thread {
     }
     
     public void run() {
-        // try {
-            int phrasebook_resource =
-                Language.getPGFResource(this.sLang, this.tLang);
-            if (phrasebook_resource == -1)
-                throw new RuntimeException("PGF not found for languages " + sLang + " and " + tLang);
-            // InputStream is =
-            //     this.activity.getResources().openRawResource(phrasebook_resource);
-            // final long begin_time = System.currentTimeMillis();
-            // PGF pgf = PGFBuilder.fromInputStream(is);
-            // final long end_time = System.currentTimeMillis();
-            // String sourceLang = (String)activity.getResources().getText(R.string.source_concrete);
-            // final Translator trans =
-            //     new Translator(pgf, sLang.concrete, tLang.concrete);
-            // activity.runOnUiThread(new Runnable() { public void run() {
-            //             Toast.makeText(activity.getApplicationContext(),
-            //                            "PGF read in " + (end_time - begin_time) + " ms",
-            //                            Toast.LENGTH_SHORT).show();
-            //             
-            // }});
-            // if (this.onPGFReady != null)
-            //     this.onPGFReady.run();
-            Looper.prepare();
-            mHandler = new PGFHandler(phrasebook_resource, sLang, tLang);
-            this.clear();
-            Looper.loop();
-        // } catch (IOException e) {
-        //     if (this.onPGFReady != null) 
-        //         this.onPGFReady.run();
-        // }
+	int phrasebook_resource =
+	    Language.getPGFResource(this.sLang, this.tLang);
+	if (phrasebook_resource == -1)
+	    throw new RuntimeException("PGF not found for languages " + sLang + " and " + tLang);
+	Looper.prepare();
+	mHandler = new PGFHandler(phrasebook_resource, sLang, tLang);
+	this.clear();
+	Looper.loop();
     }
     
     public void onPGFReady(Runnable r) {
