@@ -31,13 +31,14 @@ public class Generator {
         for(int i=0;i<absCats.length; i++) {
             dirFuns = new HashSet<String>();
             indirFuns = new HashSet<String>();
-            String[] strs = absCats[i].getFunctions();
-            for(int j=0; j<strs.length; j++)
-                for(int k=0; k<absFuns.length; k++)
-                    if(strs[j].equals(absFuns[k].getName())) {
+	    WeightedIdent[] functions = absCats[i].getFunctions();
+            for(int j=0 ; j < functions.length ; j++)
+                for(int k=0 ; k < absFuns.length ; k++)
+                    if(functions[j].ident().equals(absFuns[k].getName())) {
                         if(absFuns[k].getType().getHypos().length == 0)
-                            dirFuns.add(strs[j]);
-                        else indirFuns.add(strs[j]);
+                            dirFuns.add(functions[j].ident());
+                        else
+			    indirFuns.add(functions[j].ident());
                         break;
                     }
             dirRules.put(absCats[i].name(),dirFuns);

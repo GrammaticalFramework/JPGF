@@ -128,17 +128,23 @@ class PGFReader {
 				    + name + "'");
         Type t = getType();
         int i = getInteger();
-        int maybe = mDataInputStream.read();
-        if (maybe == 0) return new AbsFun(name,t,i,new Eq[0]);
-        Eq[] eqs = getListEq();
-        return new AbsFun(name,t,i,eqs);
+        int has_equations = mDataInputStream.read();
+	Eq[] equations;
+	if (has_equations == 0)
+	    equations = new Eq[0];
+	else
+	    equations = getListEq();
+	double weight = getDouble();
+        AbsFun f = new AbsFun(name,t,i,equations, weight);
+	if (DBG) System.err.println("/AbsFun: " + f);
+	return f;
     }
 
     private AbsCat getAbsCat() throws IOException {
         String name = getIdent();
         Hypo[] hypos = getListHypo();
-        String[] strs = getListIdent();
-        AbsCat abcC = new AbsCat(name,hypos, strs);
+        WeightedIdent[] functions = getListWeightedIdent();
+        AbsCat abcC = new AbsCat(name,hypos, functions);
         return abcC;
     }
 
@@ -179,7 +185,7 @@ class PGFReader {
     }
 
     private Hypo getHypo() throws IOException { 
-       int btype = mDataInputStream.read();
+	int btype = mDataInputStream.read();
         boolean b = btype == 0 ? false : true;
         String varName = getIdent();
         Type t = getType();
@@ -308,7 +314,7 @@ class PGFReader {
             ss = new IntLit(i);
             break;
         case 2 :
-            double d = mDataInputStream.readDouble();
+            double d = getDouble();
             ss = new FloatLit(d);
             break;
         default :
@@ -667,6 +673,22 @@ class PGFReader {
         return strs;
     }
 
+
+    // Weighted idents are a pair of a String (the ident) and a double
+    // (the ident).
+    private WeightedIdent[] getListWeightedIdent( )
+        throws IOException
+    {
+        int nb = getInteger();
+        WeightedIdent[] idents = new WeightedIdent[nb];
+        for (int i=0; i<nb; i++) {
+	    double w = getDouble();
+	    String s = getIdent();
+	    idents[i] = new WeightedIdent(s,w);
+	}
+        return idents;
+    }
+
     /* ************************************************* */
     /* Reading integers                                  */
     /* ************************************************* */
@@ -696,6 +718,11 @@ class PGFReader {
         i <<= 8;
         i |= j2 & 0xFF;
         return i;
+    }
+
+    // Reading doubles
+    private double getDouble() throws IOException {
+	return mDataInputStream.readDouble();
     }
 }
 

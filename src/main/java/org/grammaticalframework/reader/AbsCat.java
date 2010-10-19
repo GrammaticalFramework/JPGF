@@ -1,30 +1,36 @@
 package org.grammaticalframework.reader;
 
 public class AbsCat {
-    private String name;
-    private Hypo[] hypos;
-    private String[] strs;
+    private final String name;
+    private final Hypo[] hypos;
+    private final WeightedIdent[] functions;
     
-    public AbsCat(String name, Hypo[] _hypos, String[] _strs)
+    public AbsCat(String name, Hypo[] _hypos, WeightedIdent[] functions)
     {
         this.name = name;
-        hypos = _hypos;
-        strs = _strs;
+        this.hypos = _hypos;
+        this.functions = functions;
     }
 
     public String name() {
         return name;
     }
-    public Hypo[] getHypos() {return hypos;}
-    public String[] getFunctions() {return strs;}
+
+    public Hypo[] getHypos() {
+	return hypos;
+    }
+    
+    public WeightedIdent[] getFunctions() {
+	return functions;
+    }
 
     public String toString() {
         String ss = "Name : "+ name + " , Hypotheses : (";
         for(int i=0; i<hypos.length; i++)
             ss+=(" "+hypos[i].toString());
         ss+=") , String Names : (";
-        for(int i=0; i<strs.length; i++)
-            ss+=(" "+strs[i].toString());
+        for(int i=0; i<functions.length; i++)
+            ss+=(" "+functions[i].toString());
         ss+=")";
         return ss;
     }
