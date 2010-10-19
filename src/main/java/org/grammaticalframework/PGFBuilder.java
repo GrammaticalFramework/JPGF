@@ -13,6 +13,9 @@ import java.io.ByteArrayOutputStream;
 import org.grammaticalframework.reader.*;
 
 public class PGFBuilder {
+
+    private static final boolean DBG = false;
+
     /* ************************************************* */
     /* Public reading functions                          */
     /* ************************************************* */
@@ -24,6 +27,7 @@ public class PGFBuilder {
     public static PGF fromFile(String filename)
         throws FileNotFoundException, IOException
     {
+	if (DBG) System.err.println("Reading pgf from file : " + filename);
         InputStream stream = new FileInputStream(filename);
         return new PGFReader(stream).readPGF();
     }
@@ -41,7 +45,8 @@ public class PGFBuilder {
 }
 
 class PGFReader {
-    
+    private static final boolean DBG = false;
+
     private DataInputStream mDataInputStream;
     
     public PGFReader(InputStream is) {
@@ -53,6 +58,8 @@ class PGFReader {
         int ii[]=new int[4];
         for(int i=0;i<4;i++)
             ii[i]=mDataInputStream.read();
+	if (DBG) System.err.println("PGF version : "  + ii[0] + "." + ii[1] 
+				    + "." + ii[2] + "." + ii[3]);
         // Reading the global flags
         Map<String,RLiteral> flags = getListFlag();
         // Reading the abstract
@@ -92,6 +99,7 @@ class PGFReader {
     private Abstract getAbstract() throws IOException
     {
         String name = getIdent();
+	if (DBG) System.err.println("Abstract syntax [" + name + "]");
         Map<String,RLiteral> flags = getListFlag();
         AbsFun[] absFuns = getListAbsFun();
         AbsCat[] absCats = getListAbsCat();
@@ -116,6 +124,8 @@ class PGFReader {
 
     private AbsFun getAbsFun() throws IOException {
         String name = getIdent();
+	if (DBG) System.err.println("AbsFun: '"
+				    + name + "'");
         Type t = getType();
         int i = getInteger();
         int maybe = mDataInputStream.read();
@@ -162,7 +172,9 @@ class PGFReader {
         Hypo[] hypos = getListHypo();
         String returnCat = getIdent();
         Expr[] exprs = getListExpr();
-        return new Type(hypos, returnCat, exprs);
+	Type t = new Type(hypos, returnCat, exprs);
+	if (DBG) System.err.println("Type: " + t);
+        return t;
 
     }
 
