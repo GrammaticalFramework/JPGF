@@ -107,7 +107,7 @@ class PGFReader {
     }
 
     private Pattern[] getListPattern() throws IOException {
-        int npoz = getInteger();
+        int npoz = getInt();
         Pattern[] patts = new Pattern[npoz];
         for(int i=0; i<npoz; i++)
             patts[i]=getPattern();
@@ -127,7 +127,7 @@ class PGFReader {
 	if (DBG) System.err.println("AbsFun: '"
 				    + name + "'");
         Type t = getType();
-        int i = getInteger();
+        int i = getInt();
         int has_equations = mDataInputStream.read();
 	Eq[] equations;
 	if (has_equations == 0)
@@ -149,7 +149,7 @@ class PGFReader {
     }
 
     private AbsFun[] getListAbsFun() throws IOException {
-        int npoz = getInteger();
+        int npoz = getInt();
         AbsFun[] absFuns = new AbsFun[npoz];
 
         if(npoz == 0)
@@ -162,7 +162,7 @@ class PGFReader {
     }
 
     private AbsCat[] getListAbsCat() throws IOException {
-        int npoz = getInteger();
+        int npoz = getInt();
         AbsCat[] absCats = new AbsCat[npoz];
         if(npoz == 0)
             return absCats;
@@ -194,7 +194,7 @@ class PGFReader {
     }
 
     private Hypo[] getListHypo() throws IOException {
-        int npoz = getInteger();
+        int npoz = getInt();
         Hypo[] hypos = new Hypo[npoz];
         for (int i=0; i<npoz; i++)
             hypos[i]=getHypo();
@@ -202,7 +202,7 @@ class PGFReader {
     }
 
     private Expr[] getListExpr( ) throws IOException {
-        int npoz = getInteger();
+        int npoz = getInt();
         Expr[] exprs = new Expr[npoz];
         for(int i=0; i<npoz; i++)
             exprs[i]=getExpr();
@@ -230,7 +230,7 @@ class PGFReader {
             expr = new LiteralExp(lit);
             break;
         case 3 : //meta variable
-            int id = getInteger();
+            int id = getInt();
             expr = new MetaExp(id);
             break;
         case 4 : //abstract function name
@@ -238,7 +238,7 @@ class PGFReader {
             expr = new AbsNameExp(absFun);
             break;
         case 5 : //variable
-            int v = getInteger();
+            int v = getInt();
             expr = new VarExp(v);
             break;
         case 6 : //type annotated expression
@@ -257,7 +257,7 @@ class PGFReader {
 
 
     private Eq[] getListEq( ) throws IOException {
-        int npoz = getInteger();
+        int npoz = getInt();
         Eq[] eqs = new Eq[npoz];
         for (int i=0; i<npoz;i++)
             eqs[i]=getEq();
@@ -310,7 +310,7 @@ class PGFReader {
             ss = new StringLit(str);
             break;
         case 1 :
-            int i = getInteger();
+            int i = getInt();
             ss = new IntLit(i);
             break;
         case 2 :
@@ -343,14 +343,14 @@ class PGFReader {
 	getListLinDef();
         ProductionSet[] prods = getListProductionSet(cncFuns);
         Map<String, CncCat> cncCats = getListCncCat();
-        int i = getInteger();
+        int i = getInt();
         return new Concrete(name,flags,seqs,cncFuns,prods,cncCats,i,startCat);
     }
 
     private Concrete[] getListConcretes(String startCat)
         throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         Concrete[] concretes = new Concrete[npoz];
         if(npoz == 0) return concretes;
         else
@@ -374,7 +374,7 @@ class PGFReader {
     private PrintName[] getListPrintName( )
         throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         PrintName[] pnames = new PrintName[npoz];
         if(npoz == 0) return pnames;
         else
@@ -394,7 +394,7 @@ class PGFReader {
     private Sequence[] getListSequence( )
         throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         Sequence[] seqs = new Sequence[npoz];
         for(int i=0; i<npoz; i++)
             seqs[i]=getSequence();
@@ -408,8 +408,8 @@ class PGFReader {
         switch (sel) {
         case 0 : // category (non terminal symbol)
         case 1 : // Lit (Not implemented properly)
-            int i1 = getInteger();
-            int i2 = getInteger();
+            int i1 = getInt();
+            int i2 = getInt();
             symb = new ArgConstSymbol(i1,i2);
             break;
 	case 2: // Variable (Not implemented)
@@ -433,7 +433,7 @@ class PGFReader {
     private Alternative[] getListAlternative( )
         throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         Alternative[] alts = new Alternative[npoz];
         for(int i=0;i<npoz;i++)
             alts[i] = getAlternative();
@@ -451,7 +451,7 @@ class PGFReader {
     private Symbol[] getListSymbol( )
         throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         Symbol[] symbols = new Symbol[npoz];
         for(int i=0; i<npoz; i++)
             symbols[i]=getSymbol();
@@ -465,7 +465,7 @@ class PGFReader {
         throws IOException
     {
         String name = getIdent();
-        int[] sIndices = getListInteger();
+        int[] sIndices = getListInt();
         int l = sIndices.length;
         Sequence[] seqs = new Sequence[l];
         for (int i = 0 ; i < l ; i++)
@@ -476,7 +476,7 @@ class PGFReader {
     private CncFun[] getListCncFun(Sequence[] sequences)
         throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         CncFun[] cncFuns = new CncFun[npoz];
         for(int i=0; i<npoz; i++)
             cncFuns[i]=getCncFun(sequences);
@@ -491,7 +491,7 @@ class PGFReader {
     private LinDef[] getListLinDef()
         throws IOException
     {
-        int size = getInteger();
+        int size = getInt();
         LinDef[] linDefs = new LinDef[size];
         for(int i=0 ; i < size ; i++)
             linDefs[i] = getLinDef();
@@ -501,11 +501,11 @@ class PGFReader {
     private LinDef getLinDef()
         throws IOException
     {
-        int key = getInteger();
-        int listSize = getInteger();
+        int key = getInt();
+        int listSize = getInt();
 	int[] funIds = new int[listSize];
         for(int i=0 ; i < listSize ; i++)
-            funIds[i] = getInteger();
+            funIds[i] = getInt();
         return new LinDef(key, funIds);
     }
 
@@ -520,7 +520,7 @@ class PGFReader {
     private ProductionSet getProductionSet(CncFun[] cncFuns)
         throws IOException
     {
-        int id = getInteger();
+        int id = getInt();
         Production[] prods = getListProduction( id, cncFuns);
         ProductionSet ps = new ProductionSet(id,prods);
         return ps;
@@ -534,7 +534,7 @@ class PGFReader {
     private ProductionSet[] getListProductionSet(CncFun[] cncFuns)
         throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         ProductionSet[] prods = new ProductionSet[npoz];
         for(int i=0; i<npoz; i++)
             prods[i]= getProductionSet(cncFuns);
@@ -552,7 +552,7 @@ class PGFReader {
                                              CncFun[] cncFuns)
         throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         Production[] prods = new Production[npoz];
         for(int i=0; i<npoz; i++)
             prods[i]=getProduction(leftCat, cncFuns);
@@ -576,12 +576,12 @@ class PGFReader {
         Production prod = null;
         switch (sel) {
         case 0 : //application
-            int i = getInteger();
+            int i = getInt();
             int[] domain = getDomainFromPArgs();
             prod = new ApplProduction(leftCat, cncFuns[i],domain);
             break;
         case 1 : //coercion
-            int id = getInteger();
+            int id = getInt();
             prod = new CoerceProduction(leftCat, id);
             break;
         default : throw new IOException("invalid tag for productions : "+sel);
@@ -596,12 +596,12 @@ class PGFReader {
     private int[] getDomainFromPArgs()
         throws IOException
     {
-        int size = getInteger();
+        int size = getInt();
         int[] domain = new int[size];
         for(int i=0; i < size; i++) {
 	    // Skiping the list of integers
-	    getListInteger();
-            domain[i]= getInteger();
+	    getListInt();
+            domain[i]= getInt();
 	}
         return domain;
     }
@@ -612,23 +612,23 @@ class PGFReader {
     private CncCat getCncCat( ) throws IOException
     {
         String sname = getIdent();
-        int firstFId = getInteger();
-        int lastFId = getInteger();
+        int firstFId = getInt();
+        int lastFId = getInt();
         String[] ss = getListString();
         return new CncCat(sname,firstFId,lastFId,ss);
     }
 
     private Map<String, CncCat> getListCncCat( ) throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         Map<String, CncCat> cncCats = new HashMap<String,CncCat>();
         String name;
         int firstFID, lastFID;
         String[] ss;
         for(int i=0; i<npoz; i++) {
             name = getIdent();
-            firstFID = getInteger();
-            lastFID = getInteger();
+            firstFID = getInt();
+            lastFID = getInt();
             ss = getListString();
             cncCats.put(name, new CncCat(name,firstFID,lastFID,ss));
         }
@@ -640,7 +640,7 @@ class PGFReader {
     /* ************************************************* */
     private Map<String,RLiteral> getListFlag( )
         throws IOException {
-        int npoz = getInteger();
+        int npoz = getInt();
         Map<String,RLiteral> flags = new HashMap<String,RLiteral>();
         if (npoz == 0)
             return flags;
@@ -658,7 +658,7 @@ class PGFReader {
     private String getString( ) throws IOException {
         // using a byte array for efficiency
         ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
-        int npoz = getInteger();
+        int npoz = getInt();
         int r ;
         for (int i=0; i<npoz; i++) {
             r = mDataInputStream.read();
@@ -692,7 +692,7 @@ class PGFReader {
     private String[] getListString( )
         throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         String[] strs = new String[npoz];
         if(npoz == 0)
             return strs;
@@ -708,7 +708,7 @@ class PGFReader {
      * We can read them faster using this knowledge.
      **/
     private String getIdent( ) throws IOException {
-        int nbChar = getInteger();
+        int nbChar = getInt();
         byte[] bytes = new byte[nbChar];
         this.mDataInputStream.read(bytes);
         return new String(bytes, "ISO-8859-1");
@@ -717,7 +717,7 @@ class PGFReader {
     private String[] getListIdent( )
         throws IOException
     {
-        int nb = getInteger();
+        int nb = getInt();
         String[] strs = new String[nb];
         for (int i=0; i<nb; i++)
             strs[i] = getIdent();
@@ -730,7 +730,7 @@ class PGFReader {
     private WeightedIdent[] getListWeightedIdent( )
         throws IOException
     {
-        int nb = getInteger();
+        int nb = getInt();
         WeightedIdent[] idents = new WeightedIdent[nb];
         for (int i=0; i<nb; i++) {
 	    double w = getDouble();
@@ -743,23 +743,26 @@ class PGFReader {
     /* ************************************************* */
     /* Reading integers                                  */
     /* ************************************************* */
-    private int getInteger( ) throws IOException {
+    // this reads a 'Int' in haskell serialized by the pgf serializer.
+    // Those are srialized with a variable length (like some strings)
+    // to gain space.
+    private int getInt( ) throws IOException {
         long rez = (long)mDataInputStream.read();
         if (rez <= 0x7f)
             return (int)rez;
         else {
-            int ii = getInteger();
+            int ii = getInt();
             rez = (ii <<7) | (rez & 0x7f);
             return (int)rez;
         }
     }
 
-    private int[] getListInteger( ) throws IOException
+    private int[] getListInt() throws IOException
     {
-        int npoz = getInteger();
+        int npoz = getInt();
         int[] vec = new int[npoz];
         for(int i=0; i<npoz; i++)
-            vec[i] = getInteger();
+            vec[i] = getInt();
         return vec;
     }
 
