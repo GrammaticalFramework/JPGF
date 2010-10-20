@@ -1,7 +1,8 @@
 package org.grammaticalframework.reader;
 
 // An alternative is like a token (TokSymbol) but restricted to the case
-// where the folowing words match "suffix"
+// where the folowing words match "prefix"
+// Todo: subclass TokSymbol ???
 
 public class Alternative {
     private String[] tokens;

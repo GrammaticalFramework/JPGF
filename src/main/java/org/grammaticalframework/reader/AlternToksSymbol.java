@@ -23,9 +23,10 @@ public class AlternToksSymbol extends ToksSymbol {
 	sb.append("}");
         return sb.toString();
     };
+
     public String[] getToks(){return toks;}
     public Alternative[] getAlternatives(){return alts;}
 
-		}
+}
 
 
