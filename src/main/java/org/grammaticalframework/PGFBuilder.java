@@ -329,9 +329,13 @@ class PGFReader {
     private Concrete getConcrete(String startCat) throws IOException
     {
         String name = getIdent();
+	if (DBG) System.err.println("Concrete: " + name);
+	if (DBG) System.err.println("Concrete: Reading flags");
         Map<String,RLiteral> flags = getListFlag();
         // We don't use the print names, but we need to read them to skip them
+	if (DBG) System.err.println("Concrete: Skiping print names");
         getListPrintName();
+	if (DBG) System.err.println("Concrete: Reading sequences");
         Sequence[] seqs = getListSequence();
         CncFun[] cncFuns = getListCncFun(seqs);
         ProductionSet[] prods = getListProductionSet(cncFuns);
@@ -396,6 +400,7 @@ class PGFReader {
 
     private Symbol getSymbol( ) throws IOException {
         int sel = mDataInputStream.read();
+	if (DBG) System.err.println("Symbol: type=" + sel);
         Symbol symb = null;
         switch (sel) {
         case 0 : //constituent argument
@@ -419,6 +424,7 @@ class PGFReader {
             break;
         default : throw new IOException("invalid tag for symbols : "+sel);
         }
+	if (DBG) System.err.println("/Symbol: " + symb);
         return symb;
     }
 
@@ -539,6 +545,7 @@ class PGFReader {
         throws IOException
     {
         int sel = mDataInputStream.read();
+	if (DBG) System.err.println("Production: type=" + sel);
         Production prod = null;
         switch (sel) {
         case 0 : //application
