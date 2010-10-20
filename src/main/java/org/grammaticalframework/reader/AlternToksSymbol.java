@@ -12,8 +12,16 @@ public class AlternToksSymbol extends ToksSymbol {
 
     public String toString()
     {
-        String s = "Tokens : "+toks + " Alternatives : "+alts;
-        return s;	   
+	StringBuffer sb = new StringBuffer("pre { ");
+	for (String s : toks) {
+	    sb.append(s);
+	    sb.append(" "); }
+	sb.append("; ");
+	for (Alternative a : alts) {
+	    sb.append(a);
+	    sb.append("; "); }
+	sb.append("}");
+        return sb.toString();
     };
     public String[] getToks(){return toks;}
     public Alternative[] getAlternatives(){return alts;}

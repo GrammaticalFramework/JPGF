@@ -338,6 +338,9 @@ class PGFReader {
 	if (DBG) System.err.println("Concrete: Reading sequences");
         Sequence[] seqs = getListSequence();
         CncFun[] cncFuns = getListCncFun(seqs);
+	// We don't need the lindefs for now but again we need to
+	// parse them to skip them
+	getListLinDef();
         ProductionSet[] prods = getListProductionSet(cncFuns);
         Map<String, CncCat> cncCats = getListCncCat();
         int i = getInteger();
@@ -403,21 +406,20 @@ class PGFReader {
 	if (DBG) System.err.println("Symbol: type=" + sel);
         Symbol symb = null;
         switch (sel) {
-        case 0 : //constituent argument
+        case 0 : // category (non terminal symbol)
+        case 1 : // Lit (Not implemented properly)
             int i1 = getInteger();
             int i2 = getInteger();
             symb = new ArgConstSymbol(i1,i2);
             break;
-        case 1 : //constituent argument -- what is the difference ?
-            int i11 = getInteger();
-            int i12 = getInteger();
-            symb = new ArgConstSymbol(i11,i12);
-            break;
-        case 2 : //sequence of tokens
+	case 2: // Variable (Not implemented)
+	    throw new UnsupportedOperationException(
+		  "Var symbols are not supported yet");
+        case 3: //sequence of tokens
             String[] strs = getListString();
             symb = new ToksSymbol(strs);
             break;
-        case 3 : //alternative tokens
+        case 4 : //alternative tokens
             String[] altstrs = getListString();
             Alternative[] as = getListAlternative();
             symb = new AlternToksSymbol(altstrs,as);
@@ -482,6 +484,32 @@ class PGFReader {
     }
 
     /* ************************************************* */
+    /* Reading LinDefs                                   */
+    /* ************************************************* */
+    // LinDefs are stored as an int map (Int -> [Int])
+
+    private LinDef[] getListLinDef()
+        throws IOException
+    {
+        int size = getInteger();
+        LinDef[] linDefs = new LinDef[size];
+        for(int i=0 ; i < size ; i++)
+            linDefs[i] = getLinDef();
+        return linDefs;
+    }
+
+    private LinDef getLinDef()
+        throws IOException
+    {
+        int key = getInteger();
+        int listSize = getInteger();
+	int[] funIds = new int[listSize];
+        for(int i=0 ; i < listSize ; i++)
+            funIds[i] = getInteger();
+        return new LinDef(key, funIds);
+    }
+
+    /* ************************************************* */
     /* Reading productions and production sets           */
     /* ************************************************* */
     /**
@@ -540,8 +568,7 @@ class PGFReader {
      *                function of the production (only given by its index in
      *                the list)
      */
-    private Production getProduction(int leftCat,
-                                            CncFun[] cncFuns)
+    private Production getProduction(int leftCat, CncFun[] cncFuns)
         throws IOException
     {
         int sel = mDataInputStream.read();
@@ -550,8 +577,8 @@ class PGFReader {
         switch (sel) {
         case 0 : //application
             int i = getInteger();
-            int[] iis = getListInteger();
-            prod = new ApplProduction(leftCat, cncFuns[i],iis);
+            int[] domain = getDomainFromPArgs();
+            prod = new ApplProduction(leftCat, cncFuns[i],domain);
             break;
         case 1 : //coercion
             int id = getInteger();
@@ -559,7 +586,24 @@ class PGFReader {
             break;
         default : throw new IOException("invalid tag for productions : "+sel);
         }
-        return prod;
+	if (DBG) System.err.println("/Production: " + prod);
+	return prod;
+    }
+
+    // This function reads a list of PArgs (Productions arguments)
+    // but returns only the actual domain (the category of the argumetns)
+    // since we don't need the rest for now...
+    private int[] getDomainFromPArgs()
+        throws IOException
+    {
+        int size = getInteger();
+        int[] domain = new int[size];
+        for(int i=0; i < size; i++) {
+	    // Skiping the list of integers
+	    getListInteger();
+            domain[i]= getInteger();
+	}
+        return domain;
     }
 
     /* ************************************************* */
