@@ -1,9 +1,0 @@
-entrypoints Tr ;
-
-TNode.  Tr   ::= Ident [Tr2] ;
-TAtom.  Tr2  ::= Ident ;
-TStr.   Tr2  ::= String ;
-TInt.   Tr2  ::= Integer ;
-_.      Tr2  ::= "(" Tr ")" ;
-
-separator Tr2 "" ;

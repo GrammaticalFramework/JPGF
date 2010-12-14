@@ -9,7 +9,7 @@
   <property name="build" location="build"/>
   <property name="scala.home"  location="tools/scala-2.8.1.final"/>
 
-  <property name="sources.dir" value="src/main/" />
+  <property name="sources.dir" value="src/" />
   <property name="build.dir" value="build" />
   <property name="classes.dir" value="${build.dir}/classes" />
   <property name="jar.dir" value="${build.dir}/jar" />
