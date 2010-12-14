@@ -6,17 +6,16 @@ This library aims at making possible to use PGF files, produce by the grammatica
 Compilation
 -----------
 
-The project use a scala build system called sbt.
-For conveignence the sbt jar file is included with the project.
-to build the library you have to start sbt (with the script provided)
-   $ sh sbt
-and then, on the sbt shell
-    project JPGF library
-    compile
+The project now uses ant for the build process. The following commands can be interesting : 
 
-To test the demo PhraseDroid application on your phone, you need to have the android-sdk and to plug your phone via usb. Then the operation is automated by sbt : 
-> project PhraseDroid 
-> reinstall-device
+Building the library :
+> ant compile
+
+Testing the library
+> ant test
+
+Building a standalone jar file :
+> ant proguard
 
 More information
 ----------------
