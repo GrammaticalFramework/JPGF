@@ -37,6 +37,12 @@ class JPGFProject(info: ProjectInfo) extends ParentProject(info)
             new AndroidApp(_),
             library)
 
+  lazy val evalAndroid =
+    project("evaluation" / "android",
+            "EvalAndroid",
+            new AndroidApp(_),
+            library)
+
   class AndroidApp(info: ProjectInfo) extends AndroidProject(info)
   with AndroidDefaults
   

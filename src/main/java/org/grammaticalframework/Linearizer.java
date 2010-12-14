@@ -67,7 +67,7 @@ public class Linearizer {
 	    sb.append(w);
 	    sb.append(" ");
 	}
-	return sb.toString();
+	return sb.toString().trim();
     }
 
     public class LinearizerException extends Exception {

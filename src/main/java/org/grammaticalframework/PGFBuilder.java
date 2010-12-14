@@ -5,8 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileNotFoundException;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.util.logging.*;
 import java.io.ByteArrayOutputStream;
 
@@ -45,12 +44,20 @@ public class PGFBuilder {
 }
 
 class PGFReader {
+
     private static final boolean DBG = false;
 
     private DataInputStream mDataInputStream;
+    private Set<String> languages;
+    private Map<String, Integer> index;
     
     public PGFReader(InputStream is) {
         this.mDataInputStream = new DataInputStream(is);
+    }
+    
+    public PGFReader(InputStream is, Collection<String> languages) {
+        this.mDataInputStream = new DataInputStream(is);
+	this.languages = new HashSet(languages);
     }
     
     public PGF readPGF() throws IOException {
@@ -66,7 +73,10 @@ class PGFReader {
         Abstract abs = getAbstract();
         String startCat = abs.startcat();
         // Reading the concrete grammars
-        Concrete[] concretes = getListConcretes(startCat);
+        int nbConcretes = getInt();
+        Concrete[] concretes = new Concrete[nbConcrete];
+	for (int i=0; i<npoz; i++)
+	    concretes[i] = getConcrete(startCat);
         // builds and returns the pgf object.
         PGF pgf = new PGF(makeInt16(ii[0],ii[1]),
                           makeInt16(ii[2],ii[3]),
@@ -88,6 +98,8 @@ class PGFReader {
             return ((StringLit)cat).getValue();
 
     }
+
+    
     /* ************************************************* */
     /* Reading abstract grammar                          */
     /* ************************************************* */

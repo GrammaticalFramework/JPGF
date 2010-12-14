@@ -1,0 +1,117 @@
+<project name="JPGF" default="dist" basedir=".">
+  <description>
+    simple example build file
+  </description>
+
+  <property name="build.debug" value="true"/>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="scala.home"  location="scala"/>
+
+  <property name="sources.dir" value="src/main/" />
+  <property name="build.dir" value="build" />
+  <property name="classes.dir" value="${build.dir}/classes" />
+  <property name="jar.dir" value="${build.dir}/jar" />
+  <property name="scala-library.jar"
+	    value="${scala.home}/lib/scala-library.jar" />
+
+  <property name="test.dir" location="${build.dir}/test"/>
+  <property name="test.data.dir" location="${test.dir}/data"/>
+  <property name="test.reports.dir" location="${test.dir}/reports"/>
+  <property name="junit.jar"
+	    value="lib/junit-4.8.2.jar" />
+
+
+  <path id="compile.classpath">
+    <pathelement location="${scala-library.jar}" />
+    <pathelement location="${classes.dir}" />
+    <pathelement location="lib/java-cup-11a-runtime.jar" />
+  </path>
+
+  <path id="test.classpath">
+    <path refid="compile.classpath"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${build.dir}/classes"/>
+    <pathelement location="${build.dir}/test"/>
+  </path>
+
+
+
+  <target name="init">
+    <mkdir dir="${build.dir}"   />
+    <taskdef resource="scala/tools/ant/antlib.xml">
+      <classpath>
+        <pathelement location="${scala.home}/lib/scala-compiler.jar"   />
+        <pathelement location="${scala-library.jar}"   />
+      </classpath>
+    </taskdef>
+  </target>
+  
+  <target name="compile" depends="init">
+    <mkdir dir="${classes.dir}"   />
+    <scalac srcdir="${sources.dir}"
+            destdir="${classes.dir}"
+            classpathref="compile.classpath">
+    </scalac>
+    <javac srcdir="${sources.dir}"
+	   debug="true" debuglevel="lines,source"
+	   includeAntRuntime="true"
+           destdir="${classes.dir}"
+           classpathref="compile.classpath">
+    </javac>
+  </target>
+
+  <target name="test-init" depends="init">
+    <mkdir dir="${test.dir}" />
+  </target>
+
+  <target name="test-compile" depends="compile,test-init">
+    <javac destdir="${test.dir}"
+	   debug="true" debuglevel="lines,source"
+	   includeAntRuntime="true"
+	   srcdir="test">
+      <classpath refid="test.classpath"/>
+    </javac>
+    <copy todir="${test.dir}">
+      <fileset dir="test" excludes="**/*.java"/>
+    </copy>
+  </target>
+
+  <target name="test" depends="test-compile">
+    <junit printsummary="false" haltonfailure="true">
+      <classpath refid="test.classpath"/>
+      <formatter type="brief" usefile="false"/>
+      <batchtest todir="${test.data.dir}">
+	<fileset dir="${test.dir}" includes="**/*Test.class"/>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="jar" depends="compile" >
+    <mkdir dir="${jar.dir}"/>
+    <jar destfile="${jar.dir}/JPGF.jar" basedir="${classes.dir}">
+      <manifest>
+        <!-- attribute name="Main-Class" value="oata.HelloWorld"/ -->
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="proguard" depends="jar">
+    <taskdef resource="proguard/ant/task.properties"
+	     classpath="lib/proguard.jar" />
+    <proguard>
+      -injars ${jar.dir}/JPGF.jar:lib/scala-library.jar:lib/java-cup-11a-runtime.jar
+      -outjars "${jar.dir}/JPGF-min.jar"
+      -dontwarn
+      -dontoptimize
+      -dontobfuscate
+      -keep class org.grammaticalframework.** { *; }
+    </proguard>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build.dir}" failonerror="false" />
+  </target>
+
+</project>

@@ -39,6 +39,10 @@ public class PGF {
 	public String getLanguage() {
 	    return this.language;
 	}
+
+	public String toString() {
+	    return "Unknown language: " + language;
+	}
     }
 
     public PGF(int _majorVersion, int _minorVersion,
