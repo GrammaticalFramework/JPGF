@@ -4,10 +4,10 @@ import org.grammaticalframework.Trees.Absyn.Tree;
 
 import java.io.IOException;
 
-public class LinearizeFoodsTest extends PGFTestCase
+public class FoodsLinearizeTest extends PGFTestCase
 {
 
-    public LinearizeFoodsTest (String name) {
+    public FoodsLinearizeTest (String name) {
 	super(name);
     }
 

@@ -5,10 +5,10 @@ import org.grammaticalframework.Trees.PrettyPrinter;
 
 import java.io.IOException;
 
-public class ParserFoodsTest extends PGFTestCase
+public class FoodsParseTest extends PGFTestCase
 {
 
-    public ParserFoodsTest (String name) {
+    public FoodsParseTest (String name) {
 	super(name);
     }
 
