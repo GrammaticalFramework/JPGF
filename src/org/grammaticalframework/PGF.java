@@ -30,21 +30,6 @@ public class PGF {
 	return l;
     }
 
-    public class UnknownLanguageException extends Exception {
-	private String language;
-	public UnknownLanguageException(String language) {
-	    this.language = language;
-	}
-
-	public String getLanguage() {
-	    return this.language;
-	}
-
-	public String toString() {
-	    return "Unknown language: " + language;
-	}
-    }
-
     public PGF(int _majorVersion, int _minorVersion,
                Map<String, RLiteral> _flags,
                Abstract _abstr,
@@ -73,6 +58,14 @@ public class PGF {
 
     public Abstract getAbstract() {
 	return abstr;
+    }
+
+    /**
+     * Return true if the given name crrespond to a concrete grammar
+     * in the pgf, false otherwise.
+     */
+    public boolean hasConcrete(String name) {
+	return this.concretes.containsKey(name);
     }
 
     public String toString() {

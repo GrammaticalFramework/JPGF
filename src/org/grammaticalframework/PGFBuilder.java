@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.logging.*;
 import java.io.ByteArrayOutputStream;
 
+import java.lang.RuntimeException;
 import org.grammaticalframework.reader.*;
 
 public class PGFBuilder {
@@ -28,7 +29,28 @@ public class PGFBuilder {
     {
 	if (DBG) System.err.println("Reading pgf from file : " + filename);
         InputStream stream = new FileInputStream(filename);
-        return new PGFReader(stream).readPGF();
+	try {
+	    return new PGFReader(stream).readPGF();
+	} catch (UnknownLanguageException e) {
+	    throw new RuntimeException();
+	}
+    }
+
+    /**
+     * Reads a PGF binary from a file idenfied by filename.
+     * A list of the desired languages is given to the function so that the pgf
+     * doesn't have to be read entierely. The pgf file have to be indexed
+     * 
+     *
+     * @param filename the path of the pgf file.
+     * @param languages the list of desired languages
+     */
+    public static PGF fromFile(String filename, String[] languages)
+        throws FileNotFoundException, IOException, UnknownLanguageException
+    {
+	if (DBG) System.err.println("Reading pgf from file : " + filename);
+        InputStream stream = new FileInputStream(filename);
+        return new PGFReader(stream, languages).readPGF();
     }
 
     /**
@@ -39,7 +61,24 @@ public class PGFBuilder {
     public static PGF fromInputStream(InputStream stream)
         throws IOException
     {
-        return new PGFReader(stream).readPGF();
+	try {
+	    return new PGFReader(stream).readPGF();
+	} catch (UnknownLanguageException e) {
+	    throw new RuntimeException();
+	}
+    }
+
+    /**
+     * Reads a pgf from an input stream
+     * A list of the desired languages is given to the function so that the pgf
+     * doesn't have to be read entierely. The pgf file have to be indexed
+     *
+     * @param inStream and InputStream to read the pgf binary from.
+     */
+    public static PGF fromInputStream(InputStream stream, String[] languages)
+	throws IOException, UnknownLanguageException 
+    {
+        return new PGFReader(stream, languages).readPGF();
     }
 }
 
@@ -49,18 +88,18 @@ class PGFReader {
 
     private DataInputStream mDataInputStream;
     private Set<String> languages;
-    private Map<String, Integer> index;
     
     public PGFReader(InputStream is) {
         this.mDataInputStream = new DataInputStream(is);
     }
     
-    public PGFReader(InputStream is, Collection<String> languages) {
+    public PGFReader(InputStream is, String[] languages) throws UnknownLanguageException {
         this.mDataInputStream = new DataInputStream(is);
-	this.languages = new HashSet(languages);
+	this.languages = new HashSet(Arrays.asList(languages));
     }
     
-    public PGF readPGF() throws IOException {
+    public PGF readPGF() throws IOException, UnknownLanguageException {
+	Map<String, Integer> index = null;
         // Reading the PGF version
         int ii[]=new int[4];
         for(int i=0;i<4;i++)
@@ -69,16 +108,40 @@ class PGFReader {
 				    + "." + ii[2] + "." + ii[3]);
         // Reading the global flags
         Map<String,RLiteral> flags = getListFlag();
+	if (flags.containsKey("index")) {
+	    index = readIndex(((StringLit)flags.get("index")).getValue());
+	    if (DBG) System.err.println(index.toString());
+	}
         // Reading the abstract
         Abstract abs = getAbstract();
         String startCat = abs.startcat();
         // Reading the concrete grammars
         int nbConcretes = getInt();
-        Concrete[] concretes = new Concrete[nbConcretes];
+        Concrete[] concretes;
+	if (languages != null)
+	    concretes = new Concrete[languages.size()];
+	else
+	    concretes = new Concrete[nbConcretes];
+	int k = 0;
 	for (int i=0; i<nbConcretes; i++) {
 	    String name = getIdent();
-	    concretes[i] = getConcrete(name, startCat);
+	    if (DBG) System.err.println("Language " + name);
+	    if (languages == null || languages.remove(name)) {
+	       concretes[k] = getConcrete(name, startCat);
+	       k++;
+	    } else {
+		if (index != null) {
+		    this.mDataInputStream.skip(index.get(name));
+		    if (DBG) System.err.println("Skiping " + name);
+		} else
+		    getConcrete(name, startCat);
+	    }
 	}
+	// test that we actually found all the selected languages
+	if (languages != null && languages.size() > 0)
+		for (String l: languages)
+		    throw new UnknownLanguageException(l);
+	
         // builds and returns the pgf object.
         PGF pgf = new PGF(makeInt16(ii[0],ii[1]),
                           makeInt16(ii[2],ii[3]),
@@ -99,6 +162,16 @@ class PGFReader {
         else
             return ((StringLit)cat).getValue();
 
+    }
+
+    private Map<String,Integer> readIndex(String s) {
+	String[] items = s.split(" +");
+	Map<String,Integer> index = new HashMap<String,Integer>();
+	for (String item: items) {
+	    String[] i = item.split(":");
+	    index.put(i[0],new Integer(i[1]));
+	}
+	return index;
     }
 
     
