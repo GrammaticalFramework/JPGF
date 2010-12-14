@@ -7,7 +7,7 @@
   <!-- set global properties for this build -->
   <property name="src" location="src"/>
   <property name="build" location="build"/>
-  <property name="scala.home"  location="scala"/>
+  <property name="scala.home"  location="tools/scala-2.8.1.final"/>
 
   <property name="sources.dir" value="src/main/" />
   <property name="build.dir" value="build" />
@@ -15,6 +15,8 @@
   <property name="jar.dir" value="${build.dir}/jar" />
   <property name="scala-library.jar"
 	    value="${scala.home}/lib/scala-library.jar" />
+  <property name="scala-compiler.jar"
+	    value="${scala.home}/lib/scala-compiler.jar" />
 
   <property name="test.dir" location="${build.dir}/test"/>
   <property name="test.data.dir" location="${test.dir}/data"/>
@@ -42,8 +44,8 @@
     <mkdir dir="${build.dir}"   />
     <taskdef resource="scala/tools/ant/antlib.xml">
       <classpath>
-        <pathelement location="${scala.home}/lib/scala-compiler.jar"   />
-        <pathelement location="${scala-library.jar}"   />
+        <pathelement location="${scala-compiler.jar}" />
+        <pathelement location="${scala-library.jar}" />
       </classpath>
     </taskdef>
   </target>
