@@ -74,9 +74,11 @@ class PGFReader {
         String startCat = abs.startcat();
         // Reading the concrete grammars
         int nbConcretes = getInt();
-        Concrete[] concretes = new Concrete[nbConcrete];
-	for (int i=0; i<npoz; i++)
-	    concretes[i] = getConcrete(startCat);
+        Concrete[] concretes = new Concrete[nbConcretes];
+	for (int i=0; i<nbConcretes; i++) {
+	    String name = getIdent();
+	    concretes[i] = getConcrete(name, startCat);
+	}
         // builds and returns the pgf object.
         PGF pgf = new PGF(makeInt16(ii[0],ii[1]),
                           makeInt16(ii[2],ii[3]),
@@ -338,9 +340,9 @@ class PGFReader {
     /* ************************************************* */
     /* Reading concrete grammar                          */
     /* ************************************************* */
-    private Concrete getConcrete(String startCat) throws IOException
+    private Concrete getConcrete(String name, String startCat)
+	throws IOException
     {
-        String name = getIdent();
 	if (DBG) System.err.println("Concrete: " + name);
 	if (DBG) System.err.println("Concrete: Reading flags");
         Map<String,RLiteral> flags = getListFlag();
@@ -357,18 +359,6 @@ class PGFReader {
         Map<String, CncCat> cncCats = getListCncCat();
         int i = getInt();
         return new Concrete(name,flags,seqs,cncFuns,prods,cncCats,i,startCat);
-    }
-
-    private Concrete[] getListConcretes(String startCat)
-        throws IOException
-    {
-        int npoz = getInt();
-        Concrete[] concretes = new Concrete[npoz];
-        if(npoz == 0) return concretes;
-        else
-            for (int i=0; i<npoz; i++)
-                concretes[i] = getConcrete(startCat);
-        return concretes;
     }
 
     /* ************************************************* */
