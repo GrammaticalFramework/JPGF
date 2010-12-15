@@ -42,7 +42,7 @@ public class Linearizer {
      * @param concrete the name of the concrete grammar to use.
      **/
     public Linearizer(PGF pgf, String concrete)
-	throws LinearizerException, PGF.UnknownLanguageException
+	throws LinearizerException, UnknownLanguageException
     {
 	this(pgf, pgf.concrete(concrete));
     }

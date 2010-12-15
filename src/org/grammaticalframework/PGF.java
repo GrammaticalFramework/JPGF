@@ -16,20 +16,6 @@ public class PGF {
     private Abstract abstr;
     private Map<String, Concrete> concretes;
 
-    /* ******************************** API ******************************** */
-    /**
-     * access the concrete grammar by its name
-     * @param name the name of the concrete grammar
-     * @return the concrete grammar of null if there is no grammr with
-     *             that name.
-     */
-    public Concrete concrete(String name) throws UnknownLanguageException {
-	Concrete l = this.concretes.get(name);
-        if (l == null)
-	    throw new UnknownLanguageException(name);
-	return l;
-    }
-
     public PGF(int _majorVersion, int _minorVersion,
                Map<String, RLiteral> _flags,
                Abstract _abstr,
@@ -42,6 +28,20 @@ public class PGF {
         this.concretes = new HashMap<String,Concrete>();
         for(Concrete cnc : concretes)
             this.concretes.put( cnc.name(), cnc);
+    }
+
+    /* ******************************** API ******************************** */
+    /**
+     * access the concrete grammar by its name
+     * @param name the name of the concrete grammar
+     * @return the concrete grammar of null if there is no grammr with
+     *             that name.
+     */
+    public Concrete concrete(String name) throws UnknownLanguageException {
+	Concrete l = this.concretes.get(name);
+        if (l == null)
+	    throw new UnknownLanguageException(name);
+	return l;
     }
 
     /* ************************************************* */

@@ -15,7 +15,7 @@ public class Parser {
     }
 
     public Parser(PGF pgf, String language)
-        throws PGF.UnknownLanguageException
+        throws UnknownLanguageException
     {
         this(pgf, pgf.concrete(language));
     }
