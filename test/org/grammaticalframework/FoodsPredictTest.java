@@ -17,7 +17,7 @@ public class FoodsPredictTest extends PGFTestCase
     }
 
     public void testFoodsEng()
-	throws PGF.UnknownLanguageException
+	throws UnknownLanguageException
     {
 	Parser parser = new Parser(pgf, "FoodsEng");
 	String[] words = new String [] {"that", "these", "this", "those"};
@@ -29,7 +29,7 @@ public class FoodsPredictTest extends PGFTestCase
     }
 
     public void testFoodsSwe()
-	throws PGF.UnknownLanguageException
+	throws UnknownLanguageException
     {
 	Parser parser = new Parser(pgf, "FoodsSwe");
 	String[] words = new String [] {"de", "den", "det"};
@@ -41,7 +41,7 @@ public class FoodsPredictTest extends PGFTestCase
     }
 
     public void testFoodsIta()
-	throws PGF.UnknownLanguageException
+	throws UnknownLanguageException
     {
 	Parser parser = new Parser(pgf, "FoodsIta");
 

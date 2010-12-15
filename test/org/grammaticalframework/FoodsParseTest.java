@@ -18,7 +18,7 @@ public class FoodsParseTest extends PGFTestCase
 	pgf = getPGF("Foods.pgf");
     }
 
-    public void testFoodsEng() throws PGF.UnknownLanguageException {
+    public void testFoodsEng() throws UnknownLanguageException {
 	Parser parser = new Parser(pgf, "FoodsEng");
 
 	String ex1 = "this fresh pizza is Italian";
@@ -34,7 +34,7 @@ public class FoodsParseTest extends PGFTestCase
 	assertEquals(trees2[0],tree2);
     }
 
-    public void testFoodsSwe() throws PGF.UnknownLanguageException {
+    public void testFoodsSwe() throws UnknownLanguageException {
 	Parser parser = new Parser(pgf, "FoodsSwe");
 
 	String ex1 = "den här läckra pizzan är färsk";
@@ -44,7 +44,7 @@ public class FoodsParseTest extends PGFTestCase
 	assertEquals(trees1[0],tree1);
     }
 
-    public void testFoodsIta() throws PGF.UnknownLanguageException {
+    public void testFoodsIta() throws UnknownLanguageException {
 	Parser parser = new Parser(pgf, "FoodsIta");
 
 	String ex1 = "questa pizza deliziosa è fresca";

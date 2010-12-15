@@ -18,7 +18,7 @@ public class FoodsLinearizeTest extends PGFTestCase
     }
 
     public void testFoodsEng()
-	throws PGF.UnknownLanguageException, Linearizer.LinearizerException
+	throws UnknownLanguageException, Linearizer.LinearizerException
     {
 	Linearizer linearizer = new Linearizer(pgf, "FoodsEng");
 
@@ -34,7 +34,7 @@ public class FoodsLinearizeTest extends PGFTestCase
     }
 
     public void testFoodsSwe()
-	throws PGF.UnknownLanguageException, Linearizer.LinearizerException
+	throws UnknownLanguageException, Linearizer.LinearizerException
     {
 	Linearizer linearizer = new Linearizer(pgf, "FoodsSwe");
 
@@ -45,7 +45,7 @@ public class FoodsLinearizeTest extends PGFTestCase
     }
 
     public void testFoodsIta()
-	throws PGF.UnknownLanguageException, Linearizer.LinearizerException
+	throws UnknownLanguageException, Linearizer.LinearizerException
     {
 	Linearizer linearizer = new Linearizer(pgf, "FoodsIta");
 
