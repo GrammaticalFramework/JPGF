@@ -3,6 +3,11 @@ JPGF Library
 
 This library aims at making possible to use PGF files, produce by the grammatical framework gf compiler in java program. On of the goal is to build application for android devices.
 
+Dependencies
+------------
+
+In order to build the library you only need java and the ant build tool. 
+
 Compilation
 -----------
 
