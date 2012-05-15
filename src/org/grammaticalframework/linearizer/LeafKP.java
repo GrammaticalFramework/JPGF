@@ -14,20 +14,19 @@ import org.grammaticalframework.reader.Alternative;
  *                  , (["parce", "qu'"], ["on"]) ]
  **/
 public class LeafKP extends BracketedTokn{
-    private String[] defaultTokens;
-    private Alternative[] alternatives ;
+    public final String[] tokens;
+    public final Alternative[] alternatives ;
 
     public LeafKP(String[] _strs, Alternative[] _alts) {
-        this.defaultTokens = _strs;
+        this.tokens = _strs;
         this.alternatives = _alts;
     }
 
-    public String[] getStrs() {return this.defaultTokens;}
     public Alternative[] getAlts() {return alternatives;}
     public String toString() {
         String rez = "string names : [";
-        for(int i=0;i<defaultTokens.length;i++)
-            rez+= " " + defaultTokens[i];
+        for(int i=0;i< tokens.length;i++)
+            rez+= " " + tokens[i];
         rez+= "] , Alternatives : [";
         for(int i=0; i<alternatives.length;i++)
             rez+= " " + alternatives[i].toString();

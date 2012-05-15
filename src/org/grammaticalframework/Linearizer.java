@@ -13,6 +13,8 @@ import org.grammaticalframework.linearizer.*;
 
 public class Linearizer {
 
+    private static final boolean DBG = false;
+
     private PGF pgf;
     private Concrete cnc ;
     private HashMap<String,HashMap<Integer,HashSet<Production>>> lProd;
@@ -62,12 +64,7 @@ public class Linearizer {
     public String linearizeString(Tree absyn) throws LinearizerException {
 	Vector<String> words = 
 	    this.renderLin(this.linearize(absyn).elementAt(0));
-	StringBuffer sb = new StringBuffer();
-	for (String w : words) {
-	    sb.append(w);
-	    sb.append(" ");
-	}
-	return sb.toString().trim();
+	return Utils.concat( (String[])words.toArray(new String[words.size()] ));
     }
 
     public class LinearizerException extends Exception {
@@ -280,44 +277,45 @@ rez[i] = hypos[i].getType().getName();
 return rez;
 }
 
-/** flattens a bracketed token
-**/
-private Vector<String> untokn(BracketedTokn bt, String after)
-{if (bt instanceof LeafKS) 
-  {String[] d = ((LeafKS) bt).getStrs();
-   Vector<String> rez = new Vector<String>();
-   for(int i=d.length-1; i>=0;i--)
-	   rez.add(d[i]);
-   return rez;}
-else if (bt instanceof LeafKP) {
-	String[] d = ((LeafKP) bt).getStrs();
-	Alternative[] alts = ((LeafKP) bt).getAlts();
-	Vector<String> rez = new Vector<String>();
-	for (int i =0; i<alts.length; i++)
-	{String[] ss2 = alts[i].getAlt2();
-	for (int j = 0; j<ss2.length; j++)
-		 if (after.startsWith(ss2[j]))
-		    {String[] ss1 = alts[i].getAlt1();
-                     for(int k = ss1.length-1; k>=0; k--)
-		    	 rez.add(ss1[i]);
-		    return rez;
-		    }
+    /** flattens a bracketed token
+     **/
+    private Vector<String> untokn(BracketedTokn bt, String after)
+    {
+	if (bt instanceof LeafKS) {
+	    String[] d = ((LeafKS) bt).tokens;
+	    Vector<String> rez = new Vector<String>();
+	    for(int i=d.length-1; i>=0;i--)
+		rez.add(d[i]);
+	    return rez;
+	} else if (bt instanceof LeafKP) {
+	    String[] d = ((LeafKP) bt).tokens;
+	    Alternative[] alts = ((LeafKP) bt).getAlts();
+	    Vector<String> rez = new Vector<String>();
+	    for (int i =0; i<alts.length; i++)
+		{String[] ss2 = alts[i].getAlt2();
+		    for (int j = 0; j<ss2.length; j++)
+			if (after.startsWith(ss2[j]))
+			    {String[] ss1 = alts[i].getAlt1();
+				for(int k = ss1.length-1; k>=0; k--)
+				    rez.add(ss1[i]);
+				return rez;
+			    }
+		}
+	    for(int i = d.length-1;i>=0; i--)
+		rez.add(d[i]);
+	    return rez;
 	}
-    for(int i = d.length-1;i>=0; i--)
-	rez.add(d[i]);
-	return rez;
-     }
-else {Vector<String> rez = new Vector<String>();
-	 Vector<BracketedTokn> bs = ((Bracket) bt).getBracketedToks();
-      for(int i=bs.size()-1; i>=0;i--)
-    	{rez.addAll(untokn(bs.elementAt(i),after));
-	    after = rez.lastElement();
-    	 }  	
-      return rez;}}
-
+	else {Vector<String> rez = new Vector<String>();
+	    Vector<BracketedTokn> bs = ((Bracket) bt).getBracketedToks();
+	    for(int i=bs.size()-1; i>=0;i--)
+		{rez.addAll(untokn(bs.elementAt(i),after));
+		    after = rez.lastElement();
+		}  	
+	    return rez;}}
+    
     /** flattens the result of the linearization
      **/
-
+    
 private Vector<String> renderLin(LinTriple v)
 {Vector<String> rez= new Vector<String>();
 Vector<String> rezF= new Vector<String>(); 
@@ -351,7 +349,7 @@ return rez;
      * @param ys
      * @param mb_cty
      * @param mb_fid
-     * @param e is the tree to linearize
+     * @param tree is the tree to linearize
      * @return all the possible linearized tuples for this tree.
      **/
     private Vector<LinTriple> lin0(Vector<String> xs,
@@ -360,6 +358,7 @@ return rez;
                                   Integer mb_fid,
                                   Tree tree) throws LinearizerException
     {
+	if (DBG) System.err.println("lin0: " + tree);
         // if tree is a lambda, we add the variable to the list of bound
         // variables and we linearize the subtree.
         if(tree instanceof Lambda) {
@@ -406,6 +405,7 @@ return rez;
                                     Vector<Tree> es)
         throws LinearizerException
     {
+	if (DBG) System.err.println("apply: " + f);
         HashMap<Integer,HashSet<Production>> prods = lProd.get(f);
         if (prods == null) {
             Vector<Tree> newes = new Vector<Tree>();
@@ -437,67 +437,67 @@ return rez;
                     rez.add(new LinTriple(n_fid+1,new CncType(cat,n_fid),linTab));
                 }
             }
+	    if (DBG) System.err.println("apply -> " + rez);
             return rez;
         }
     }
 
 
 
-private Vector<AppResult> getApps(HashMap<Integer,HashSet<Production>> prods, CncType mb_cty, String f ) throws LinearizerException
-{if (mb_cty == null)
-	if (f.equals("_V") || f.equals("_B")) return new Vector<AppResult>();
-         else 
-	  {Vector<AppResult> rez = new Vector<AppResult>();
-	   Iterator<Entry<Integer,HashSet<Production>>> it = prods.entrySet().iterator();
-           while(it.hasNext())
-	     {Entry<Integer,HashSet<Production>> en = it.next();
-	      Integer fid = en.getKey();
-	      Iterator<Production> ip = en.getValue().iterator();
-              while(ip.hasNext())
-                  {Production entr = ip.next();
-                   Vector<AppResult> appR = toApp(new CncType("_",fid.intValue()),entr,f,prods);
-    	           rez.addAll(appR);}}
-              return rez;}
-else {int fid = mb_cty.getFId();
-      HashSet<Production> setProd = prods.get(new Integer(fid));
-      Vector<AppResult> rez = new Vector<AppResult>();
-      if (setProd == null) return new Vector<AppResult>();
-      else {Iterator<Production> iter = setProd.iterator();
-            while(iter.hasNext())
-             rez.addAll(toApp(mb_cty,iter.next(),f,prods));
-    	    return rez;}}
-}
+    private Vector<AppResult> getApps(HashMap<Integer,HashSet<Production>> prods, CncType mb_cty, String f ) throws LinearizerException
+    {if (mb_cty == null)
+	    if (f.equals("_V") || f.equals("_B")) return new Vector<AppResult>();
+	    else 
+		{Vector<AppResult> rez = new Vector<AppResult>();
+		    Iterator<Entry<Integer,HashSet<Production>>> it = prods.entrySet().iterator();
+		    while(it.hasNext())
+			{Entry<Integer,HashSet<Production>> en = it.next();
+			    Integer fid = en.getKey();
+			    Iterator<Production> ip = en.getValue().iterator();
+			    while(ip.hasNext())
+				{Production entr = ip.next();
+				    Vector<AppResult> appR = toApp(new CncType("_",fid.intValue()),entr,f,prods);
+				    rez.addAll(appR);}}
+		    return rez;}
+	else {int fid = mb_cty.getFId();
+	    HashSet<Production> setProd = prods.get(new Integer(fid));
+	    Vector<AppResult> rez = new Vector<AppResult>();
+	    if (setProd == null) return new Vector<AppResult>();
+	    else {Iterator<Production> iter = setProd.iterator();
+		while(iter.hasNext())
+		    rez.addAll(toApp(mb_cty,iter.next(),f,prods));
+		return rez;}}
+    }
 
-
-private Vector<AppResult> toApp(CncType cty, Production p, String f, HashMap<Integer,HashSet<Production>> prods) throws LinearizerException
-{Vector<AppResult> rez = new Vector<AppResult>();
- if(p instanceof ApplProduction)
-     {int[] args = ((ApplProduction)p).getArgs();
-      CncFun cncFun = ((ApplProduction)p).getFunction(); 
-      Vector<CncType> vtype = new Vector<CncType>();
-      if(f.equals("V")) 
-    	  {for(int i=0; i<args.length; i++)
-	          vtype.add(new CncType("__gfVar",args[i]));
-	   rez.add(new AppResult(cncFun,cty,vtype));
-	   return rez;}	
-      if(f.equals("_B"))
-	  {vtype.add(new CncType(cty.getCId(),args[0]));
-	   for(int i=1; i<args.length;i++)
-	          vtype.add(new CncType("__gfVar",args[i]));
-	   rez.add(new AppResult(cncFun,cty,vtype));
-	   return rez;}
-      else {AbsFun[] absFuns = pgf.getAbstract().getAbsFuns();
-	    Type t = null;
-	    for(int i=0; i<absFuns.length;i++)
-	     	 if(f.equals(absFuns[i].getName())) t = absFuns[i].getType(); 
-	    if(t == null) throw new LinearizerException(" f not found in the abstract syntax");
-            Vector<String> catSkel = catSkeleton(t);
-	    String res = catSkel.elementAt(0);
-            for(int i=0; i<args.length;i++)
-		 vtype.add(new CncType(catSkel.elementAt(i+1),args[i]));
-	    rez.add(new AppResult(cncFun,new CncType(res,cty.getFId()),vtype));
-	    return rez;}}
-   else {
+    private Vector<AppResult> toApp(CncType cty, Production p, String f, HashMap<Integer,HashSet<Production>> prods) throws LinearizerException
+    {Vector<AppResult> rez = new Vector<AppResult>();
+	if(p instanceof ApplProduction)
+	    {int[] args = ((ApplProduction)p).getArgs();
+		CncFun cncFun = ((ApplProduction)p).getFunction(); 
+		Vector<CncType> vtype = new Vector<CncType>();
+		if(f.equals("V")) 
+		    {for(int i=0; i<args.length; i++)
+			    vtype.add(new CncType("__gfVar",args[i]));
+			rez.add(new AppResult(cncFun,cty,vtype));
+			return rez;}	
+		if(f.equals("_B"))
+		    {vtype.add(new CncType(cty.getCId(),args[0]));
+			for(int i=1; i<args.length;i++)
+			    vtype.add(new CncType("__gfVar",args[i]));
+			rez.add(new AppResult(cncFun,cty,vtype));
+			return rez;}
+		else {AbsFun[] absFuns = pgf.getAbstract().getAbsFuns();
+		    Type t = null;
+		    for(int i=0; i<absFuns.length;i++)
+			if(f.equals(absFuns[i].getName())) t = absFuns[i].getType(); 
+		    if(t == null) throw new LinearizerException(" f not found in the abstract syntax");
+		    Vector<String> catSkel = catSkeleton(t);
+		    String res = catSkel.elementAt(0);
+		    for(int i=0; i<args.length;i++)
+			vtype.add(new CncType(catSkel.elementAt(i+1),args[i]));
+		    rez.add(new AppResult(cncFun,new CncType(res,cty.getFId()),vtype));
+		    return rez;}}
+	else {
 	 int fid = ((CoerceProduction) p).getInitId();
          HashSet<Production> setProds = prods.get(new Integer(fid));
          Iterator<Production> it = setProds.iterator();
@@ -600,16 +600,20 @@ return bt;
             exps.remove(0);
             Vector<LinTriple> rezLin =
                 lin0(new Vector<String>(), xs, cncType,n_fid,exp);
+	    if (DBG) System.err.println("descend.rezLin: " + rezLin);
             Vector<RezDesc> rezDesc = descend(n_fid,cncTypes,exps,xs);
             for(int i =0; i<rezLin.size(); i++)
                 for(int j=0; j<rezDesc.size();j++) {
+		    if (DBG) System.err.println("i=" + i + " j=" + j);
                     CncType c = rezLin.elementAt(i).getCncType();
                     Vector<CncType> vcnc = rezDesc.elementAt(j).getCncTypes();
                     vcnc.add(c);
                     Vector<Vector<Vector<BracketedTokn>>> vbt =
-                        rezDesc.elementAt(j).getBracketedTokens();
+                        (Vector<Vector<Vector<BracketedTokn>>>)rezDesc.elementAt(j).getBracketedTokens().clone();
                     Vector<Vector<BracketedTokn>> bt =
                         rezLin.elementAt(i).getLinTable();
+		    if (DBG) System.err.println("vb: " + bt);
+		    if (DBG) System.err.println("vbtx: " + vbt);
                     vbt.add(bt);
                     rez.add(new RezDesc(n_fid,vcnc,vbt));
                 }
@@ -649,23 +653,6 @@ boolean isLiteral(int i)
 { if (isLiteralString(i) || isLiteralInt(i) || isLiteralFloat(i) || isLiteralVar(i)) return true;
 return false;}
 
-/*
-public static void main(String[] args)
-{ System.out.println("Main function");
-	try {
-    Generator gg = new Generator("Phrasebook.pgf");
-    Expr rez = gg.gen("Greeting");
-    Linearizer ll = new Linearizer("Phrasebook.pgf","PhrasebookFre",rez);
-    //System.out.println("The l-productions are "+ll.getLProductions());
-   // System.out.println("intermediate linearizing : "+ll.lin0(new Vector<String>(), new Vector<String>(), null, new Integer(0), rez));
-    if(rez != null)
-     System.out.println("the random expression is "+rez.toString());
-    else System.out.println("the random expression is null");
-    System.out.println("The resulting linearization is "+ll.renderLin(ll.lin0(new Vector<String>(), new Vector<String>(), null, new Integer(0), rez)));
-	System.out.println("The end");
-	}
- catch(Exception e) {System.out.println("Something went wrong : "+e.toString());}
- }*/
 
 }
 

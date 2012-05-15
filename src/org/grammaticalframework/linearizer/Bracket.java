@@ -15,8 +15,8 @@ public class Bracket extends BracketedTokn{
    public int getLIndex() {return lIndex;}
    public int getFId() {return fId;}
    public Vector<BracketedTokn> getBracketedToks() {return bss;}
-   public String toString() {String rez = "name : "+cId + ", linIndex : "+lIndex+", fId : "+fId+", bracketed tokens : "+bss.toString();
-                             //for(int i=0;i<bss.length;i++)
-                             //	 rez+=(" "+bss[i].toString());
-                             return rez;}
+    
+    public String toString() {
+	return "(" + "name:"+cId + ", linIndex:"+ lIndex + ", fId:"+fId+" "+bss.toString() + ")";
+    }
 }
