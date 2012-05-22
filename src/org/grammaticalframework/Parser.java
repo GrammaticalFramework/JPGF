@@ -31,9 +31,8 @@ public class Parser {
      * @param tokens the input tokens
      * @return the corresponding parse-state
      **/
-    // FIXME: not using the start category ??
     public ParseState parse(String[] tokens) {
-        ParseState ps = new ParseState(this.language);
+        ParseState ps = new ParseState(this.language, this.startcat);
         for (String w : tokens)
             if (!ps.scan(w))
                 break;

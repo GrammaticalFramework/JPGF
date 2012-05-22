@@ -12,7 +12,7 @@ public class Concrete {
     private ProductionSet[] prods;
     private Map<String, CncCat> cncCats ;
     private int fId ;
-    private String startCat;
+    public final String startCat;
 
     public Concrete (String name,
                      Map<String,RLiteral> flags,

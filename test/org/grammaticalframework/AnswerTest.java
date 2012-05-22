@@ -3,6 +3,7 @@ package org.grammaticalframework;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
 import java.io.IOException;
+import java.util.*;
 
 public class AnswerTest extends PGFTestCase
 {
@@ -25,10 +26,16 @@ public class AnswerTest extends PGFTestCase
 	//	Tree[] trees = trans.parse("AnswerEng", "Take bus 10 from Valand Göteborg to Chalmers Göteborg at 1");
 	// System.out.println(trees[0]);
 		
-	String ex1 = "Take bus 10 from Valand Göteborg to Chalmers Göteborg at 1";
+	// Since this is using (and testing) the implementation of variants,
+	// there is everal different linearization possibilities
+	Set<String> gold = new HashSet<String>();
+	gold.add("Take bus 10 from Valand to Chalmers at 1");
+	gold.add("Take bus 10 from Valand Göteborg to Chalmers at 1");
+	gold.add("Take bus 10 from Valand to Chalmers Göteborg at 1");
+	gold.add("Take bus 10 from Valand Göteborg to Chalmers Göteborg at 1");
 	Tree tree1 = parseTree("((((Routing Bus) St_1) St_0) N1)");
 	String lin1 = linearizer.linearizeString(tree1);
-	assertEquals(ex1,lin1);
+	assert(gold.contains(lin1));
 
 	System.out.println(lin1);
 

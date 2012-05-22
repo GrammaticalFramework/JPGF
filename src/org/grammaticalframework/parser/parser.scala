@@ -10,9 +10,9 @@ import scala.collection.immutable.HashMap
 /** ParseState
  * The parse-state is the core of the parser.
  * */
-private class ParseState(val grammar:Concrete) {
+private class ParseState(val grammar:Concrete, val absStartCat: String) {
     
-    private val startCat = this.grammar.startCat
+    private val startCat = this.grammar.concreteCats(this.absStartCat)
     private var trie = new ParseTrie
     private val chart = new Chart(100) // TODO: 100 is a bad value...
     private var agenda = new Stack[ActiveItem]
