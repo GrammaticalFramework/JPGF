@@ -34,8 +34,8 @@ public class Generator {
 	    WeightedIdent[] functions = absCats[i].getFunctions();
             for(int j=0 ; j < functions.length ; j++)
                 for(int k=0 ; k < absFuns.length ; k++)
-                    if(functions[j].ident().equals(absFuns[k].getName())) {
-                        if(absFuns[k].getType().getHypos().length == 0)
+                    if(functions[j].ident().equals(absFuns[k].name)) {
+                        if(absFuns[k].type.getHypos().length == 0)
                             dirFuns.add(functions[j].ident());
                         else
 			    indirFuns.add(functions[j].ident());
@@ -72,12 +72,12 @@ public class Generator {
 	String funcName = vs.elementAt(rand);
 	AbsFun[] absFuns = pgf.getAbstract().getAbsFuns();
 	for(int i=0; i<absFuns.length;i++)
-	    if(absFuns[i].getName().equals(funcName))
-		{Hypo[] hypos = absFuns[i].getType().getHypos();
+	    if(absFuns[i].name.equals(funcName))
+		{Hypo[] hypos = absFuns[i].type.getHypos();
 		    String[] tempCats = new String[hypos.length];
 		    Tree[] exps = new Tree[hypos.length];
 		    for(int k=0; k<hypos.length;k++)
-			{tempCats[k]=hypos[k].getType().getName();
+			{tempCats[k]=hypos[k].type.getName();
 			    exps[k]=gen(tempCats[k]);
 			    if(exps[k] == null) return null;}
 		    Tree rez = new Function(funcName);

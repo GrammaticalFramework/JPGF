@@ -1,7 +1,7 @@
 package org.grammaticalframework.reader;
 
 public class AbsCat {
-    private final String name;
+    public final String name;
     private final Hypo[] hypos;
     private final WeightedIdent[] functions;
     

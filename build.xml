@@ -6,7 +6,7 @@
   <!-- set global properties for this build -->
   <property name="build.debug" value="true"/>  
 
-  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DIRS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->  
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DIRS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <property name="src" location="src"/>
   <property name="build" location="build"/>
   <property name="scala.home"  location="tools/scala-2.8.1.final"/>
@@ -19,7 +19,7 @@
   <property name="test.data.dir" location="${test.dir}/data"/>
   <property name="test.reports.dir" location="${test.dir}/reports"/>
 
-  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JARS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->  
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JARS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <property name="scala-library.jar"
 	    value="${scala.home}/lib/scala-library.jar" />
   <property name="scala-compiler.jar"
@@ -27,9 +27,12 @@
   <property name="junit.jar"
 	    value="lib/junit-4.8.2.jar" />
   <property name="JPGF.final.jar" value="${jar.dir}/JPGF.final.jar"/>
-  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PATHS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->  
+  <property name="guava.jar"
+	    value="lib/guava-12.0.jar" />
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PATHS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <path id="compile.classpath">
     <pathelement location="${scala-library.jar}" />
+    <pathelement location="${guava.jar}" />
     <pathelement location="${classes.dir}" />
     <pathelement location="lib/java-cup-11a-runtime.jar" />
   </path>

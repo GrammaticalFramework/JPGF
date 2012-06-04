@@ -260,7 +260,7 @@ return rezTemp;}
         Abstract abstr = pgf.getAbstract();
         AbsFun[] absFuns = abstr.getAbsFuns();
         for(int i=0; i<absFuns.length; i++) {
-            Hypo[] hypos = absFuns[i].getType().getHypos();
+            Hypo[] hypos = absFuns[i].type.getHypos();
             for(int j=0; j<hypos.length; j++)
                 if(!rezTemp.contains(hypos[j].getType().getName()))
                     rezTemp.add(hypos[j].getType().getName());}
@@ -489,7 +489,7 @@ return rez;
 		else {AbsFun[] absFuns = pgf.getAbstract().getAbsFuns();
 		    Type t = null;
 		    for(int i=0; i<absFuns.length;i++)
-			if(f.equals(absFuns[i].getName())) t = absFuns[i].getType(); 
+			if(f.equals(absFuns[i].name)) t = absFuns[i].type; 
 		    if(t == null) throw new LinearizerException(" f not found in the abstract syntax");
 		    Vector<String> catSkel = catSkeleton(t);
 		    String res = catSkel.elementAt(0);

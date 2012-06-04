@@ -1,28 +1,28 @@
 package org.grammaticalframework.reader;
 
 public class AbsFun {
-    private String str;
-    private Type t;
-    private int arit;
-    private Eq[] eqs;
-    private final double weight;
+    public final String name;
+    public final Type type;
+    public final int arity;
+    public final Eq[] eqs;
+    public final double weight;
     
-    public AbsFun(String _str, Type _t, int _arit, Eq[] _eqs, double weight) {
-	str = _str;
-	t = _t;
-	arit = _arit;
-	eqs = _eqs;
+    public AbsFun(String name, Type type, int arity, Eq[] _eqs, double weight) {
+	this.name = name;
+	this.type = type;
+	this.arity = arity;
+	this.eqs = _eqs;
 	this.weight = weight;
     }
-    
+ 
     public String toString() {
 	StringBuffer sb = new StringBuffer();
 	sb.append("<function name=");
-	sb.append(str);
+	sb.append(name);
 	sb.append(" type=");
-	sb.append(t);
+	sb.append(type);
 	sb.append(" arity=");
-	sb.append(arit);
+	sb.append(arity);
 	sb.append(" equations=[");
 	for (Eq e : this.eqs) {
 	    sb.append(eqs);
@@ -33,10 +33,4 @@ public class AbsFun {
 	sb.append(">");
 	return sb.toString();
     }
-    
-    public String getName() {return str;}
-    public Type getType() {return t;}
-    public int getArit() {return arit;}
-    public Eq[] getEqs() {return eqs;}
-
 }
