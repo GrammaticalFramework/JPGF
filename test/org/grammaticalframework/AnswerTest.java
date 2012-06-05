@@ -37,8 +37,6 @@ public class AnswerTest extends PGFTestCase
 	String lin1 = linearizer.linearizeString(tree1);
 	assert(gold.contains(lin1));
 
-	System.out.println(lin1);
-
     }
 
     public void tearDown() {

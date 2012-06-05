@@ -1,7 +1,9 @@
 package org.grammaticalframework.reader;
 
+import java.util.*;
+
 public class Type {
-    private Hypo [] hypos;
+    public final Hypo [] hypos;
     private String str;
     private Expr[] exprs;
 
@@ -12,17 +14,36 @@ public class Type {
     }
 
     public String toString() {
-	String ss = "Hypotheses : (";
-	for (int i=0; i<hypos.length;i++)
-	    ss+=(" "+hypos[i].toString());
-	ss+=(") , Name : "+ str + " , Expressions : (");
-	for (int i=0; i<exprs.length; i++)
-	    ss+=(" "+ exprs[i].toString());
-	ss+=")";
-	return ss;
+	StringBuffer sb = new StringBuffer();
+	for (Hypo h: hypos) {
+	    if (h.type.isFunctionType())
+		sb.append("(");
+	    sb.append(h);
+	    if (h.type.isFunctionType())
+		sb.append(")");
+	    sb.append(" -> ");
+	}
+	sb.append(str);
+	for (Expr e: exprs) {
+	    sb.append(" ");
+	    sb.append(e);
+	}
+	return sb.toString();
     }
 
     public Hypo[] getHypos() {return hypos;}
     public String getName() {return str;}
     public Expr[] getExprs() {return exprs;}
+
+    public boolean isFunctionType() {
+	return this.hypos.length > 0;
+    }
+
+    public boolean isFunctorType() {
+	for (Hypo h: hypos)
+	    if (h.type.isFunctionType())
+		return true;
+	return false;
+    }
+
 }

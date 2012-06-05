@@ -16,21 +16,6 @@ public class AbsFun {
     }
  
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append("<function name=");
-	sb.append(name);
-	sb.append(" type=");
-	sb.append(type);
-	sb.append(" arity=");
-	sb.append(arity);
-	sb.append(" equations=[");
-	for (Eq e : this.eqs) {
-	    sb.append(eqs);
-	    sb.append(", ");
-	}
-	sb.append("] weight=");
-	sb.append(weight);
-	sb.append(">");
-	return sb.toString();
+	return name + " : " + this.type ;
     }
 }

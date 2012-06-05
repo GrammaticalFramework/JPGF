@@ -13,7 +13,7 @@ public class PGF {
     private int majorVersion;
     private int minorVersion;
     private Map<String, RLiteral> flags;
-    private Abstract abstr;
+    public final Abstract abstr;
     private Map<String, Concrete> concretes;
 
     public PGF(int _majorVersion, int _minorVersion,

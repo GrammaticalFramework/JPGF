@@ -135,8 +135,46 @@
       </batchtest>
     </junit>
   </target>
+
+  <target name="doc">
+    <javadoc
+	destdir="docs/api"
+	author="true"
+	version="true"
+	use="true"
+	windowtitle="JPGF">
+
+      
+      <packageset dir="src" defaultexcludes="yes">
+	<include name="org/grammaticalframework/**"/>
+	<exclude name="org/grammaticalframework/parser/**"/>
+	<exclude name="org/grammaticalframework/reader/**"/>
+	<exclude name="org/grammaticalframework/linearizer/**"/>
+	<exclude name="org/grammaticalframework/Trees/**"/>
+	<exclude name="org/grammaticalframework/util/**"/>
+      </packageset>
+      
+      <doctitle><![CDATA[<h1>JPGF</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; 2000 Dummy Corp. All Rights Reserved.</i>]]></bottom>
+      <tag name="todo" scope="all" description="To do:"/>
+      <group title="Group 1 Packages" packages="com.dummy.test.a*"/>
+      <group title="Group 2 Packages" packages="com.dummy.test.b*:com.dummy.test.c*"/>
+      <link offline="true" href="http://download.oracle.com/javase/6/docs/api/" packagelistLoc="C:\tmp"/>
+      <link href="http://developer.java.sun.com/developer/products/xml/docs/api/"/>
+    </javadoc>
+  </target>
+
+  <target name="publish-doc" depends="doc">
+    <scp 
+	todir="gdetrez@grammaticalframework.org:/usr/local/www/www.grammaticalframework.org/JPGF/"
+	keyfile="/home/gregoire/.ssh/id_rsa">
+      <fileset dir="docs"/>
+    </scp>
+  </target>
+  
   <target name="clean">
     <delete dir="${build.dir}" failonerror="false" />
+    <delete dir="docs" failonerror="false" />
   </target>
 
 </project>

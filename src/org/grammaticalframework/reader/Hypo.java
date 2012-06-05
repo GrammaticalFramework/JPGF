@@ -12,7 +12,11 @@ public class Hypo {
     }
 
     public String toString() {
-	return "Bound Type : "+bind+ " , Name : "+ name +" , Type : ("+ type +")";}
+	if (bind)
+	    return "(" + name + ": "  + type + ")";
+	else
+	    return type.toString();
+    }
 
     public boolean getBind() {return bind;}
     public String getName() {return name;}
