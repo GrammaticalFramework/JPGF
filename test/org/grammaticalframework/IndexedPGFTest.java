@@ -2,8 +2,10 @@ package org.grammaticalframework;
 
 import junit.framework.TestCase;
 import java.io.IOException;
+import java.util.*;
 
-public class IndexedPGFTest extends TestCase {
+
+public class IndexedPGFTest extends PGFTestCase {
 
      public IndexedPGFTest(String name) {
 	 super(name);
@@ -15,20 +17,40 @@ public class IndexedPGFTest extends TestCase {
 	String filename =
 	    this.getClass().getResource("PhrasebookIndexed.pgf").getFile();
 	PGF pgf = PGFBuilder.fromFile(filename, new String[] {"PhrasebookEng", "PhrasebookFre"});
-	assert(pgf.hasConcrete("PhrasebookEn"));
-	assert(pgf.hasConcrete("PhrasebookFre"));
+	assertTrue(pgf.hasConcrete("PhrasebookEng"));
+	assertTrue(pgf.hasConcrete("PhrasebookFre"));
 	assertFalse(pgf.hasConcrete("PhrasebookIta"));
+	
+	HashSet<String> gold = new HashSet();
+	gold.add("PhrasebookEng");
+	gold.add("PhrasebookFre");
+	assertEquals(gold, pgf.concreteNames());
     }
 
     public void testIndexedPhrasebookAll()
 	throws java.io.IOException
     {
-	String filename =
-	    this.getClass().getResource("PhrasebookIndexed.pgf").getFile();
-	PGF pgf = PGFBuilder.fromFile(filename);
-	assert(pgf.hasConcrete("PhrasebookEn"));
-	assert(pgf.hasConcrete("PhrasebookFre"));
-	assert(pgf.hasConcrete("PhrasebookIta"));
+	PGF pgf = getPGF("PhrasebookIndexed.pgf");
+	assertTrue(pgf.hasConcrete("PhrasebookEng"));
+	assertTrue(pgf.hasConcrete("PhrasebookFre"));
+	assertTrue(pgf.hasConcrete("PhrasebookIta"));
+	
+	HashSet<String> gold = new HashSet();
+	gold.add("DisambPhrasebookEng");
+	gold.add("PhrasebookBul");
+	gold.add("PhrasebookCat");
+	gold.add("PhrasebookDan");
+	gold.add("PhrasebookDut");
+	gold.add("PhrasebookEng");
+	gold.add("PhrasebookFre");
+	gold.add("PhrasebookGer");
+	gold.add("PhrasebookIta");
+	gold.add("PhrasebookNor");
+	gold.add("PhrasebookPol");
+	gold.add("PhrasebookRon");
+	gold.add("PhrasebookSpa");
+	gold.add("PhrasebookSwe");
+	assertEquals(gold, pgf.concreteNames());
     }
 
     public void testUnknownLanguage()
@@ -48,17 +70,41 @@ public class IndexedPGFTest extends TestCase {
 	String filename =
 	    this.getClass().getResource("Foods.pgf").getFile();
 	PGF pgf = PGFBuilder.fromFile(filename, new String[] {"FoodsIta"});
-	assert(pgf.hasConcrete("FoodsIta"));
+	assertTrue(pgf.hasConcrete("FoodsIta"));
 	assertFalse(pgf.hasConcrete("FoodsFre"));	
     }
 
     public void testUninexedFoodsAll() 
 	throws java.io.IOException
     {
-	String filename =
-	    this.getClass().getResource("Foods.pgf").getFile();
-	PGF pgf = PGFBuilder.fromFile(filename);
-	assert(pgf.hasConcrete("FoodsIta"));
-	assert(pgf.hasConcrete("FoodsFre"));	
+	PGF pgf = getPGF("Foods.pgf");
+	assertTrue(pgf.hasConcrete("FoodsIta"));
+
+	HashSet<String> gold = new HashSet();
+	gold.add("FoodsAfr");
+	gold.add("FoodsAmh");
+	gold.add("FoodsBul");
+	gold.add("FoodsCat");
+	gold.add("FoodsDut");
+	gold.add("FoodsEng");
+	gold.add("FoodsEpo");
+	gold.add("FoodsFas");
+	gold.add("FoodsFin");
+	gold.add("FoodsGer");
+	gold.add("FoodsHeb");
+	gold.add("FoodsHin");
+	gold.add("FoodsIce");
+	gold.add("FoodsIta");
+	gold.add("FoodsJpn");
+	gold.add("FoodsLav");
+	gold.add("FoodsMlt");
+	gold.add("FoodsMon");
+	gold.add("FoodsPor");
+	gold.add("FoodsRon");
+	gold.add("FoodsSwe");
+	gold.add("FoodsTsn");
+	gold.add("FoodsTur");
+	gold.add("FoodsUrd");
+	assertEquals(gold, pgf.concreteNames());
     }
 }

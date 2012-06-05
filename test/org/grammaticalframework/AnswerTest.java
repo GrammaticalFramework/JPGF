@@ -35,7 +35,7 @@ public class AnswerTest extends PGFTestCase
 	gold.add("Take bus 10 from Valand Göteborg to Chalmers Göteborg at 1");
 	Tree tree1 = parseTree("((((Routing Bus) St_1) St_0) N1)");
 	String lin1 = linearizer.linearizeString(tree1);
-	assert(gold.contains(lin1));
+	assertTrue(gold.contains(lin1));
 
     }
 

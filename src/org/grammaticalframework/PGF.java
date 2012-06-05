@@ -1,8 +1,6 @@
 package org.grammaticalframework;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.grammaticalframework.parser.ParseState;
@@ -14,7 +12,7 @@ public class PGF {
     private int minorVersion;
     private Map<String, RLiteral> flags;
     public final Abstract abstr;
-    private Map<String, Concrete> concretes;
+    private final Map<String, Concrete> concretes;
 
     public PGF(int _majorVersion, int _minorVersion,
                Map<String, RLiteral> _flags,
@@ -31,6 +29,14 @@ public class PGF {
     }
 
     /* ******************************** API ******************************** */
+    /**
+     * Returns the names of all concrete grammars available in the PGF
+     * @return list of concrete names
+     */
+    public Set<String> concreteNames() {
+	return this.concretes.keySet();
+    }
+
     /**
      * access the concrete grammar by its name
      * @param name the name of the concrete grammar
