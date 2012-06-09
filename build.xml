@@ -3,6 +3,9 @@
     simple example build file
   </description>
   
+  <!-- Read property file -->
+  <property file="jpgf.properties"/>
+
   <!-- set global properties for this build -->
   <property name="build.debug" value="true"/>  
 
@@ -26,9 +29,9 @@
 	    value="${scala.home}/lib/scala-compiler.jar" />
   <property name="junit.jar"
 	    value="lib/junit-4.8.2.jar" />
-  <property name="JPGF.final.jar" value="${jar.dir}/JPGF.final.jar"/>
   <property name="guava.jar"
 	    value="lib/guava-12.0.jar" />
+  <property name="JPGF.final.jar" value="${jar.dir}/JPGF-${version}.jar"/>
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PATHS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <path id="compile.classpath">
     <pathelement location="${scala-library.jar}" />
@@ -100,7 +103,7 @@
 	     classpath="lib/proguard.jar" />
     <proguard>
       <![CDATA[
--injars ${classes.dir}:${scala-library.jar}:lib/java-cup-11a-runtime.jar
+-injars ${classes.dir}:${scala-library.jar}:${guava.jar}:lib/java-cup-11a-runtime.jar
 -outjars "${JPGF.final.jar}"
 -libraryjars  <java.home>/lib/rt.jar
 -dontnote
