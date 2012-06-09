@@ -40,14 +40,31 @@ public class Concrete {
         return name;
     }
 
+    public class UnknownCategory extends Exception {
+	private final String cat;
+	
+	public UnknownCategory(String c) {
+	    this.cat = c;
+	}
+
+	public String toString() {
+	    return "Unknown category " + cat;
+	}
+
+    }
+
     /**
      * returns the concretes categories (forest indices) corresponding to the
      * given abstract category.
      * @param absCat the name of the abstract category
      * @return the CncCat object or null if the category in unknown.
      **/
-    public CncCat concreteCats(String absCat) {
-        return this.cncCats.get(absCat);
+    public CncCat concreteCats(String absCat) throws UnknownCategory {
+        CncCat c = this.cncCats.get(absCat);
+	if (c != null)
+	    return c;
+	else
+	    throw new UnknownCategory(absCat);
     }
 
     public Sequence[] getSequences() {return seqs;}

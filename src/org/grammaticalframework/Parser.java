@@ -1,7 +1,7 @@
 package org.grammaticalframework;
 
 import org.grammaticalframework.reader.*;
-import org.grammaticalframework.parser.ParseState;
+import org.grammaticalframework.parser.*;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
 
@@ -31,7 +31,7 @@ public class Parser {
      * @param tokens the input tokens
      * @return the corresponding parse-state
      **/
-    public ParseState parse(String[] tokens) {
+    public ParseState parse(String[] tokens) throws ParseError {
         ParseState ps = new ParseState(this.language, this.startcat);
         for (String w : tokens)
             if (!ps.scan(w))
@@ -45,8 +45,9 @@ public class Parser {
      * @return an array of trees
      **/
     // FIXME: not using the start category ??
-    public Tree[] parseToTrees(String[] tokens) {
-        return this.parse(tokens).getTrees();
+    // FIXME: Return collection
+    public Tree[] parseToTrees(String[] tokens) throws ParseError {
+	return this.parse(tokens).getTrees();
     }
 
     /**
@@ -55,7 +56,7 @@ public class Parser {
      * @param phrase the input string
      * @return the corresponding parse-state
      **/
-    public ParseState parse(String phrase) {
+    public ParseState parse(String phrase) throws ParseError {
         return this.parse(phrase.split(" "));
     }
 
@@ -65,7 +66,7 @@ public class Parser {
      * @param startcat the start category
      * @return the corresponding parse-state
      **/
-    public ParseState parse() {
+    public ParseState parse() throws ParseError {
         return this.parse(new String[0]);
     }
 

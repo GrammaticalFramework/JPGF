@@ -130,7 +130,7 @@
       <pathelement location="${JPGF.final.jar}" />
       <pathelement location="${build.dir}/test" />
   </path>
-    <junit printsummary="false" haltonfailure="true">
+    <junit printsummary="false" haltonfailure="false">
       <classpath refid="test-jar.classpath" />
       <formatter type="brief" usefile="false"/>
       <batchtest todir="${test.data.dir}">

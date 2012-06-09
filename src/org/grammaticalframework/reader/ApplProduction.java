@@ -1,8 +1,8 @@
 package org.grammaticalframework.reader;
 
 public class ApplProduction extends Production {
-    private CncFun function;
-    private int[] domain;
+    public final CncFun function;
+    public final int[] domain;
     
     public ApplProduction(int fId, CncFun function, int[] domain) {
         super(0, fId);

@@ -1,5 +1,6 @@
 package org.grammaticalframework;
 
+import org.grammaticalframework.parser.*;
 import java.util.Arrays;
 import java.io.IOException;
 
@@ -17,7 +18,7 @@ public class FoodsPredictTest extends PGFTestCase
     }
 
     public void testFoodsEng()
-	throws UnknownLanguageException
+	throws UnknownLanguageException, ParseError
     {
 	Parser parser = new Parser(pgf, "FoodsEng");
 	String[] words = new String [] {"that", "these", "this", "those"};
@@ -29,7 +30,7 @@ public class FoodsPredictTest extends PGFTestCase
     }
 
     public void testFoodsSwe()
-	throws UnknownLanguageException
+	throws UnknownLanguageException, ParseError
     {
 	Parser parser = new Parser(pgf, "FoodsSwe");
 	String[] words = new String [] {"de", "den", "det"};
@@ -41,7 +42,7 @@ public class FoodsPredictTest extends PGFTestCase
     }
 
     public void testFoodsIta()
-	throws UnknownLanguageException
+	throws UnknownLanguageException, ParseError
     {
 	Parser parser = new Parser(pgf, "FoodsIta");
 

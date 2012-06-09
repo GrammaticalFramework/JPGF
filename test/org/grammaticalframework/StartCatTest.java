@@ -2,7 +2,7 @@ package org.grammaticalframework;
 
 import org.grammaticalframework.Trees.Absyn.Tree;
 import org.grammaticalframework.Trees.PrettyPrinter;
-
+import org.grammaticalframework.parser.*;
 import java.io.IOException;
 
 /** This test the ability of the parser t use different start categories **/
@@ -19,7 +19,7 @@ public class StartCatTest extends PGFTestCase
 	pgf = getPGF("Foods.pgf");
     }
 
-    public void testComment() throws UnknownLanguageException {
+    public void testComment() throws UnknownLanguageException, ParseError {
 	Parser parser = new Parser(pgf, "FoodsEng");
 	parser.setStartcat("Comment");
 	String ex1 = "this fresh pizza is Italian";
@@ -35,7 +35,7 @@ public class StartCatTest extends PGFTestCase
 	assertEquals(trees2[0],tree2);
     }
 
-    public void testItem() throws UnknownLanguageException {
+    public void testItem() throws UnknownLanguageException, ParseError {
 	Parser parser = new Parser(pgf, "FoodsEng");
 	parser.setStartcat("Item");
 	String ex1 = "this fresh pizza";

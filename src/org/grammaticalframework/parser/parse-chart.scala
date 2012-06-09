@@ -58,6 +58,10 @@ private class Chart(var nextCat:Int) {
       case None => this.generateFreshCategory(oldCat, l, j, k)
       case Some(c) => c
     }
+
+  def hasCategory(oldCat:Int, cons:Int, begin:Int, end:Int):Boolean =
+    categoryBookKeeper.contains((oldCat, cons, begin, end))
+
   def getCategory(oldCat:Int, cons:Int, begin:Int, end:Int):Option[Int] =
     categoryBookKeeper.get((oldCat, cons, begin, end))
 
