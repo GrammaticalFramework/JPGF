@@ -1,4 +1,4 @@
-<project name="JPGF" default="dist" basedir=".">
+<project name="JPGF" default="jar" basedir=".">
   <description>
     simple example build file
   </description>

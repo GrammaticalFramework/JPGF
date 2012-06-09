@@ -6,7 +6,7 @@ This library aims at making possible to use PGF files, produce by the grammatica
 Dependencies
 ------------
 
-In order to build the library you only need java and the ant build tool. 
+In order to build the library you need a java compiler, a scala compiler and the ant build tool.
 
 Compilation
 -----------
@@ -14,13 +14,15 @@ Compilation
 The project now uses ant for the build process. The following commands can be interesting : 
 
 Building the library :
-> ant compile
+> ant build
 
 Testing the library
 > ant test
 
 Building a standalone jar file :
-> ant proguard
+> ant jar
+This builds the all library as a single jar file and includes external dependencies (cup, guava...)
+
 
 More information
 ----------------
