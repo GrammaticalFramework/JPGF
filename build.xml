@@ -74,6 +74,7 @@
 
   <target name="test-init" depends="init">
     <mkdir dir="${test.dir}" />
+    <mkdir dir="${test.reports.dir}" />
   </target>
 
   <target name="test-compile" depends="compile,test-init">
@@ -89,10 +90,11 @@
   </target>
 
   <target name="test" depends="test-compile">
-    <junit printsummary="false" haltonfailure="true">
+    <junit printsummary="true" haltonfailure="true">
+      <formatter type="xml" usefile="true"/>
       <classpath refid="test.classpath"/>
       <formatter type="brief" usefile="false"/>
-      <batchtest todir="${test.data.dir}">
+      <batchtest todir="${test.reports.dir}">
 	<fileset dir="${test.dir}" includes="**/*Test.class"/>
       </batchtest>
     </junit>
