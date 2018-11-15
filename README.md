@@ -1,7 +1,7 @@
 JPGF Library
 ============
 
-This library aims at making possible to use PGF files, produce by the grammatical framework gf compiler in java program. On of the goal is to build application for android devices.
+This is a pure Java+Scala library that aims at making possible to use PGF files, produce by the grammatical framework gf compiler in java program. One of the goal is to build application for Android devices. It is now OBSOLETE since the PGF format has changed several times and no one has updated this library. Instead use the Java binding to the C runtime.
 
 Dependencies
 ------------
